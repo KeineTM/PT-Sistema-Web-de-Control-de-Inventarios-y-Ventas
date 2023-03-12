@@ -1,0 +1,13 @@
+/* Variables */
+:root {
+    --fuente-principal: 'Montserrat';
+    --fuente-kalam: 'Kalam';
+    --fuente-opensans: 'Open Sans';
+    --color-fuente-formulario: rgb(226, 109, 129);
+    --color-campo: pink;
+    --color-gris: gray;
+}
+
+html {
+    font-family: var(--fuente-principal);
+}

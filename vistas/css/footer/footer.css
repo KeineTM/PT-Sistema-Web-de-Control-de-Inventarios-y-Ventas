@@ -1,0 +1,9 @@
+footer {
+    height: 10vh;
+    padding: 5vh;
+
+    display: grid;
+    place-content: center;
+    text-align: center;
+    line-height: 2rem;
+}
