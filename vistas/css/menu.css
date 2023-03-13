@@ -1,0 +1,78 @@
+.menu-contenedor {
+    width: fit-content;
+}
+
+.menu {
+    width: fit-content;
+    height: 100vh;
+    background-color: var(--color-menu-claro);
+    padding: .5rem;
+}
+
+/* Clase para los botones de control 
+ * Mantiene un tamaño mínimo y un efecto de transición al abrirse o cerrarse el menú */
+.menu-control {
+    width: 2rem;
+    transition: width 0.5s ease-in-out 0s, background-color 0.9s ease 0s;
+}
+
+/* Clase para la lista con las opciones del menú (ul)
+ * En un principio tiene un tamaño de 3rem
+ * Oculta su contenido si este sobrepasa su tamaño colapsando así el menú
+ * Tiene un efecto de transición al abrirse o cerrarse */
+.menu-lista {
+    width: 2rem;
+    clear: both;
+    overflow: hidden;
+    background-color: var(--color-menu-claro);
+    transition: width 0.5s ease-in-out 0s, background-color 0.9s ease 0s;
+}
+
+/* Al dirigir el ancla (target) al menú aumenta su ancho desplegándolo */
+#menu:target .menu-lista, #menu:target .menu-control {
+    width: 250px;
+}
+
+/* Oculta al inicio el botón para colapsar el menú */
+.colapsar {
+    display: none;
+}
+
+/* Cuando se dirige el ancla al menú, el botón para desplegar se oculta */
+#menu:target .desplegar {
+    display: none;
+}
+
+/* Cuando se dirige el ancla al menú, el botón para colapsar se muestra */
+#menu:target .colapsar {
+    display: block;
+}
+
+.flecha {
+    display: block;
+    height: 2rem;
+    background-repeat: no-repeat;
+    background-position-x: 100%;
+    filter: var(--filter-blanco);
+}
+
+.izq {
+    background-image: url('../img/arrow-left.svg');
+}
+
+.der {
+    background-image: url('../img/arrow-right.svg');
+}
+
+.menu__opciones-url {
+    display: block;
+    padding: 1rem 1rem 1rem 3rem;
+    color: white;
+    font-weight: 300;
+    letter-spacing: .15rem;
+    transition: .5s;
+}
+
+.menu__opciones:hover {
+    background:var(--color-menu-medio);
+}

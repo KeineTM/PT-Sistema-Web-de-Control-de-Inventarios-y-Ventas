@@ -14,8 +14,9 @@ pero las url de php se consideran desde la ubicación de plantilla.php. -->
     <!-- Hojas de estilos -->
     <link rel="stylesheet" href="vistas/css/reset.css">
     <link rel="stylesheet" href="vistas/css/general.css">
-    <link rel="stylesheet" href="vistas/css/main/login.css">
-    <link rel="stylesheet" href="vistas/css/footer/footer.css">    
+    <!--<link rel="stylesheet" href="vistas/css/paginas/login.css">-->
+    <link rel="stylesheet" href="vistas/css/footer.css">
+    <link rel="stylesheet" href="vistas/css/menu.css">    
 
     <!-- Fuentes -->
     <link href="https://fonts.googleapis.com/css2?family=Kalam&family=Montserrat:wght@300;400;700&family=Open+Sans:wght@300;400;700&display=swap" rel="stylesheet">
@@ -23,16 +24,16 @@ pero las url de php se consideran desde la ubicación de plantilla.php. -->
 </head>
 <body>
     <header>
+        
     </header>
 
     <main>
-        <?php include "modulos/main/login.php" ?>
+        <?php include "modulos/menu.php" ?>
+        <?php //include "paginas/login.php" ?>
     </main>
     
     <footer>
-        <?php include "modulos/footer/footer.php" ?>
+        <?php include "modulos/footer.php" ?>
     </footer>
-
-    <script src="vistas/js/main/validacion.js"></script>
 </body>
 </html>

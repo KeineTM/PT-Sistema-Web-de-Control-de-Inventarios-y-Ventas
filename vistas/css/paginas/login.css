@@ -22,6 +22,7 @@ main {
     border: none;
     border-bottom: thin solid;
     font-size: larger;
+    background-color: var(--color-sombra);
 }
 
 .campo:focus {
@@ -30,28 +31,27 @@ main {
 
 .boton {
     padding: .6rem;
-    background-color: var(--color-fuente-formulario) ;
+    background-color: var(--color-fuente) ;
     border: thin solid;
     border-radius: 5rem;
     color: white;
     font-size: larger;
     cursor: pointer;
-    width: 60%;
     margin: 0 auto;
+    width: 80%;
+    font-family: var(--fuente-principal);
+
     transition: .7s;
 }
 
-.boton span {
-    position: relative;
-    transition: 0.5s;
-}
 
 .boton:hover {
-    width: 90%;
+    width: 100%;
+    letter-spacing: .5rem;
 }
 
 .alerta {
-    color: red;
+    color: var(--color-fuente);
     font-size: small;
     visibility: hidden;
 }

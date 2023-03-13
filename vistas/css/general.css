@@ -3,9 +3,14 @@
     --fuente-principal: 'Montserrat';
     --fuente-kalam: 'Kalam';
     --fuente-opensans: 'Open Sans';
-    --color-fuente-formulario: rgb(226, 109, 129);
-    --color-campo: pink;
+    --color-fuente: #A555EC;
+    --color-menu-oscuro: #35284c;
+    --color-menu-medio: #3b315d;
+    --color-menu-claro: #473a6e;
+    --color-sombra: #E5D1FA;
+    --color-sombra-oscuro: #D09CFA;
     --color-gris: gray;
+    --filter-blanco: invert(98%) sepia(0%) saturate(6%) hue-rotate(163deg) brightness(103%) contrast(101%);
 }
 
 html {
