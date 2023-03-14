@@ -1,36 +1,51 @@
 .menu-contenedor {
-    width: fit-content;
+    position: absolute;
+    width: 100vw;
+    z-index: 5;
 }
 
 .menu {
-    width: fit-content;
-    height: 100vh;
-    background-color: var(--color-menu-claro);
-    padding: .5rem;
+    display: flex;
+    flex-direction: column-reverse;
 }
 
-/* Clase para los botones de control 
- * Mantiene un tamaño mínimo y un efecto de transición al abrirse o cerrarse el menú */
 .menu-control {
-    width: 2rem;
-    transition: width 0.5s ease-in-out 0s, background-color 0.9s ease 0s;
+    display: grid;
+    place-content: center;
+    background-color: var(--color-menu-medio);
+    border-radius: 0 0 50% 50%;
+}
+
+.colapsar, .desplegar {
+    width: 100vw;
+    text-align: center;
+}
+
+.flecha {
+    height: 1.5rem;
+    filter: var(--filter-blanco);
 }
 
 /* Clase para la lista con las opciones del menú (ul)
- * En un principio tiene un tamaño de 3rem
  * Oculta su contenido si este sobrepasa su tamaño colapsando así el menú
  * Tiene un efecto de transición al abrirse o cerrarse */
 .menu-lista {
-    width: 2rem;
-    clear: both;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    background-color: var(--color-menu-medio);
+    
+    width: 100%;
+    max-height: 0;
+    text-align: center;
     overflow: hidden;
-    background-color: var(--color-menu-claro);
-    transition: width 0.5s ease-in-out 0s, background-color 0.9s ease 0s;
+    transition: max-height 0.8s ease-in-out 0s;
 }
 
-/* Al dirigir el ancla (target) al menú aumenta su ancho desplegándolo */
-#menu:target .menu-lista, #menu:target .menu-control {
-    width: 250px;
+/* Al dirigir el ancla (tag) al menú aumenta su altura desplegándolo */
+#menu:target .menu-lista {
+    max-height: 500px;
+    display: flex;
 }
 
 /* Oculta al inicio el botón para colapsar el menú */
@@ -48,31 +63,74 @@
     display: block;
 }
 
-.flecha {
-    display: block;
-    height: 2rem;
-    background-repeat: no-repeat;
-    background-position-x: 100%;
-    filter: var(--filter-blanco);
-}
-
-.izq {
-    background-image: url('../img/arrow-left.svg');
-}
-
-.der {
-    background-image: url('../img/arrow-right.svg');
+.menu__opciones {
+    width: 50%;
+    padding: .3rem;
+    box-sizing: border-box;
 }
 
 .menu__opciones-url {
-    display: block;
-    padding: 1rem 1rem 1rem 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 5rem;
+    padding: .3rem;
+    text-align: center;
+    box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.2);
+    background-color: var(--color-menu-claro);
+    cursor: pointer;
     color: white;
-    font-weight: 300;
-    letter-spacing: .15rem;
-    transition: .5s;
 }
 
-.menu__opciones:hover {
-    background:var(--color-menu-medio);
+.icono-menu {
+    filter: var(--filter-blanco);
+    height: 2.5rem;
+    margin-bottom: .5rem;
+}
+
+
+
+
+@media screen and (min-width: 426px) and (max-width: 768px) {
+    .menu__opciones {
+        width: 33%;
+    }
+
+    .menu-lista {
+        justify-content: center;
+    }
+}
+
+
+
+@media screen and (min-width: 769px) {
+    .menu-contenedor {
+        position: relative;
+        float: left;
+        min-width: 240px;
+        max-width: 15vw;
+        height: 100vh;
+        background-color: var(--color-menu-medio);
+    }
+
+    .menu-lista {
+        max-height: none;
+        min-height: fit-content;
+        overflow: visible;
+        transition: none;
+    }
+
+    .menu__opciones-url {
+        height: 5rem;
+        padding: 1rem;
+    }
+
+    .menu__opciones-url:hover {
+        background-color: var(--color-menu-oscuro);
+    }
+
+    .colapsar, .desplegar, .flecha, .menu-control{
+        display: none;
+    }
 }

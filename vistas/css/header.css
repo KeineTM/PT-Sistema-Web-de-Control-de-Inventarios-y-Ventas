@@ -1,0 +1,33 @@
+.header-contenedor {
+    padding: 1rem;
+    background-color: var(--color-menu-medio);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header-titulo {
+    text-align: center;
+    font-family: var(--fuente-opensans);
+    color: white;
+    font-size: larger;
+    letter-spacing: .1em;
+    line-height: 1.5rem;
+}
+
+.header-titulo span {
+    display: block;
+    width: 100%;
+    font-size: larger;
+    font-weight: bolder;
+    color: var(--color-sombra);
+    background-color: var(--color-menu-medio);
+}
+
+@media screen and (min-width: 769px) {
+    .header-titulo span {
+        font-size: xx-large;
+        padding-top: 1rem;
+    }
+}

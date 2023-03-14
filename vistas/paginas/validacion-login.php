@@ -1,11 +1,13 @@
 <?php
+    // Esta página no se muestra, es totalmente back-end
     $usuario = $_POST['usuario-txt'];
     $password = $_POST['password-txt'];
 
-    if($usuario == "Jessy" && $password == "qwerty")
-        echo 'Los datos coinciden';
+    if($usuario == "Jessy" && $password == "qwerty") {
+        header("Location: index.php?pagina=inicio");
+    }
     else
-        echo 'Los datos no coinciden';
+        header("Location: index.php?pagina=login&error=true");
 
     // Primero debe validar que no exista una sesión ya activa.
     // Lo de arriba se sustituye por la conexión y consultas a la BD

@@ -5,7 +5,7 @@ CREATE DATABASE `tienda`
 --------------------------------------------------------------------------------------------
 -- Tabla de tipos de usuario
 CREATE TABLE `tipos_usuario` (
-    tipo_id SMALLINT(2) PRIMARY KEY NOT NULL,
+    tipo_id SMALLINT(2) PRIMARY KEY AUTO_INCREMENT NOT NULL,
     tipo_usuario VARCHAR(50) NOT NULL
 );
 
@@ -25,10 +25,14 @@ CREATE TABLE `usuarios` (
     FOREIGN KEY (tipo_usuario) REFERENCES tipos_usuario(tipo_id)
 );
 
+INSERT INTO usuarios VALUES (
+    'ABCD00', 'Jessica', 'Trejo', 'Méndez', '0123456789', 'ABCD0000000XX', 
+    'jessica.trejome@nube.unadmexico.mx', '$2y$05$Gg1zv/EBXLsPAo63u8J/3ewycyBL8MhyneJHcs1GmixBXMqiM0mMS', 'Usuario de prueba con privilegios de administrador.',
+    1, 1);
 --------------------------------------------------------------------------------------------
 -- Tabla de categorías del inventario
 CREATE TABLE `categorias` (
-    categoria_id SMALLINT(3) PRIMARY KEY NOT NULL,
+    categoria_id SMALLINT(3) PRIMARY KEY AUTO_INCREMENT NOT NULL,
     categoria VARCHAR(100) NOT NULL
 );
 

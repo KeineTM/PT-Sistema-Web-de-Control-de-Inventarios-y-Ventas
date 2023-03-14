@@ -1,4 +1,14 @@
-<form class="login-form" action="vistas/paginas/validacion-login.php" method="post" id="form-login">
+<?php
+    # Evalúa si existe una llave 'error' en el query string deñ url
+    if(isset($_GET["error"])) {
+        if($_GET["error"] == "true") { # De existir imprime el mensaje correspondiente
+            echo '<center style="color:red;">Los datos escritos no coinciden.</br></br>
+                Intente nuevamente.</center></br></br></br></br>';
+        }
+    }
+?>
+
+<form class="login-form" action="index.php?pagina=validacion-login" method="post" id="form-login">
     <label for="usuario-txt">Nombre de usuario:</label>
     <input class="campo" type="text" name="usuario-txt" id="usuario-txt">
     <span class="alerta" id="alerta-usuario">Debe llenar este campo</span>

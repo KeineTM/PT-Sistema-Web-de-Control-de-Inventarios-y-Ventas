@@ -1,19 +1,10 @@
-main {
-    height: 100vh;
-
-    display: grid;
-    place-content: center;
-}
-
 .login-form {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-
-    width: 80vw;
     max-width: 300px;
-
-    font-size: larger;
+    font-size: large;
+    padding-bottom: 5rem;
 }
 
 .campo {
@@ -22,7 +13,7 @@ main {
     border: none;
     border-bottom: thin solid;
     font-size: larger;
-    background-color: var(--color-sombra);
+    background-color: none;
 }
 
 .campo:focus {
@@ -41,13 +32,12 @@ main {
     width: 80%;
     font-family: var(--fuente-principal);
 
-    transition: .7s;
+    transition: .4s;
 }
 
-
 .boton:hover {
-    width: 100%;
-    letter-spacing: .5rem;
+    width: 90%;
+    letter-spacing: .1rem;
 }
 
 .alerta {
