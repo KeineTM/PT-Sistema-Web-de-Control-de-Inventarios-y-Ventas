@@ -4,7 +4,7 @@
     $password = $_POST['password-txt'];
 
     if($usuario == "Jessy" && $password == "qwerty") {
-        header("Location: index.php?pagina=inicio");
+        header("Location: index.php?pagina=inicio-usuario");
     }
     else
         header("Location: index.php?pagina=login&error=true");

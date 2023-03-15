@@ -1,7 +1,10 @@
-<!-- Controlador de la plantilla principal
-Esta clase recibe las peticiones desde el index.php -->
 <?php
+    # Controlador de la plantilla principal
+    # Esta clase recibe las peticiones desde el index.php
+    # Gestiona la navegación en el sitio web
+
     class ControladorPlantilla {
+
         # Método que llama a plantilla.php
         public function ctrPlantilla() {
             include 'vistas/plantilla.php';
@@ -13,7 +16,7 @@ Esta clase recibe las peticiones desde el index.php -->
                 if($_GET["pagina"] == "login") {
                     return "Inicio de sesión - Globo Kids";
                 }
-                if($_GET["pagina"] == "inicio") {
+                if($_GET["pagina"] == "inicio-usuario") {
                     return "Inicio - Globo Kids";
                 }
                 if($_GET["pagina"] == "ventas") {
@@ -38,7 +41,7 @@ Esta clase recibe las peticiones desde el index.php -->
             if(isset($_GET["pagina"])) {
                 if ($_GET["pagina"] == "login" ||
                     $_GET["pagina"] == "validacion-login" ||
-                    $_GET["pagina"] == "inicio" ||
+                    $_GET["pagina"] == "inicio-usuario" ||
                     $_GET["pagina"] == "ventas" ||
                     $_GET["pagina"] == "apartados" ||
                     $_GET["pagina"] == "devoluciones" ||
