@@ -8,7 +8,7 @@
     }
 ?>
 
-<form class="login-form" action="index.php?pagina=validacion-login" method="post" id="form-login">
+<form class="login-form" action="index.php?pagina=usuario-validacion" method="post" id="form-login">
     <label for="usuario-txt">Nombre de usuario:</label>
     <input class="campo" type="text" name="usuario-txt" id="usuario-txt">
     <span class="alerta" id="alerta-usuario">Debe llenar este campo</span>

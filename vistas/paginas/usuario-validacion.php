@@ -1,13 +1,17 @@
 <?php
     // Esta página no se muestra, es totalmente back-end
-    $usuario = $_POST['usuario-txt'];
+    $usuarioID = $_POST['usuario-txt'];
     $password = $_POST['password-txt'];
 
-    if($usuario == "Jessy" && $password == "qwerty") {
-        header("Location: index.php?pagina=inicio-usuario");
-    }
-    else
-        header("Location: index.php?pagina=login&error=true");
+    echo ctrlUsuarios::ctrValidarUsuario($usuarioID);
+
+    
+
+    #if($usuarioID == "Jessy" && $password == "qwerty") {
+    #    header("Location: index.php?pagina=inicio-usuario");
+    #}
+    #else
+    #    header("Location: index.php?pagina=login&error=true");
 
     // Primero debe validar que no exista una sesión ya activa.
     // Lo de arriba se sustituye por la conexión y consultas a la BD

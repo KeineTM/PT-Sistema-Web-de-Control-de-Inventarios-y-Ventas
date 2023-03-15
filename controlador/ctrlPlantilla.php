@@ -30,7 +30,7 @@
         static public function ctrlMenu() {
             if(isset($_GET["pagina"])) {
                 if($_GET["pagina"] != "login" &&
-                   $_GET["pagina"] != "validacion-login") {
+                   $_GET["pagina"] != "usuario-validacion") {
                     include "vistas/modulos/menu.php";
                 }
             }
@@ -40,7 +40,7 @@
         static public function ctrlContenido() {
             if(isset($_GET["pagina"])) {
                 if ($_GET["pagina"] == "login" ||
-                    $_GET["pagina"] == "validacion-login" ||
+                    $_GET["pagina"] == "usuario-validacion" ||
                     $_GET["pagina"] == "inicio-usuario" ||
                     $_GET["pagina"] == "ventas" ||
                     $_GET["pagina"] == "apartados" ||
