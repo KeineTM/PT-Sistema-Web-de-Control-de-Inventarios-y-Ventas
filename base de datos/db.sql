@@ -26,9 +26,9 @@ CREATE TABLE `usuarios` (
 );
 
 INSERT INTO usuarios VALUES (
-    'ABCD00', 'Jessica', 'Trejo', 'Méndez', '0123456789', 'ABCD0000000XX', 
-    'jessica.trejome@nube.unadmexico.mx', '$2y$05$Gg1zv/EBXLsPAo63u8J/3ewycyBL8MhyneJHcs1GmixBXMqiM0mMS', 'Usuario de prueba con privilegios de administrador.',
-    1, 1);
+    'ABCDXX', 'Jessica', 'Trejo', 'Méndez', '9876543210', 'ABCDXXXXXXXXX', 
+    'jessica.trejome@globokids.com', '$2y$05$Gg1zv/EBXLsPAo63u8J/3ewycyBL8MhyneJHcs1GmixBXMqiM0mMS', 'Usuario de prueba con privilegios de empleado.',
+    1, 2);
     
 SELECT usuarios.usuario_id, usuarios.password, tipos_usuario.tipo_usuario, 
 CONCAT(usuarios.nombre,' ',usuarios.apellido_paterno,' ',usuarios.apellido_materno) AS nombre_completo 

@@ -33,7 +33,6 @@
     <link rel="stylesheet" href="vistas/css/footer.css">
     <link rel="stylesheet" href="vistas/css/paginas/login.css">
 
-
     <!-- Fuentes -->
     <link href="https://fonts.googleapis.com/css2?family=Kalam&family=Montserrat:wght@300;400;700&family=Open+Sans:wght@300;400;700&display=swap" rel="stylesheet">
 
@@ -49,13 +48,10 @@
 
     <main>
         <?php
-############################## IMPORTANTE ###############################################################
-            # Aquí se evalúa la existencia de una sesión activa (con la evaluación de existencia de las variables de sesión creadas en el login)
-            # De no encontrarla, dirigirá al usuario a la página de login.php
-            if(!isset($_SESSION['validarSesion']))
-                include "paginas/login.php";
-            # Mientras que al existir carga el contenido correspondiente
-            else ControladorPlantilla::ctrlContenido();
+            ##########################################################################################
+            # Controlador de contenido de la página
+            # Valida la sesión, determina el tiempo de usuario y muestra el contenido correspondiente
+            ControladorPlantilla::ctrlContenido();
         ?>
     </main>
     
