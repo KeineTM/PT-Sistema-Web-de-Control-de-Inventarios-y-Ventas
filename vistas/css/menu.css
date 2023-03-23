@@ -1,136 +1,112 @@
 .menu-contenedor {
-    position: absolute;
-    width: 100vw;
-    z-index: 5;
-}
-
-.menu {
     display: flex;
-    flex-direction: column-reverse;
+    position: absolute;
+    top: 100px;
+    z-index: 4; /* Este atributo pone al menú por debajo de la cabecera */
+
+    width: 100vw;   
+    background: var(--degradado-principal);
+    transition: max-height .6s;
+
+    max-height: 0;
+    overflow: hidden;
 }
 
-.menu-control {
-    display: grid;
-    place-content: center;
-    background-color: var(--color-menu-medio);
-    border-radius: 0 0 50% 50%;
-}
-
-.colapsar, .desplegar {
-    width: 100vw;
-    text-align: center;
-}
-
-.flecha {
-    height: 1.5rem;
-    filter: var(--filter-blanco);
-}
-
-/* Clase para la lista con las opciones del menú (ul)
- * Oculta su contenido si este sobrepasa su tamaño colapsando así el menú
- * Tiene un efecto de transición al abrirse o cerrarse */
 .menu-lista {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    background-color: var(--color-menu-medio);
-    
-    width: 100%;
-    max-height: 0;
-    text-align: center;
-    overflow: hidden;
-    transition: max-height 0.8s ease-in-out 0s;
-}
-
-/* Al dirigir el ancla (tag) al menú aumenta su altura desplegándolo */
-#menu:target .menu-lista {
-    max-height: 500px;
-    display: flex;
-}
-
-/* Oculta al inicio el botón para colapsar el menú */
-.colapsar {
-    display: none;
-}
-
-/* Cuando se dirige el ancla al menú, el botón para desplegar se oculta */
-#menu:target .desplegar {
-    display: none;
-}
-
-/* Cuando se dirige el ancla al menú, el botón para colapsar se muestra */
-#menu:target .colapsar {
-    display: block;
-}
-
-.menu__opciones {
-    width: 50%;
-    padding: .3rem;
-    box-sizing: border-box;
+    align-items: center;
+    padding: 1rem 0;
 }
 
 .menu__opciones-url {
-    display: flex;
-    flex-direction: column;
+    height: 3.5rem;
+    width: 100vw;
+    display: grid;
+    grid-template-columns: 20% 50%;
+    place-content: center;
     align-items: center;
-    justify-content: center;
-    height: 5rem;
-    padding: .3rem;
-    text-align: center;
-    box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.2);
-    background-color: var(--color-menu-claro);
-    cursor: pointer;
-    color: white;
+
+    font-family: var(--fuente-contenido);
+    font-size: large;
+    font-weight: bold;
+    text-transform: uppercase;
+
+    background-image: url(../img/angle-right.svg);
+    background-repeat: no-repeat;
+    background-size: 0.5rem;
+    background-position: 98%;
+    filter: var(--filter-blanco);
 }
 
 .icono-menu {
+    width: 1.5rem;
+}
+
+.abrir-menu {
+    max-height: 700px;
+}
+
+#btn-abrir-menu {
+    position: absolute;
+    top: 0;
     filter: var(--filter-blanco);
-    height: 2.5rem;
-    margin-bottom: .5rem;
+    z-index: 7; /* Este atributo pone el botón de abrir del menú por encima de la cabecera */
 }
 
-
-
-
-@media screen and (min-width: 426px) and (max-width: 768px) {
-    .menu__opciones {
-        width: 33%;
-    }
-
-    .menu-lista {
-        justify-content: center;
-    }
-}
-
-
-
-@media screen and (min-width: 769px) {
+@media screen and (min-width: 720px) {
     .menu-contenedor {
         position: relative;
-        float: left;
-        min-width: 240px;
-        max-width: 15vw;
-        height: 100vh;
-        background-color: var(--color-menu-medio);
+        justify-content: center;
+        top: 0;
+        z-index: 7;
+    
+        width: 100%;   
+        border-radius: 0;
+        background: none;
+        transition: none;
+    
+        min-height: calc(100vh - 70px);
+        height: fit-content;
+        overflow: visible;
     }
 
     .menu-lista {
-        max-height: none;
-        min-height: fit-content;
-        overflow: visible;
-        transition: none;
+        display: block;
+        padding: 0;
     }
-
+    
+    .menu__opciones:first-child {
+        margin-top: 0;
+    }
+    
     .menu__opciones-url {
-        height: 5rem;
-        padding: 1rem;
+        display: flex;
+        place-content: initial;
+        gap: 0.5rem;
+        width: 100%;
+        height: 3rem;
+        box-sizing: border-box;
+        padding: 0 1rem 0 0;
+        
+        font-size: medium;
+
+        background-image: none;
+        background-position: 100%;
     }
 
     .menu__opciones-url:hover {
-        background-color: var(--color-menu-oscuro);
+        background-image: url(../img/angle-right.svg);
     }
-
-    .colapsar, .desplegar, .flecha, .menu-control{
+    
+    #btn-abrir-menu {
         display: none;
+        z-index: none;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .menu__opciones-url {
+        padding: 0 2rem 0 0;
+        font-size: large;
     }
 }

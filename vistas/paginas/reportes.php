@@ -1,3 +1,3 @@
-<section class="reportes-inicio">
+<section class="main-contenedor">
     <p>Módulo de reportes</p>
 </section>

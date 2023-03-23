@@ -19,7 +19,7 @@
         static public function ctrlTitulo() {
             if(isset($_GET["pagina"])) {
                 return $_GET["pagina"]." - Globo Kids";
-            } else "Sistema Globo Kids";
+            } else return "Sistema Globo Kids";
         }
 
         /** 
@@ -30,11 +30,8 @@
          * Si en un principio no hay sesion activa siempre redireccionará a la página de login.
          */
         static public function ctrlContenido() {
-            if(isset($_SESSION["validarSesion"]) && isset($_GET["pagina"])) {
-
-                $usuarioLogeado = ControladorUsuarios::ctrlConsultarUsuarios($_SESSION['idUsuarioSesion']);
-                
-                if($usuarioLogeado['tipo_usuario'] === 'Administrador') {
+            if(isset($_GET["pagina"])) {                
+                if($_SESSION['tipoUsuarioSesion'] === 'Administrador') {
                     
                     if ($_GET["pagina"] == "inicio-usuario" ||
                     $_GET["pagina"] == "ventas" ||
@@ -50,7 +47,7 @@
                     } else 
                         include "vistas/paginas/inicio-usuario.php";
 
-                } else if($usuarioLogeado['tipo_usuario'] === 'Empleado') {
+                } else if($_SESSION['tipoUsuarioSesion'] === 'Empleado') {
                     if ($_GET["pagina"] == "inicio-usuario" ||
                     $_GET["pagina"] == "ventas" ||
                     $_GET["pagina"] == "apartados" ||
@@ -66,7 +63,7 @@
                 }
 
             } else
-                include "vistas/paginas/login.php";
+                include "vistas/paginas/inicio-usuario.php";
         }
     }
 ?>

@@ -1,0 +1,63 @@
+ /************** Boton redondo con borde degradado usado en el login **************/
+.boton {
+    padding: 3px;
+    background: var(--color-rosa);
+    border: 0;
+    border-radius: 5rem;
+
+    color: var(--color-blanco);
+    font-size: larger;
+    font-family: var(--fuente-principal);
+    text-align: center;
+
+    cursor: pointer;
+    transition: letter-spacing .4s; 
+}
+
+.boton:hover {
+    letter-spacing: .1rem;
+    background: var(--degradado-principal);
+}
+
+.boton:active {
+    top: 1px;
+}
+
+.boton-interior-blanco {
+    display: grid;
+    place-content: center;
+    background-color: var(--color-blanco);
+    border-radius: 5rem;
+    width: 100%;
+    height: 100%;
+}
+/************************************************************************/
+
+/********* Botón del menú en tamaño smartphone **************************/
+.boton-abrir {
+    height: 3rem;
+    width: 3rem;
+
+    background-image: url("../img/bars.svg");
+    background-repeat: no-repeat;
+    background-size: 1.5rem;
+    background-position: center;
+}
+/***********************************************************************/
+
+/******************** Botón para las opciones del main ****************/
+.boton-main {
+    display: flex;
+    align-items: center;
+    height: 4rem;
+    padding: 1rem;
+    box-sizing: border-box;
+
+    border-left: 7px solid var(--color-naranja);
+    box-shadow: 0px 0px 5px 3px rgba(0,0,0,0.1);
+}
+
+.boton-main:hover {
+    border-color: var(--color-cielo);
+}
+/***********************************************************************/

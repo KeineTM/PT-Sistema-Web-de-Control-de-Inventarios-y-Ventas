@@ -1,0 +1,19 @@
+.inventario-lista__opcion {
+    padding: 0.4rem;
+}
+
+@media screen and (min-width: 720px) and (max-width: 1023px) {
+    .inventario-lista {
+        display: grid;
+        grid-template-columns: 50% 50%;
+        grid-template-rows: max-content;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .inventario-lista {
+        display: grid;
+        grid-template-columns: 50% 25% 25%;
+        grid-template-rows: max-content;
+    }
+}

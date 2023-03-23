@@ -1,28 +1,27 @@
 /* Variables */
 :root {
-    --fuente-principal: 'Montserrat';
-    --fuente-kalam: 'Kalam';
-    --fuente-opensans: 'Open Sans';
-    --color-fuente: #A555EC;
-    --color-menu-oscuro: #35284c;
-    --color-menu-medio: #3b315d;
-    --color-menu-claro: #473a6e;
-    --color-sombra: #f5ebfd;
-    --color-sombra-oscuro: #e7d5f7;
-    --color-gris: gray;
-    --filter-blanco: invert(98%) sepia(0%) saturate(6%) hue-rotate(163deg) brightness(103%) contrast(101%);
-    --filter-oscuro: invert(16%) sepia(59%) saturate(521%) hue-rotate(220deg) brightness(87%) contrast(94%);
+    --fuente-titulo: 'Concert One';
+    --fuente-subtitulo: 'Overpass';
+    --fuente-contenido: 'Signika Negative';
+    --color-fuente-principal: rgb(100, 100, 100);
+    --color-blanco: #fff;
+    --degradado-principal: linear-gradient(180deg, rgba(255,120,153,1) 15%, rgba(252,208,163,1) 200%);
+    --degradado-secundario: linear-gradient(180deg, rgba(246,160,231,1) 0%, rgba(250,118,140,1) 200%);
+    --color-crema-alternativo: #fd9e9d;
+    --color-rosa: #ff7899;
+    --color-crema: #fcd0a3;
+    --color-naranja: #f3bb71;
+    --color-rosa-claro: #fe85a6;
+    --color-cielo: #7bedee;
+    --color-verde: #b4dc79;
+    --filter-rosa: invert(71%) sepia(24%) saturate(4560%) hue-rotate(302deg) brightness(102%) contrast(101%);
+    --filter-crema: invert(94%) sepia(69%) saturate(721%) hue-rotate(304deg) brightness(99%) contrast(101%);
+    --filter-blanco: invert(88%) sepia(73%) saturate(15%) hue-rotate(210deg) brightness(100%) contrast(105%);
 }
 
 html {
-    font-family: var(--fuente-principal);
     scroll-behavior: smooth;
-}
-
-main {
-    min-height: 100vh;
-    display: grid;
-    place-content: center;
-    z-index: 1;
+    font-family: var(--fuente-contenido);
+    background: var(--degradado-principal);
 
 }

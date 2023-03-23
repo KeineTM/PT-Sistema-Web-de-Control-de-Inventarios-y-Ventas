@@ -1,0 +1,39 @@
+/*
+ * Esta hoja de estilos define el diseño básico de cada página de contenido en el sitio.
+ * Cada main-x estará incluido en cada página y se adjuntará un nombrePagina-x para incorporar los estilos nuevos y personalizados a cada una.
+ * El principal elemento a editar es la distribución tipo grid.
+ */
+
+main {
+    height: calc(100vh - 100px);
+    margin-top: -20px;
+}
+
+.main-contenedor {
+    display: grid;
+    grid-template-rows: 40px calc(100% - 40px);
+    padding: 1.5rem 1rem 1rem 1rem;
+    background: var(--color-blanco);
+    color: var(--color-fuente-principal);
+    height: calc(100vh - 100px);
+    box-sizing: border-box;
+}
+
+.main-contenedor h2 {
+    font-size: x-large;
+    font-weight: bold;
+}
+
+@media screen and (min-width: 720px) and (max-width: 1023px) {
+    main {
+        display: grid;
+        grid-template-columns: 11rem calc(100% - 11rem);
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    main {
+        display: grid;
+        grid-template-columns: 13rem calc(100% - 13rem);
+    }
+}

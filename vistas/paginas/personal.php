@@ -1,3 +1,3 @@
-<section class="personal-inicio">
+<section class="main-contenedor">
     <p>Módulo de personal</p>
 </section>

@@ -1,3 +1,3 @@
-<section class="ventas-inicio">
+<section class="main-contenedor">
     <p>Página de ventas</p>
 </section>

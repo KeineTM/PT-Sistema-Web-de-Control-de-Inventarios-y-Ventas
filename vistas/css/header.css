@@ -1,33 +1,51 @@
+header {
+    height: 120px;
+}
+
 .header-contenedor {
-    padding: 1rem;
-    background-color: var(--color-menu-medio);
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: relative;
+    z-index: 6; /* Este atributo pone la cabecera por encima del menú, pero debajo del boton para desplegarlo*/
 }
 
-.header-titulo {
+.header__titulo-contenedor {
+    display: grid;
+    place-content: center;
+    background: var(--color-rosa);
+
+    position: absolute;
+    top: .7rem;
+    left: 0;
+    right: 0;
+    margin: auto;
+    
+    width: 7rem;
+    height: 7rem;
+    border-radius: 50%;
+}
+
+.header__titulo {
+    display: grid;
+    place-content: center;
+    background: var(--color-blanco);
+
+    width: 6rem;
+    height: 6rem;
+    border-radius: 50%;
+    font-family: var(--fuente-titulo);
+    font-size: 2rem;
     text-align: center;
-    font-family: var(--fuente-opensans);
-    color: white;
-    font-size: larger;
-    letter-spacing: .1em;
     line-height: 1.5rem;
+    text-transform: uppercase;
+    color: var(--color-rosa);
 }
 
-.header-titulo span {
-    display: block;
-    width: 100%;
-    font-size: larger;
-    font-weight: bolder;
-    color: var(--color-sombra);
-    background-color: var(--color-menu-medio);
+.header__subtitulo {
+    display: none;
+    color: var(--color-fuente-claro);
 }
 
-@media screen and (min-width: 769px) {
-    .header-titulo span {
-        font-size: xx-large;
-        padding-top: 1rem;
+@media screen and (min-width: 720px) {
+    .header-contenedor {
+        border-radius: 0;
     }
 }

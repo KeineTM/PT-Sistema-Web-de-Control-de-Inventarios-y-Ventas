@@ -1,13 +1,49 @@
 <?php
-    /** 
-     * Esta clase gestiona todas las actividades que se relacionen con los usuarios del sistema
-     */
+    /**  Esta clase gestiona todas las actividades que se relacionen con los usuarios del sistema */
     class ControladorUsuarios {
-        /**
-         * Método que ejecuta una consulta para recuperar los campos usuario_id, password, tipo_usuario y nombre_completo de un usuario.
-         */
-        static public function ctrlConsultarUsuarios($usuarioID) {
-            return ModeloUsuarios::mdlConsultarUsuarios($usuarioID);
+        public $usuario_id;
+        public $nombre;
+        public $apellido_paterno;
+        public $apellido_materno;
+        public $telefono;
+        public $rfc;
+        public $email;
+        public $password;
+        public $notas;
+        public $estado;
+        public $tipo_usuario;
+
+        # Métodos constructores
+        public function __construct($usuario_id, $nombre, $apellido_paterno, $apellido_materno, $telefono, $rfc, $email, $password, $notas, $estado, $tipo_usuario) {
+            $this->usuario_id = $usuario_id;
+            $this->nombre = $nombre;
+            $this->apellido_paterno = $apellido_paterno;
+            $this->apellido_materno = $apellido_materno;
+            $this->telefono = $telefono;
+            $this->rfc = $rfc;
+            $this->email = $email;
+            $this->password = $password;
+            $this->notas = $notas;
+            $this->estado = $estado;
+            $this->tipo_usuario = $tipo_usuario;
+        }
+        
+        /** Método que recupera toda la información de la tabla usuario. */
+        static public function ctrlConsultarUsuarios() {
+            $modelo = new ModeloUsuarios;
+            return $modelo -> read();
+        }
+
+        /** Método que recupera toda la información de un usuario existente */
+        static public function ctrlConsultarUsuarioID($usuario_id) {
+            $modelo = new ModeloUsuarios;
+            return $modelo -> read($usuario_id);
+        }
+
+        /** Método que recupera toda la información de un usuario existente y activo con sólo un fragmento de información para iniciar sesión */
+        static public function ctrlConsultarUsuarioLogin($usuario_id) {
+            $modelo = new ModeloUsuarios;
+            return $modelo -> readLogin($usuario_id);
         }
 
         /**
@@ -18,20 +54,28 @@
          */
         static public function ctrlLoginUsuarios() {
             if(isset($_POST["login-usuario"])) {
-                $usuarioID = $_POST['login-usuario'];
-                $password = $_POST['login-pass'];
+                if($_POST['login-usuario'] && $_POST['login-pass']) { // Valida que existan datos
+                    $usuario_id = $_POST['login-usuario'];
+                    $password = $_POST['login-pass'];
 
-                $consultaUsuario = ModeloUsuarios::mdlConsultarUsuarios($usuarioID);
-                
-                if($consultaUsuario && ControladorSeguridad::ctrlValidarPassword($password, $consultaUsuario['password'])) {
-                    # Declaración de variables de sesión
-                    $_SESSION['validarSesion'] = true; // Indica que existe una sesión
-                    $_SESSION['idUsuarioSesion'] = $consultaUsuario['usuario_id']; // Mantiene el ID del usuario
+                    // Si no existe en la tabla devuelve null
+                    $consultaUsuario = self::ctrlConsultarUsuarioLogin($usuario_id);
+                    
+                    if($consultaUsuario && ControladorSeguridad::ctrlValidarPassword("$password", $consultaUsuario[0][0]['password'])) {
+                        # Declaración de variables de sesión
+                        $_SESSION['validarSesion'] = true; // Indica que existe una sesión
+                        # Para acceder al contenido de la consulta es necesario apuntar al índice del array [$registros][$resultado(fetchAll)][campo]
+                        $_SESSION['idUsuarioSesion'] = $consultaUsuario[0][0]['usuario_id'];
+                        $_SESSION['nombreUsuarioSesion'] = $consultaUsuario[0][0]['nombre_completo'];
+                        $_SESSION['tipoUsuarioSesion'] = $consultaUsuario[0][0]['tipo_usuario'];
 
-                    header("Location: index.php?pagina=inicio-usuario");
-                } else 
-                    header("Location: index.php?pagina=login&error=true");
-            }
+                        header("Location: index.php?pagina=inicio-usuario");
+
+                    } else 
+                        header("Location: index.php?pagina=login&error=1");
+                } else
+                    header("Location: index.php?pagina=login&error=0");
+            } 
         }
 
         /**

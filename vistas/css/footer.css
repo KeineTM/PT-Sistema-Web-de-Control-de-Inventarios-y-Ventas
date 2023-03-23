@@ -1,9 +1,11 @@
 footer {
-    height: 10vh;
-    padding: 5vh;
-
+    height: fit-content;
+    padding: .5rem;
+    box-sizing: border-box;
+    
     display: grid;
     place-content: center;
     text-align: center;
     line-height: 2rem;
+    color: var(--color-blanco);
 }

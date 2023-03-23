@@ -1,2 +1,2 @@
-Globo Kids © Jessica Trejo Méndez <br>
-2023
+Globo Kids © 2023 </br>
+Jessica Trejo Méndez

@@ -31,32 +31,42 @@
     <link rel="stylesheet" href="vistas/css/menu.css">
     <link rel="stylesheet" href="vistas/css/header.css">  
     <link rel="stylesheet" href="vistas/css/footer.css">
+    <link rel="stylesheet" href="vistas/css/main.css">
+    <link rel="stylesheet" href="vistas/css/modal.css">
+    <link rel="stylesheet" href="vistas/css/formularios.css">
+    <link rel="stylesheet" href="vistas/css/botones.css">
     <link rel="stylesheet" href="vistas/css/paginas/login.css">
+    <link rel="stylesheet" href="vistas/css/paginas/inventario.css">
 
     <!-- Fuentes -->
-    <link href="https://fonts.googleapis.com/css2?family=Kalam&family=Montserrat:wght@300;400;700&family=Open+Sans:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Concert+One&family=Montserrat:wght@300;400;700&family=Overpass:wght@200;400;700&family=Signika+Negative:wght@400;700&display=swap" rel="stylesheet">
 
 </head>
 
 <body>
+    
     <header>
         <?php include "modulos/header.php" ?>
-
-        <!-- Valida la existencia de una sesión activa para incluir el menú -->
-        <?php if(isset($_SESSION['validarSesion'])) include "modulos/menu.php" ?>
     </header>
 
     <main>
+        <!-- Valida la existencia de una sesión activa para incluir el menú -->
+        <?php if(isset($_SESSION['validarSesion'])) include "modulos/menu.php" ?>
+
         <?php
             ##########################################################################################
             # Controlador de contenido de la página
             # Valida la sesión, determina el tiempo de usuario y muestra el contenido correspondiente
-            ControladorPlantilla::ctrlContenido();
+            if(isset($_SESSION["validarSesion"])) ControladorPlantilla::ctrlContenido();
+            else include "vistas/paginas/login.php";
         ?>
     </main>
     
     <footer>
         <?php include "modulos/footer.php" ?>
     </footer>
+
 </body>
 </html>
