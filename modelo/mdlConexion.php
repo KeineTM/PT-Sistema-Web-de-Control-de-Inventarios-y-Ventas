@@ -6,57 +6,53 @@
  */
 abstract class ModeloConexion {
     private static $db_host = "localhost";
-    private static $db_usuario = "root"; // HAY QUE CAMBIARLO PARA EL ADMINISTRADOR Y EL EMPLEADO
-    private static $db_password = "";
+    protected $db_usuario; // HAY QUE CAMBIARLO PARA EL ADMINISTRADOR Y EL EMPLEADO
+    protected $db_password;
     protected $db_nombre;
-    private $conexion;
-    protected $consulta;
+    protected $conexion;
+    protected $sentenciaSQL;
     protected $registros = array();
 
     /** Método que inicia conexión con la base de datos */
-    private function conectar() {
-        # Empleo de Objetos de Datos PHP o PDO para crear conexiones seguras
+    protected function abrirConexion() {
         try {
             # Sintaxis $mbd = new PDO('mysql:host=localhost;dbname=prueba', $usuario, $contraseña);
             $this->conexion = new PDO(
                 "mysql:host=".self::$db_host. 
                 ";dbname=".$this->db_nombre, 
-                self::$db_usuario, 
-                self::$db_password);
+                $this->db_usuario, 
+                $this->db_password);
         } catch(PDOException $error) {
             die($error->getMessage());
         }
     }
 
     /**  Método que cierra la conexión a base de datos */
-    private function cerrar() {
+    protected function cerrarConexion() {
         $this->conexion = null;
     }
 
-    /**
-     * Método para ejecutar consultas que realizan cambios en la base de datos sin devolver datos.
-     * Estas son: Create, Update y Delete.
-     */
+    /** Método para ejecutar consultas que realizan cambios en la base de datos sin devolver datos: Create, Update y Delete. */
     protected function consultaCUD () {
-        $this->conectar(); # Conecta
-        $this->conexion->prepare($this->consulta);
+        $this->abrirConexion(); # Conecta
+        $this->conexion->prepare($this->sentenciaSQL);
         $this->conexion -> execute(); # Ejecuta
-        $this->cerrar(); # Cierra
+        $this->cerrarConexion(); # Cierra
     }
 
     /** Método para ejecutar consultas que recuperan información de la base de datos. */
     protected function consultaRead ($id = '') {
-        $this->conectar(); # Conecta
-        $resultado = $this->conexion -> prepare($this->consulta); 
+        $this->abrirConexion();
+        $resultado = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
         
         if($id != '') { # Si contiene un parámetro este se liga para evitar SQLinjection
-            $resultado -> bindValue(1, $id, PDO::PARAM_STR);
+            $resultado -> bindParam(1, $id, PDO::PARAM_STR);
         }
 
         $resultado -> execute(); # Ejecuta
-        while($this->registros[] = $resultado -> fetchAll(PDO::FETCH_ASSOC)); # Recupera datos
+        $this->registros = $resultado -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos
         $resultado = null; # Limpia memoria
-        $this->cerrar(); # Cierra
+        $this->cerrarConexion();
 
         return $this->registros;
     }

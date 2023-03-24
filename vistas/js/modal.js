@@ -1,4 +1,4 @@
-const btnAbrirAlta = document.getElementById("abrir__alta-inventario")
+const btnAbrirAlta = document.getElementById("abrir__alta-inventario");
 const btnCerrarModal = document.getElementById("btnCerrarModal");
 const btnCerrarMiniModal = document.getElementById("btnCerrarMiniModal");
 

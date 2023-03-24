@@ -36,14 +36,22 @@
 
         /** Método que recupera toda la información de un usuario existente */
         static public function ctrlConsultarUsuarioID($usuario_id) {
-            $modelo = new ModeloUsuarios;
-            return $modelo -> read($usuario_id);
+            if(strlen($usuario_id) > 0) {
+                $modelo = new ModeloUsuarios;
+                return $modelo -> read($usuario_id);
+            } else {
+                return "Error. No se han recibido los datos.";
+            }
         }
 
         /** Método que recupera toda la información de un usuario existente y activo con sólo un fragmento de información para iniciar sesión */
         static public function ctrlConsultarUsuarioLogin($usuario_id) {
-            $modelo = new ModeloUsuarios;
-            return $modelo -> readLogin($usuario_id);
+            if(strlen($usuario_id) > 0) {
+                $modelo = new ModeloUsuarios;
+                return $modelo -> readLogin($usuario_id);
+            } else {
+                return "Error. No se han recibido los datos.";
+            }
         }
 
         /**
@@ -54,20 +62,20 @@
          */
         static public function ctrlLoginUsuarios() {
             if(isset($_POST["login-usuario"])) {
-                if($_POST['login-usuario'] && $_POST['login-pass']) { // Valida que existan datos
+                if(strlen($_POST['login-usuario']) > 0 && strlen($_POST['login-pass']) > 0) { // Valida que existan datos
                     $usuario_id = $_POST['login-usuario'];
                     $password = $_POST['login-pass'];
 
                     // Si no existe en la tabla devuelve null
                     $consultaUsuario = self::ctrlConsultarUsuarioLogin($usuario_id);
                     
-                    if($consultaUsuario && ControladorSeguridad::ctrlValidarPassword("$password", $consultaUsuario[0][0]['password'])) {
+                    if($consultaUsuario && ControladorSeguridad::ctrlValidarPassword("$password", $consultaUsuario[0]['password'])) {
                         # Declaración de variables de sesión
                         $_SESSION['validarSesion'] = true; // Indica que existe una sesión
-                        # Para acceder al contenido de la consulta es necesario apuntar al índice del array [$registros][$resultado(fetchAll)][campo]
-                        $_SESSION['idUsuarioSesion'] = $consultaUsuario[0][0]['usuario_id'];
-                        $_SESSION['nombreUsuarioSesion'] = $consultaUsuario[0][0]['nombre_completo'];
-                        $_SESSION['tipoUsuarioSesion'] = $consultaUsuario[0][0]['tipo_usuario'];
+                        # Para acceder al contenido de la consulta es necesario apuntar al índice del array $registros[fila][campo]
+                        $_SESSION['idUsuarioSesion'] = $consultaUsuario[0]['usuario_id'];
+                        $_SESSION['nombreUsuarioSesion'] = $consultaUsuario[0]['nombre_completo'];
+                        $_SESSION['tipoUsuarioSesion'] = $consultaUsuario[0]['tipo_usuario'];
 
                         header("Location: index.php?pagina=inicio-usuario");
 

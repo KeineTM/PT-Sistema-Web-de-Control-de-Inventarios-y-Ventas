@@ -51,6 +51,7 @@
     align-items: center;
     height: 4rem;
     padding: 1rem;
+    cursor: pointer;
     box-sizing: border-box;
 
     border-left: 7px solid var(--color-naranja);

@@ -35,14 +35,15 @@ class ControladorProductos {
 
     ## Otros métodos
     static public function ctrlRegistrarCategoria($categoria) {
-        ModeloProductos::mdlRegistrarCategoria("Lámparas");
+        
     }
 
     /**
      * Este método devuelve un listado de las categorías registradas
      */
-    static public function ctrlListarCategorias() {
-        return ModeloProductos::mdlListarCategorias();
+    static public function ctrlCategoriasActivas() {
+        $modelo = new ModeloProductos();
+        return $modelo -> readCategoriasActivas();
     }
 
     public function __toString() {

@@ -1,50 +1,63 @@
 <?php
 require_once "mdlConexion.php";
 
-class ModeloProductos {
-    /**
-     * Método que registra una nueva categoría en la tabla
-     */
-    static public function mdlRegistrarCategoria($categoria) {
-        if(strlen($categoria) > 0) {
-            $consulta = Conexion::conectar() -> prepare('INSERT INTO categorias_inventario("categoria") VALUES (?)');
-            $consulta -> bindValue(1, $categoria, PDO::PARAM_STR);
-            $consulta -> execute();
-                
-                
-            $consulta -> close();
-
-        } else
-            echo 'Debe llenar todos los campos';
+class ModeloProductos extends ModeloConexion{
+    # Método constructor
+    public function __construct() {
+        $this->db_usuario = "root";
+        $this->db_password = "";
+        $this->db_nombre = "tienda";
     }
+
+    /** Método que registra una nueva categoría en la tabla */
+    public function create() {
         
-    /**
-     * Método que retorna todos los registros de la tabla de categorías
-     */
-    static public function mdlListarCategorias() {
-        $consulta = Conexion::conectar() -> prepare('SELECT * FROM categorias_inventario WHERE estado=1');
-        $consulta -> execute();
-
-        //if($consulta->rowCount() > 0)
-        return $consulta -> fetchAll(PDO::FETCH_ASSOC);
-
-        $consulta -> close();
-        $consulta = null;            
     }
 
-    static public function mdlValidarFormulario() {
-
+    public function read($id='') {
+        $this->sentenciaSQL = ($id === '')
+            ? "SELECT * FROM productos"
+            : "";
     }
 
-    static public function mdlRegistrarProducto() {
-
+    public function update() {
+        
     }
 
-    static public function mdlConsultarProducto() {
+    public function delete() {
+        
+    }
+
+    public function createCategoria() {
 
     }
 
-    static public function mdlEditarProducto($producto_id) {
+    public function readCategorias($categoria='') {
+        $this->sentenciaSQL = ($categoria === '')
+            ? "SELECT * FROM categorias_inventario"
+            : "SELECT * FROM categorias_inventario WHERE categoria_id = ?";
+        
+        return $this->consultaRead($categoria);
+    }
 
+    public function readCategoriasActivas() {
+        $this->sentenciaSQL = "SELECT * FROM categorias_inventario WHERE estado = 1"; 
+        return $this->consultaRead();
+    }
+
+    public function updateCategoria() {
+        
+    }
+
+    public function createCaducidad() {
+
+    }
+
+    public function readCaducidad() {
+
+    }
+
+    public function updateCaducidad() {
+        
     }
 }

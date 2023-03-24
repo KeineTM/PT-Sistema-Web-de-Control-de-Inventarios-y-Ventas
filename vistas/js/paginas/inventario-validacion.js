@@ -25,7 +25,7 @@ btnRegistrarProducto.addEventListener('click', (event) => {
 
 /**
  * API FETCH para el registro de categorías asíncronas
- */
+ 
 btnRegistrarCategoria.addEventListener('click', (event) => {
     event.preventDefault();
 
@@ -44,4 +44,4 @@ btnRegistrarCategoria.addEventListener('click', (event) => {
     }).catch(error => {
         console.error('Error:', error);
     });
-})
+})*/

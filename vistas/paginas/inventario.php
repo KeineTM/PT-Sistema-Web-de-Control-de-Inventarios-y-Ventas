@@ -2,9 +2,9 @@
     <h2>Inventario</h2>
     <!-- Lista de opciones -->
     <ul class="inventario-lista">
-        <li class="inventario-lista__opcion"><a href="#" class="boton-main" id="abrir__alta-inventario">Formulario de Alta</a></li>
-        <li class="inventario-lista__opcion"><a href="#" class="boton-main">Tabla de Productos</a></li>
-        <li class="inventario-lista__opcion"><a href="#" class="boton-main">Vista de Catálogo</a></li>
+        <li class="inventario-lista__opcion"><a class="boton-main" id="abrir__alta-inventario">Formulario de Alta</a></li>
+        <li class="inventario-lista__opcion"><a class="boton-main">Tabla de Productos</a></li>
+        <li class="inventario-lista__opcion"><a class="boton-main">Vista de Catálogo</a></li>
     </ul>
 
     <!-- Ventana modal para el formulario de alta de productos -->
@@ -23,7 +23,7 @@
                         
                         <?php
                             # Extracción de datos de la tabla categorías para la lista de selección en el formulario
-                            $categorias = ControladorProductos::ctrlListarCategorias();
+                            $categorias = ControladorProductos::ctrlCategoriasActivas();
                             foreach ($categorias as $columna) {
                                 echo '<option value="' .$columna["categoria_id"]. '">' .$columna["categoria"]. '</option>';
                             }
@@ -69,6 +69,7 @@
     <!-- Fin del modal formulario de alta de categoria -->
 
 </section>
+
 <!-- Scripts de JavaScript -->
 <script src="vistas/js/modal.js"></script>
 <script type="module" src="vistas/js/paginas/inventario-validacion.js"></script>
