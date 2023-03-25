@@ -35,7 +35,12 @@ class ControladorProductos {
 
     ## Otros métodos
     static public function ctrlRegistrarCategoria($categoria) {
-        
+        if(strlen($categoria) > 0) {
+            $modelo = new ModeloProductos();
+            return $modelo -> createCategoria($categoria);
+        } else {
+            return "No se insertaron los datos solicitados";
+        }
     }
 
     /**

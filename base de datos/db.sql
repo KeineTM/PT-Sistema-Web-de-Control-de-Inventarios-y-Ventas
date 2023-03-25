@@ -5,7 +5,7 @@ CREATE DATABASE `tienda`
 --------------------------------------------------------------------------------------------
 -- Tabla de tipos de usuario
 CREATE TABLE `tipos_usuario` (
-    tipo_id SMALLINT(2) PRIMARY KEY AUTO_INCREMENT,
+    tipo_id INT PRIMARY KEY AUTO_INCREMENT,
     tipo_usuario VARCHAR(50) NOT NULL
 );
 
@@ -21,7 +21,7 @@ CREATE TABLE `usuarios` (
     password VARCHAR(200) NOT NULL,
     notas VARCHAR(250),
     estado BOOLEAN DEFAULT 1,
-    tipo_usuario SMALLINT(2) NOT NULL,
+    tipo_usuario INT NOT NULL,
     --Un campo FULLTEXT permite incluir las columnas donde se realizarán ciertas consultas
     FULLTEXT KEY busqueda(usuario_id, nombre, apellido_paterno, apellido_materno),
     FOREIGN KEY (tipo_usuario) REFERENCES tipos_usuario(tipo_id)
@@ -49,7 +49,7 @@ SELECT *  FROM usuarios
 --------------------------------------------------------------------------------------------
 -- Tabla de categorías del inventario
 CREATE TABLE `categorias_inventario` (
-    categoria_id SMALLINT(3) PRIMARY KEY AUTO_INCREMENT,
+    categoria_id INT PRIMARY KEY AUTO_INCREMENT,
     categoria VARCHAR(100) UNIQUE NOT NULL,
     estado BOOLEAN DEFAULT 1
 );
@@ -58,7 +58,7 @@ CREATE TABLE `categorias_inventario` (
 CREATE TABLE `inventario` (
     producto_id VARCHAR(20) PRIMARY KEY,
     nombre VARCHAR(80) NOT NULL,
-    categoria_id SMALLINT(3) NOT NULL,
+    categoria_id INT NOT NULL,
     descripcion TEXT(500),
     unidades INT NOT NULL,
     unidades_minimas INT,

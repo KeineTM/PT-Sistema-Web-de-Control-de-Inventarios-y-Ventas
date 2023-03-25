@@ -22,6 +22,10 @@ abstract class ModeloConexion {
                 ";dbname=".$this->db_nombre, 
                 $this->db_usuario, 
                 $this->db_password);
+
+            # Activa el modo de error para capturar los errores que puedan surgir
+            $this->conexion -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            
         } catch(PDOException $error) {
             die($error->getMessage());
         }

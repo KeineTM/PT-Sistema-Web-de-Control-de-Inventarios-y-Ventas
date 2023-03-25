@@ -14,26 +14,16 @@
             <h2>Formulario de alta de producto</h2>
             <p>Los campos marcados con * son necesarios.</p>
             <form class="formulario" action="post" id="formulario-alta-producto">
-                <input type="text" class="campo requerido" placeholder="ID del producto" id="idProducto-txt" maxlength="20" name="idProducto-txt">
-                <input type="text" class="campo requerido" placeholder="Nombre" id="nombreProducto-txt" maxlength="80" name="nombreProducto-txt">
-
+                <input type="text" class="campo requerido" placeholder="ID del producto" maxlength="20" id="idProducto-txt" name="idProducto-txt">
+                <input type="text" class="campo requerido" placeholder="Nombre" maxlength="80" id="nombreProducto-txt" name="nombreProducto-txt">
                 <fieldset class="formulario__fieldset">
-                    <select class="campo" id="categoriaProducto-txt" splaceholder="seleccionar" name="categoriaProducto-txt">
+                    <select class="campo" splaceholder="seleccionar" id="categoriaProducto-txt" name="categoriaProducto-txt">
                         <option disabled selected>Categorías...</option>
-                        
-                        <?php
-                            # Extracción de datos de la tabla categorías para la lista de selección en el formulario
-                            $categorias = ControladorProductos::ctrlCategoriasActivas();
-                            foreach ($categorias as $columna) {
-                                echo '<option value="' .$columna["categoria_id"]. '">' .$columna["categoria"]. '</option>';
-                            }
-                        ?>
-
+                        <!-- Por medio de la interfaz fetch API de Javascript se cargan las categorías -->
                     </select>
                     <button class="boton redondo" id="btnAgregarCategoria"><img class="icono" src="vistas/img/plus.svg" alt="Agregar"></button>
                 </fieldset>
-                
-                <textarea class="campo" placeholder="Descripción" rows="3" cols="50" id="descripcionProducto-txt" name="descripcionProducto-txt" maxlength="500"></textarea>
+                <textarea class="campo" placeholder="Descripción" rows="3" cols="50" maxlength="500" id="descripcionProducto-txt" name="descripcionProducto-txt"></textarea>
                 <input type="number" class="campo  requerido" placeholder="Unidades" id="unidadesProducto-txt" name="unidadesProducto-txt">
                 <input type="number" class="campo" placeholder="Unidades mínimas" id="unidadesMinimasProducto-txt" name="unidadesMinimasProducto-txt">
                 <input type="number" step="any" class="campo" placeholder="Precio de compra" id="precioCompraProducto-txt" name="precioCompraProducto-txt">
@@ -42,7 +32,7 @@
                 <label for="fechaCaducidad-txt">Fecha de caducidad</label>
                 <input type="date" class="campo" placeholder="Fecha de caducidad" id="caducidadProducto-txt" name="caducidadProducto-txt">
                 <label for="imagenProducto-txt">URL de la foto</label>
-                <input type="text" class="campo" placeholder="Imagen" id="imagenProducto-txt" maxlength="250" name="imagenProducto-txt">
+                <input type="text" class="campo" placeholder="Imagen" maxlength="250" id="imagenProducto-txt" name="imagenProducto-txt">
                 
                 <button class="boton-registrar boton" id="btnRegistrarProducto">Registrar</button>
                 <div class="formulario__botones-contenedor">
@@ -56,6 +46,7 @@
     <!-- Fin del modal formulario de alta de producto -->
 
     <!-- Modal alta de categoría -->
+    <!-- El registro de categorías se realiza sin recargar por medio de fetch API y recargando la lista de selección de categorías en el formulario de alta de producto -->
     <div class="modal" id="modal__alta-categoria">
         <div class="modal__contenedor">
             <form action="post" class="formulario" id="formulario-alta-categoria">
@@ -71,5 +62,8 @@
 </section>
 
 <!-- Scripts de JavaScript -->
-<script src="vistas/js/modal.js"></script>
+
+<script src="vistas/js/paginas/inventario-listar-categorias-asincrono.js"></script>
+<script type="module" src="vistas/js/paginas/inventario-alta-categoria-asincrono.js"></script>
 <script type="module" src="vistas/js/paginas/inventario-validacion.js"></script>
+<script type="module" src="vistas/js/paginas/inventario-modal.js"></script>
