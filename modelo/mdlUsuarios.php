@@ -8,7 +8,6 @@ class ModeloUsuarios extends ModeloConexion {
     public function __construct() {
         $this->db_usuario = "root";
         $this->db_password = "";
-        $this->db_nombre = "tienda";
     }
 
     # Implementación de los métodos abstractos

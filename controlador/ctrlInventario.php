@@ -11,7 +11,7 @@ class ControladorProductos {
     private $precioMayoreo;
     private $estado;
     private $foto_url;
-    protected $consulta = array();
+    private $caducidad;
 
     ## Métodos Constructores y Destructores
     public function __construct($producto_id, $nombre, $categoria_id, $descripcion, $unidades, $unidadesMinimas,

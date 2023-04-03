@@ -25,6 +25,7 @@ CREATE TABLE `usuarios` (
     password VARCHAR(200) NOT NULL,
     notas VARCHAR(250),
     estado BOOLEAN DEFAULT 1,
+    caducidad BOOLEAN DEFAULT 0,
     tipo_usuario INT NOT NULL,
     --Un campo FULLTEXT permite incluir las columnas donde se realizarán ciertas consultas
     FULLTEXT KEY busqueda(usuario_id, nombre, apellido_paterno, apellido_materno),
@@ -36,9 +37,9 @@ CREATE TABLE `usuarios` (
 
 INSERT INTO usuarios (usuario_id, nombre, apellido_paterno, apellido_materno, telefono, rfc, email, password, notas, tipo_usuario) VALUES 
     ('ABCD00', 'Jessica', 'Trejo', 'Méndex', '9876543210', 'ABCD00XXXXXXX', 'jessica.trejome@globokids.com', 
-    '$2y$05$Gg1zv/EBXLsPAo63u8J/3ewycyBL8MhyneJHcs1GmixBXMqiM0mMS', 'Usuario de prueba con privilegios de administrador.', 1),
-    ('ABCDXX', 'Jessica', 'T', 'M', '9876543210', 'ABCDXXXXXXXXX', 'jessica.trejome@globokids.com', 
-    '$2y$05$8qKl/Nz7EUti/Fq.u/TCdOJqM23dLDhrl1xAX9AOmMHQF.hegsQ.C', 'Usuario de prueba con privilegios de empleado.', 2);
+    '$2y$05$aXRy7SlJIV/ywlWTO5NVk.LsQVv6CCJuPXpM6AGxasy7x5QG7SGRS', 'Usuario de prueba con privilegios de administrador.', 1),
+    ('ABCDXX', 'Jessica', 'T', 'M', '9876543210', 'ABCDXXXXXXXXX', 'jessica.tm@globokids.com', 
+    '$2y$05$X5UeRCw5IY5gb.fCZySW4OCp/1x0L1e0q45bU3IV8ygEybuBkdA16', 'Usuario de prueba con privilegios de empleado.', 2);
     
 SELECT usuarios.usuario_id, usuarios.password, tipos_usuario.tipo_usuario, 
     CONCAT(usuarios.nombre,' ',usuarios.apellido_paterno,' ',usuarios.apellido_materno) AS nombre_completo 
@@ -130,10 +131,10 @@ CREATE TABLE `operaciones` (
     descuento DECIMAL(8,2) DEFAULT 0,
     total DECIMAL(8,2) NOT NULL,
     notas VARCHAR(250),
-    tipos_operacion CHAR(2) NOT NULL,
+    tipo_operacion CHAR(2) NOT NULL,
     estado BOOLEAN DEFAULT 1,
     cliente_id VARCHAR(6)
-    FOREIGN KEY (tipos_operacion) REFERENCES tipos_operacion(tipo_id),
+    FOREIGN KEY (tipo_operacion) REFERENCES tipos_operacion(tipo_id),
     FOREIGN KEY (cliente_id) REFERENCES contactos(contacto_id)
         ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -202,6 +203,7 @@ CREATE TABLE `negocio` (
     rfc VARCHAR(13) PRIMARY KEY NOT NULL,
     razon_social VARCHAR(200) NOT NULL,
     nombre_tienda VARCHAR(200) NOT NULL,
+    descripcion TEXT NOT NULL,
     calle VARCHAR(150) NOT NULL,
     numero VARCHAR(6) NOT NULL,
     codigo_postal CHAR(5) NOT NULL,

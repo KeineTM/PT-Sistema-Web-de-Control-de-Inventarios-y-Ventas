@@ -8,8 +8,16 @@
             else if($_GET["error"] === "1")
                 echo '<center style="color:#ff7899;">Los datos escritos son incorrectos.</br></br>
                     Intente nuevamente.</center></br></br>';
+            else if($_GET["error"] === "recaptcha")
+                echo '<center style="color:#ff7899;">No se ha aprobado el reCAPTCHA.</center></br></br>';
         }
+
+        # Con este código se envían los datos del formulario a ser procesados por el método de Login
+        ControladorUsuarios::ctrlLoginUsuarios();
+
+        $claves = ControladorSeguridad::getClavesReCAPTCHA();
     ?>
+
     <form class="login-form" method="post" id="form-login">
         <label for="usuario-txt">Nombre de usuario:</label>
         <input class="login-campo" type="text" name="login-usuario" id="login-usuario">
@@ -23,16 +31,28 @@
         <span class="alerta" id="alerta-password">Debe llenar este campo</span>
 
         <div class="botones-contenedor">
-            <button class="boton" type="button" id="btn-enviar"><div class="boton-interior-blanco"><img class="icono-login" src="vistas/img/right-to-bracket.svg" alt="Iniciar sesión"></div></button>
+            <button class="boton" type="button" id="btn-enviar" disabled><div class="boton-interior-blanco"><img class="icono-login" src="vistas/img/right-to-bracket.svg" alt="Iniciar sesión"></div></button>
         </div>
-        
-        <?php
-            # Con este código se envían los datos del formulario a ser procesados por el método de Login
-            ControladorUsuarios::ctrlLoginUsuarios();
-        ?>
-        
+
+        <input type="hidden" name="token" id="token">
+
     </form>
 </section>
 
 <!-- Script de validación del formulario de inicio de sesión -->
-<script src="vistas/js/paginas/login-validacion.js"></script>
+<script type="module" src="vistas/js/paginas/login.js"></script>
+<!-- Script para el API de Google reCAPTCHA de forma asíncrona para evitar bloqueo de la página en caso de error -->
+<script src="https://www.google.com/recaptcha/api.js?render=<?php echo $claves['publica'] ?>"></script>
+<script>
+    // Objeto grecaptcha generado por el API de Google
+    grecaptcha.ready(() => {
+        grecaptcha.execute('<?php echo $claves['publica'] ?>', {
+        action: 'formularioLogin'
+        }).then(function(token) {
+        let recaptchaResponse = document.getElementById('token');
+        recaptchaResponse.value = token;
+        document.getElementById('btn-enviar').disabled = false;
+        console.log({token})
+        });
+    });
+</script>

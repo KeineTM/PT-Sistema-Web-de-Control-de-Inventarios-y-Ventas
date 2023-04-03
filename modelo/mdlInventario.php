@@ -6,7 +6,6 @@ class ModeloProductos extends ModeloConexion{
     public function __construct() {
         $this->db_usuario = "root";
         $this->db_password = "";
-        $this->db_nombre = "tienda";
     }
 
     /** Método que registra una nueva categoría en la tabla */

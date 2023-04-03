@@ -6,9 +6,9 @@
  */
 abstract class ModeloConexion {
     private static $db_host = "localhost";
+    private static $db_nombre = "tienda";
     protected $db_usuario; // HAY QUE CAMBIARLO PARA EL ADMINISTRADOR Y EL EMPLEADO
     protected $db_password;
-    protected $db_nombre;
     protected $conexion;
     protected $sentenciaSQL;
     protected $registros = array();
@@ -19,7 +19,7 @@ abstract class ModeloConexion {
             # Sintaxis $mbd = new PDO('mysql:host=localhost;dbname=prueba', $usuario, $contraseña);
             $this->conexion = new PDO(
                 "mysql:host=".self::$db_host. 
-                ";dbname=".$this->db_nombre, 
+                ";dbname=".self::$db_nombre, 
                 $this->db_usuario, 
                 $this->db_password);
 

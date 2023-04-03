@@ -33,13 +33,10 @@ const validarNumeroDecimal = (input) => {
 /**
  * Método que valida que todos los campos obligatorios del formulario estén llenos, 
  * en caso de no estarlo, colorea el borde de estos en rojo y previene al usuario. 
- * Recibe el evento, la lista de campos a validar y el formulario que se enviará
- * @param {*} event 
- * @param {array} listaCamposObligatorios 
- * @param {object} formulario 
+ * Recibe el evento, la lista de campos a validar y retorna el resultado de la validacion
+ * @param {array} listaCamposObligatorios
  */
-const validarLlenadoFormulario = (event, listaCamposObligatorios, formulario) => {
-    event.preventDefault();
+const validarLlenadoFormulario = (listaCamposObligatorios) => {
     let camposObligatoriosLlenos = 0;
 
     listaCamposObligatorios.forEach(campo => {
@@ -51,13 +48,15 @@ const validarLlenadoFormulario = (event, listaCamposObligatorios, formulario) =>
         }
     });
 
-    (camposObligatoriosLlenos === listaCamposObligatorios.length)
-        ? formulario.submit()
-        : alert("Se deben llenar los campos marcados");
+    if(camposObligatoriosLlenos === listaCamposObligatorios.length)
+        return true;
+    else {
+        alert("Debe llenar los campos marcados con rojo.");
+        return false;
+    }
 }
 
 export const metodosValidacion = {
-    //validarCampoVacio,
     validarLlenadoFormulario,
     validarNumeroEntero,
     validarNumeroDecimal

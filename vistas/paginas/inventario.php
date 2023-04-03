@@ -64,6 +64,4 @@
 <!-- Scripts de JavaScript -->
 
 <script src="vistas/js/paginas/inventario-listar-categorias-asincrono.js"></script>
-<script type="module" src="vistas/js/paginas/inventario-alta-categoria-asincrono.js"></script>
-<script type="module" src="vistas/js/paginas/inventario-validacion.js"></script>
-<script type="module" src="vistas/js/paginas/inventario-modal.js"></script>
+<script type="module" src="vistas/js/paginas/inventario.js"></script>
