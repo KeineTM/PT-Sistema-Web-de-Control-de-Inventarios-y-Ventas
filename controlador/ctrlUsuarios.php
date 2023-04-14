@@ -50,8 +50,7 @@
          * Si la verificación es exitosa envía al usuario a la página de inicio del sistema.
          * De lo contrario lo regresa a la página de login con un mensaje que indica lo sucedido.
          */
-        static public function ctrlLoginUsuarios() {
-            
+        static public function ctrlLoginUsuarios() {  
             if(isset($_POST["login-usuario"])) {
                 if(ControladorSeguridad::ctrlEvaluarReCAPTCHA($_POST['token'])) {
                     if(strlen($_POST['login-usuario']) > 0 && strlen($_POST['login-pass']) > 0) { // Valida que existan datos

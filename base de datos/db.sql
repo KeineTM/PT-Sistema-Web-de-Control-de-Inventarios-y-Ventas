@@ -71,18 +71,10 @@ CREATE TABLE `inventario` (
     precio_venta DECIMAL(8,2) NOT NULL,
     precio_mayoreo DECIMAL(8,2),
     foto_url VARCHAR(250) DEFAULT "no-foto.jpg",
+    caducidad DATE,
     estado BOOLEAN DEFAULT 1,
-    caducidad BOOLEAN DEFAULT 0,
     FULLTEXT KEY busqueda(producto_id, nombre),
     FOREIGN KEY (categoria_id) REFERENCES categorias_inventario(categoria_id)
-        ON DELETE RESTRICT ON UPDATE CASCADE
-);
-
--- Tabla auxiliar para caducidades de productos que lo necesitan
-CREATE TABLE `perecederos_inventario` (
-    producto_id VARCHAR(20) PRIMARY KEY,
-    caducidad DATE NOT NULL,
-    FOREIGN KEY (producto_id) REFERENCES inventario(producto_id)
         ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -91,7 +83,7 @@ CREATE TABLE `perecederos_inventario` (
 CREATE TABLE `tipos_contacto` (
     tipo_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     tipo_contacto VARCHAR(50) NOT NULL
-)
+);
 
 INSERT INTO tipos_contacto(tipo_contacto) VALUES
 ("Proveedor"),
@@ -107,8 +99,8 @@ CREATE TABLE `contactos` (
     telefono VARCHAR(10) UNIQUE NOT NULL,
     email VARCHAR(150) UNIQUE,
     notas VARCHAR(250),
-    tipo_contacto int NOT NULL,
-    FULLTEXT KEY busqueda(nombre, apellido_paterno, apellido_materno, tipo_contacto),
+    tipo_contacto INT NOT NULL,
+    FULLTEXT KEY busqueda(nombre, apellido_paterno, apellido_materno),
     FOREIGN KEY (tipo_contacto) REFERENCES tipos_contacto(tipo_id)
         ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -117,7 +109,7 @@ CREATE TABLE `contactos` (
 -- Tabla catálogo de tipos de transaccion (venta, apartado, devolución)
 CREATE TABLE `tipos_operacion` (
     tipo_id CHAR(2) PRIMARY KEY NOT NULL,
-    operacion VARCHAR(50) NOT NULL,
+    operacion VARCHAR(50) NOT NULL
 );
 
 INSERT INTO tipos_operacion VALUES 
@@ -133,7 +125,7 @@ CREATE TABLE `operaciones` (
     notas VARCHAR(250),
     tipo_operacion CHAR(2) NOT NULL,
     estado BOOLEAN DEFAULT 1,
-    cliente_id VARCHAR(6)
+    cliente_id INT,
     FOREIGN KEY (tipo_operacion) REFERENCES tipos_operacion(tipo_id),
     FOREIGN KEY (cliente_id) REFERENCES contactos(contacto_id)
         ON DELETE RESTRICT ON UPDATE CASCADE
@@ -141,9 +133,11 @@ CREATE TABLE `operaciones` (
 
 -- Tabla pivote de productos incluídos en las operaciones
 CREATE TABLE `productos_incluidos` (
-    operacion_id VARCHAR(10) PRIMARY KEY NOT NULL,
-    producto_id VARCHAR(20) PRIMARY KEY NOT NULL,
+    operacion_id VARCHAR(10)  NOT NULL,
+    producto_id VARCHAR(20) NOT NULL,
     unidades INT NOT NULL,
+    -- Llave primaria compuesta
+    PRIMARY KEY (operacion_id, producto_id),
     FOREIGN KEY (operacion_id) REFERENCES operaciones(operacion_id),
     FOREIGN KEY (producto_id) REFERENCES inventario(producto_id)
         ON DELETE RESTRICT ON UPDATE CASCADE
@@ -153,7 +147,7 @@ CREATE TABLE `productos_incluidos` (
 CREATE TABLE `metodos_pago` (
     metodo_id SMALLINT(2) PRIMARY KEY AUTO_INCREMENT NOT NULL,
     metodo VARCHAR(50) NOT NULL
-)
+);
 
 INSERT INTO metodos_pago(metodo) VALUES 
 ("Efectivo"),
@@ -163,11 +157,12 @@ INSERT INTO metodos_pago(metodo) VALUES
 
 -- Tabla pivote de abonos a las operaciones realizados por los empleados
 CREATE TABLE `abonos` (
-    operacion_id VARCHAR(10) PRIMARY KEY NOT NULL,
-    empleado_id VARCHAR(6) PRIMARY KEY NOT NULL,
+    operacion_id VARCHAR(10) NOT NULL,
+    empleado_id VARCHAR(6) NOT NULL,
     fecha TIMESTAMP NOT NULL,
     abono DECIMAL(8,2) NOT NULL,
-    metodo_pago SMALLINT(2) DEFAULT 1
+    metodo_pago SMALLINT(2) DEFAULT 1,
+    PRIMARY KEY (operacion_id, empleado_id),
     FOREIGN KEY (operacion_id) REFERENCES operaciones(operacion_id),
     FOREIGN KEY (empleado_id) REFERENCES usuarios(usuario_id),
     FOREIGN KEY (metodo_pago) REFERENCES metodos_pago(metodo_id)
@@ -225,10 +220,33 @@ INSERT INTO redes_sociales(nombre) VALUES
 
 -- Tabla pivote con las url de las redes con las que cuenta el negocio
 CREATE TABLE `redes_negocio` (
-    rfc VARCHAR(13) PRIMARY KEY NOT NULL,
-    red_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    rfc VARCHAR(13) NOT NULL,
+    red_id INT AUTO_INCREMENT NOT NULL,
     url VARCHAR(200) NOT NULL,
+    PRIMARY KEY (rfc, red_id),
     FOREIGN KEY (rfc) REFERENCES negocio(rfc),
     FOREIGN KEY (red_id) REFERENCES redes_sociales(red_id)
         ON DELETE RESTRICT ON UPDATE CASCADE
 );
+
+-------------------------------------------------------------------------
+-- Creación de usuarios y privilegios con DCL
+-- Usuario para el login
+CREATE USER 'lecturaUsuarios'@'localhost' IDENTIFIED BY 'PassWord_1';
+GRANT SELECT ON tienda.usuarios TO 'lecturaUsuarios'@'localhost';
+GRANT SELECT ON tienda.tipos_usuario TO 'lecturaUsuarios'@'localhost';
+-- Usuario Administrador
+CREATE USER 'administradorGloboKids'@'localhost' IDENTIFIED BY "Administrador_PassWord_1";
+GRANT SELECT, INSERT, UPDATE ON *.* TO 'administradorGloboKids'@'localhost';
+-- Usuario Empleado
+CREATE USER 'empleadoGloboKids'@'localhost' IDENTIFIED BY "Empleado_PassWord_1";
+GRANT SELECT ON *.* TO 'empleadoGloboKids'@'localhost';
+GRANT INSERT, UPDATE ON tienda.categorias_inventario TO 'empleadoGloboKids'@'localhost';
+GRANT INSERT, UPDATE ON tienda.inventario TO 'empleadoGloboKids'@'localhost';
+GRANT INSERT, UPDATE ON tienda.perecederos_inventario TO 'empleadoGloboKids'@'localhost';
+GRANT INSERT, UPDATE ON tienda.contactos TO 'empleadoGloboKids'@'localhost';
+GRANT INSERT, UPDATE ON tienda.operaciones TO 'empleadoGloboKids'@'localhost';
+GRANT INSERT, UPDATE ON tienda.productos_incluidos TO 'empleadoGloboKids'@'localhost';
+GRANT INSERT, UPDATE ON tienda.abonos TO 'empleadoGloboKids'@'localhost';
+
+FLUSH PRIVILEGES;

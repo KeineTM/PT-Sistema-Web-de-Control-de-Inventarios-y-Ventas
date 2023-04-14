@@ -12,7 +12,6 @@ class ModeloUsuarios extends ModeloConexion {
 
     # Implementación de los métodos abstractos
     public function create() {
-
     }
 
     /** Método que recupera toda la información de la tabla de usuarios. 

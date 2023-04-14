@@ -8,15 +8,18 @@ class ModeloProductos extends ModeloConexion{
         $this->db_password = "";
     }
 
-    /** Método que registra una nueva categoría en la tabla */
-    public function create() {
-        
+    /** Método que registra un nuevo producto en la tabla. Recibe una lista con los tados a registrar. */
+    public function registrarNuevoProducto($listaDatos) {
+        $this->registros = $listaDatos;
+        $this->sentenciaSQL = "INSERT INTO inventario VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+        return $this->consultasCUD();
     }
 
-    public function read($id='') {
+    public function leer($id='') {
         $this->sentenciaSQL = ($id === '')
             ? "SELECT * FROM productos"
-            : "";
+            : "";// TODO
+            
     }
 
     public function update() {
@@ -30,20 +33,20 @@ class ModeloProductos extends ModeloConexion{
     /** Método que registra una categoría nueva */
     public function createCategoria($categoria) {
         $this->sentenciaSQL = "INSERT INTO categorias_inventario (categoria) VALUES (?)";
-        $this -> abrirConexion(); # Conecta
+        $this -> abrirConexion();
 
         try {
-            $registro = $this->conexion -> prepare($this->sentenciaSQL); #
+            $registro = $this->conexion -> prepare($this->sentenciaSQL);
             $registro -> bindValue(1, $categoria, PDO::PARAM_STR);
-            $registro -> execute(); # Ejecuta
+            $registro -> execute();
 
             return $categoria . ' registrado correctamente';
 
         } catch(PDOException $e) {
             return 'Error: ' .$e->getMessage();
         } finally {
-            $registro = null; # Limpia
-            $this->cerrarConexion(); # Cierra
+            $registro = null;
+            $this->cerrarConexion();
         }
     }
 
@@ -53,13 +56,13 @@ class ModeloProductos extends ModeloConexion{
             ? "SELECT * FROM categorias_inventario"
             : "SELECT * FROM categorias_inventario WHERE categoria_id = ?";
         
-        return $this->consultaRead($categoria);
+        return $this-> consultaRead($categoria);
     }
 
     /** Este método devuelve la lista de categorias activas ordenadas alfabéticamente */
     public function readCategoriasActivas() {
         $this->sentenciaSQL = "SELECT * FROM categorias_inventario WHERE estado = 1 ORDER BY categoria"; 
-        return $this->consultaRead();
+        return $this-> consultaRead();
     }
 
     public function updateCategoria() {

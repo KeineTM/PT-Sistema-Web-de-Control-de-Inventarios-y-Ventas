@@ -47,12 +47,11 @@
     // Objeto grecaptcha generado por el API de Google
     grecaptcha.ready(() => {
         grecaptcha.execute('<?php echo $claves['publica'] ?>', {
-        action: 'formularioLogin'
+            action: 'formularioLogin'
         }).then(function(token) {
-        let recaptchaResponse = document.getElementById('token');
-        recaptchaResponse.value = token;
-        document.getElementById('btn-enviar').disabled = false;
-        console.log({token})
+            let recaptchaResponse = document.getElementById('token');
+            recaptchaResponse.value = token;
+            document.getElementById('btn-enviar').disabled = false;
         });
     });
 </script>

@@ -24,11 +24,11 @@
                     <button class="boton redondo" id="btnAgregarCategoria"><img class="icono" src="vistas/img/plus.svg" alt="Agregar"></button>
                 </fieldset>
                 <textarea class="campo" placeholder="Descripción" rows="3" cols="50" maxlength="500" id="descripcionProducto-txt" name="descripcionProducto-txt"></textarea>
-                <input type="number" class="campo  requerido" placeholder="Unidades" id="unidadesProducto-txt" name="unidadesProducto-txt">
-                <input type="number" class="campo" placeholder="Unidades mínimas" id="unidadesMinimasProducto-txt" name="unidadesMinimasProducto-txt">
-                <input type="number" step="any" class="campo" placeholder="Precio de compra" id="precioCompraProducto-txt" name="precioCompraProducto-txt">
-                <input type="number" step="any" class="campo  requerido" placeholder="Precio de venta" id="precioVentaProducto-txt" name="precioVentaProducto-txt">
-                <input type="number" step="any" class="campo" placeholder="Precio de mayoreo" id="precioMayoreoProducto-txt" name="precioMayoreoProducto-txt">
+                <input type="number" class="campo  requerido" placeholder="Unidades" maxlength="4" id="unidadesProducto-txt" name="unidadesProducto-txt">
+                <input type="number" class="campo" placeholder="Unidades mínimas" maxlength="4" id="unidadesMinimasProducto-txt" name="unidadesMinimasProducto-txt">
+                <input type="number" step="any" class="campo" placeholder="Precio de compra" maxlength="10" id="precioCompraProducto-txt" name="precioCompraProducto-txt">
+                <input type="number" step="any" class="campo  requerido" placeholder="Precio de venta" maxlength="10" id="precioVentaProducto-txt" name="precioVentaProducto-txt">
+                <input type="number" step="any" class="campo" placeholder="Precio de mayoreo" maxlength="10" id="precioMayoreoProducto-txt" name="precioMayoreoProducto-txt">
                 <label for="fechaCaducidad-txt">Fecha de caducidad</label>
                 <input type="date" class="campo" placeholder="Fecha de caducidad" id="caducidadProducto-txt" name="caducidadProducto-txt">
                 <label for="imagenProducto-txt">URL de la foto</label>
@@ -62,6 +62,4 @@
 </section>
 
 <!-- Scripts de JavaScript -->
-
-<script src="vistas/js/paginas/inventario-listar-categorias-asincrono.js"></script>
 <script type="module" src="vistas/js/paginas/inventario.js"></script>

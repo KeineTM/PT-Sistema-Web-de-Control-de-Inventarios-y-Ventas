@@ -16,7 +16,7 @@ abstract class ModeloConexion {
     /** Método que inicia conexión con la base de datos */
     protected function abrirConexion() {
         try {
-            # Sintaxis $mbd = new PDO('mysql:host=localhost;dbname=prueba', $usuario, $contraseña);
+            # Sintaxis $mbd = new PDO('mysql:host=$host;dbname=$bdname', $usuario, $contraseña);
             $this->conexion = new PDO(
                 "mysql:host=".self::$db_host. 
                 ";dbname=".self::$db_nombre, 
@@ -37,16 +37,30 @@ abstract class ModeloConexion {
     }
 
     /** Método para ejecutar consultas que realizan cambios en la base de datos sin devolver datos: Create, Update y Delete. */
-    protected function consultaCUD () {
-        $this->abrirConexion(); # Conecta
-        $this->conexion->prepare($this->sentenciaSQL);
-        $this->conexion -> execute(); # Ejecuta
-        $this->cerrarConexion(); # Cierra
+    protected function consultasCUD() {
+        try {
+            $this->abrirConexion(); # Conecta
+            $registro = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
+            # Recorre la lista ligando parámetros a la sentencia SQL:
+            for($i = 0; $i < sizeof($this->registros); $i++) {
+                $registro -> bindParam($i+1, $this->registros[$i]);
+            }
+
+            $registro -> execute(); # Ejecuta
+
+            return "Registro exitoso.";
+
+        } catch(PDOException $e) {
+            return 'Error: ' .$e->getMessage();
+        } finally {
+            $registro = null; # Limpia
+            $this->cerrarConexion(); # Cierra
+        }
     }
 
     /** Método para ejecutar consultas que recuperan información de la base de datos. */
-    protected function consultaRead ($id = '') {
-        $this->abrirConexion();
+    protected function consultaRead($id = '') {
+        $this->abrirConexion(); # Conecta
         $resultado = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
         
         if($id != '') { # Si contiene un parámetro este se liga para evitar SQLinjection
@@ -56,15 +70,9 @@ abstract class ModeloConexion {
         $resultado -> execute(); # Ejecuta
         $this->registros = $resultado -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos
         $resultado = null; # Limpia memoria
-        $this->cerrarConexion();
+        $this->cerrarConexion(); # Cierra
 
         return $this->registros;
     }
-
-    # Métodos abstractos CRUD
-    abstract protected function create();
-    abstract protected function read();
-    abstract protected function update();
-    abstract protected function delete();
 }
 ?>

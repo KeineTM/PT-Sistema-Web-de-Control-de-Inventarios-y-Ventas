@@ -46,6 +46,59 @@
             else
                 return true;
         }
+
+        ## Validaciones
+        /** Recibe una lista de datos. Retorna true si todos los datos no están vacíos y false si al menos uno está vacío */
+        static public function validarVacio($listaDatos) {
+            $contador = 0;
+            foreach($listaDatos as $dato) {
+                if(strlen($dato) > 0) $contador++;
+            }
+
+            if($contador === sizeof($listaDatos))
+                return true;
+            else
+                return false;
+        }
+
+        /** Recibe una lista de datos. Retorna true si todos los datos son tipo INT, de lo contrario devuelve false */
+        static public function validarEnterno($listaDatos) {
+            $contador = 0;
+            $regex = '/^[1-9][0-9]{0,3}$/'; # Números enteros de máximo 4 caracteres.
+
+            foreach($listaDatos as $dato) {
+                if(preg_match($regex, $dato)) $contador++;
+            }
+
+            if($contador === sizeof($listaDatos))
+                return true;
+            else
+                return false;
+        }
+
+        /** Recibe una lista de datos. Retorna true si se trata de un número con un máximo de 2 decimales, de lo contrario devuelve false */
+        static public function validarDecimal($listaDatos) {
+            $contador = 0;
+            $regex = '/^[0-9]{1,10}(\.[0-9]{1,2})?$/'; # Números decimales de máximo 10 digitos y de 0 a 2 decimales
+
+            foreach($listaDatos as $dato) {
+                if(preg_match($regex, $dato)) $contador++;
+            }
+
+            if($contador === sizeof($listaDatos))
+                return true;
+            else
+                return false;
+        }
+
+        /** Compara una fecha de caducidad con la fecha actual, retorna true si la fecha ingresada es mayor que la actual, de lo contrario retorna false */
+        static public function validarCaducidad($fecha) {
+            $fecha_actual = date("Y-m-d");
+            if($fecha_actual > $fecha)
+                return false;
+            else
+                return true;
+        }
     }
 
 ?>
