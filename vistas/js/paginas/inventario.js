@@ -27,14 +27,14 @@ btnCerrarModal.addEventListener("click", metodosModal.cerrarModalFormulario);
 // -------------------------------------------------------------------------------------------------------
 const selectCategorias = document.getElementById("categoriaProducto-txt");
 
-/** Método que recibe una array de objetos con el listado de la tabla */
-const cargarOptions = (selectCategorias, listaCategorias) => {
+/** Método que recibe un JSON con el listado de la tabla categorías y el DOM de la etiqueta SELECT */
+const cargarOptions = (selectCategorias, listaCategoriasJSON) => {
     selectCategorias.innerHTML = "<option disabled selected>Categorías...</option>";
 
-    for (const registro of listaCategorias) { // Recorre el array para entrar a cada registro (tipo object)
+    for (const registro of listaCategoriasJSON) { // Recorre el array para entrar a cada registro (objeto tipo json)
         const nuevaOpcion = document.createElement('option');  // Crea una nueva option
-        nuevaOpcion.value = registro['categoria_id']; // Asigna de value el valor de PK en tabla
-        nuevaOpcion.textContent = registro['categoria']; // Incluye en texto el nombre de la categoria
+        nuevaOpcion.value = registro['categoria_id']; // Asigna como value la llave primaria del registro
+        nuevaOpcion.textContent = registro['categoria']; // Nombre de la categoria
         selectCategorias.appendChild(nuevaOpcion); // Agrega la opción en la etiqueta select
     }
 };
@@ -44,15 +44,13 @@ const recuperarCategoriasAsincrono = (selectCategorias) => {
     fetch('controlador/ctrlInventario.php?funcion=listar-categorias') // Esta página de PHP se ejecuta y el resultado o respuesta (un echo) es el que regresa a este método
     .then(response => response.json()) // Aquí se recibe un JSON
     .then(data => {
-        cargarOptions(selectCategorias, data);
+        cargarOptions(selectCategorias, data); // Carga la etiqueta select con el json recuperado
     }).catch(error => {
-        console.error('Error:', error);
+        console.error('Error:', error); // Devuelve el error si ocurrió uno
     });
 };
 
 recuperarCategoriasAsincrono(selectCategorias);
-
-
 
 
 // -------------------------------------------------------------------------------------------------------
@@ -70,9 +68,9 @@ const registrarCategoriaAsincrono = () => {
     fetch('controlador/ctrlInventario.php?funcion=registrar-categoria', {
         method: 'POST',
         body: formData
-    }).then(response => response.text() // Recuperación de la respuesta del servidor con text()
+    }).then(response => response.text() // Recuperación de la respuesta del servidor en texto plano
     ).then(data => {
-        alert(data); // Impresión en pantalla de la respuesta
+        alert(data); // Impresión en pantalla de la respuesta del registro
         nuevaCategoria.value = ''; // Limpia el campo
         recuperarCategoriasAsincrono(selectCategorias); // RECARGA LA LISTA DE OPCIONES CON OTRO AJAX del archivo inventario-listar-categorias-asincrono.js
     }).catch(error => {
@@ -131,4 +129,113 @@ btnRegistrarProducto.addEventListener('click', (event) => {
     if(metodosValidacion.validarLlenadoFormulario(listaCamposObligatorios)) {
         registrarProductoAsincrono();
     }
+});
+
+
+// -------------------------------------------------------------------------------------------------------
+// Tabla de productos
+// -------------------------------------------------------------------------------------------------------
+const btnAbrirTablaProductos = document.getElementById("abrir__tabla-productos");
+const contenedorTabla = document.getElementById("tabla-contenedor");
+
+/** Método que construye y llena la tabla de productos */
+const crearTablaProductos = (contenedor, listaProductosJSON) => {
+    const tabla = document.createElement('table'); // Tabla
+    tabla.classList.add('tabla');
+
+    const thead =
+        `<thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Descripción</th>
+                <th>Existencia</th>
+                <th>Unidades Mín</th>
+                <th>P Compra</th>
+                <th>P Venta</th>
+                <th>P Mayoreo</th>
+                <th>Estado</th>
+                <th>Foto</th>
+                <th>Caducidad</th>
+            </tr>
+        </thead>`;
+    const tbody = document.createElement('tbody');
+    tabla.innerHTML= thead; // Agrega código HTML al objeto HTML
+    tabla.appendChild(tbody); // Agrega un objeto HTML a otro objeto HTML
+
+    // Recorrido del archivo JSON para crear filas por cada registro y celdas con los valores
+    listaProductosJSON.forEach(producto => {
+        const fila = document.createElement('tr'); // Crea fila
+
+        // Celdas
+        const celdaID = document.createElement('td');
+        celdaID.innerText = producto['producto_id'];
+        fila.appendChild(celdaID);
+
+        const celdaNombre = document.createElement('td');
+        celdaNombre.innerText = producto['nombre'];
+        fila.appendChild(celdaNombre);
+
+        const celdaCategoria = document.createElement('td');
+        celdaCategoria.innerText = producto['categoria'];
+        fila.appendChild(celdaCategoria);
+
+        const celdaDescripcion = document.createElement('td');
+        celdaDescripcion.innerText = producto['descripcion'];
+        fila.appendChild(celdaDescripcion);
+
+        const celdaUnidades = document.createElement('td');
+        celdaUnidades.innerText = producto['unidades'];
+        fila.appendChild(celdaUnidades);
+
+        const celdaUnidadesMin = document.createElement('td');
+        celdaUnidadesMin.innerText = producto['unidades_minimas'];
+        fila.appendChild(celdaUnidadesMin);
+
+        const celdaPrecioCompra = document.createElement('td');
+        celdaPrecioCompra.innerText = producto['precio_compra'];
+        fila.appendChild(celdaPrecioCompra);
+
+        const celdaPrecioVenta = document.createElement('td');
+        celdaPrecioVenta.innerText = `$${producto['precio_venta']}`;
+        fila.appendChild(celdaPrecioVenta);
+
+        const celdaPrecioMayoreo = document.createElement('td');
+        celdaPrecioMayoreo.innerText = producto['precio_mayoreo'];
+        fila.appendChild(celdaPrecioMayoreo);
+
+        const celdaEstado = document.createElement('td');
+        celdaEstado.innerText = (producto['estado'])
+                                ? 'Activo'
+                                : 'Baja';
+        fila.appendChild(celdaEstado);
+
+        const celdaFotoURL = document.createElement('td');
+        celdaFotoURL.innerHTML = `<img src="${producto['foto_url']}">`;
+        fila.appendChild(celdaFotoURL);
+
+        const celdaCaducidad = document.createElement('td');
+        celdaCaducidad.innerText = producto['caducidad'];
+        fila.appendChild(celdaCaducidad);
+        
+        tbody.appendChild(fila); // Agrega fila al cuerpo de la tabla
+    });
+
+    contenedor.appendChild(tabla);
+}
+
+const recuperarProductosAsincrono = () => {
+    fetch('controlador/ctrlInventario.php?funcion=tabla-productos')
+    .then(response => response.json())
+    .then(data => {
+        crearTablaProductos(contenedorTabla, data); // Construye la tabla
+    }).catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+btnAbrirTablaProductos.addEventListener('click', () => {
+    contenedorTabla.innerHTML = ""; // Limpia el contenedor antes de crear la tabla
+    recuperarProductosAsincrono();
 });

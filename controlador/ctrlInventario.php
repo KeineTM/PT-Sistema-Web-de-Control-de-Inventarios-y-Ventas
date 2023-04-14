@@ -1,6 +1,4 @@
 <?php
-require 'ctrlSeguridad.php';
-
 class ControladorProductos {
     private $producto_id;
     private $nombre;
@@ -33,7 +31,8 @@ class ControladorProductos {
     }*/
 
     /** Método que registra un nuevo producto en la base de datos */
-    public function ctrlRegistrarProducto() {
+    public function ctrlRegistrar() {
+        require_once 'ctrlSeguridad.php';
         $this->producto_id = $_POST['idProducto-txt'];
         $this->nombre = $_POST['nombreProducto-txt'];
         $this->categoria_id = ($_POST['categoriaProducto-txt']);
@@ -62,15 +61,21 @@ class ControladorProductos {
         if($this->precioCompra) array_push($listaCamposDecimal, $this->precioCompra);
         if($this->precioMayoreo) array_push($listaCamposDecimal, $this->precioMayoreo);
 
+        # Validación extra de caducidad
+        $validacionCaducidad = ($this->caducidad !== null) 
+                                ? ControladorSeguridad::validarCaducidad($this->caducidad)
+                                : true;
+
         if(ControladorSeguridad::validarVacio($listaCamposObligatorios) &&
             ControladorSeguridad::validarEnterno($listaCamposInt) &&
             ControladorSeguridad::validarDecimal($listaCamposDecimal) &&
-            ControladorSeguridad::validarCaducidad($this->caducidad)) {
+            $validacionCaducidad) {
 
             $listaDatos = [$this->producto_id, $this->nombre, $this->categoria_id, $this->descripcion, $this->unidades, $this->unidadesMinimas, 
                             $this->precioCompra, $this->precioVenta, $this->precioMayoreo, $this->estado, $this->foto_url, $this->caducidad];
-            $modelo = new ModeloProductos;
-            return $modelo -> registrarNuevoProducto($listaDatos);
+            $producto = new ModeloProductos;
+            return $producto -> registrar($listaDatos);
+
         } # Control de las validaciones
         elseif (!ControladorSeguridad::validarVacio($listaCamposObligatorios))
             return "No se han completado los campos obligatorios.";
@@ -78,11 +83,18 @@ class ControladorProductos {
             return "Los campos Categoría, Unidades y Unidades Mínimas sólo aceptan números enteros menores a 9999";
         elseif (!ControladorSeguridad::validarDecimal($listaCamposDecimal))
             return "Los campos Precio de Venta, Precio de Compra y Precio Mayoreo sólo aceptan números con un máximo de 2 decimales";
-        elseif (!ControladorSeguridad::validarCaducidad($this->caducidad))
+        elseif (!$validacionCaducidad)
             return "La fecha de caducidad no puede ser anterior al día de hoy.";
     }
 
+    /** Método que devuelve todos los productos de la tabla inventario */
+    static public function ctrlLeerTodos() {
+        $listaProductos = new ModeloProductos();
+        return $listaProductos -> leer();
+    }
+
     ## Otros métodos
+    /** Método para registrar una categoría, recibe una cadena con el nombre */
     static public function ctrlRegistrarCategoria($categoria) {
         if(strlen($categoria) > 0) {
             $modelo = new ModeloProductos();
@@ -119,7 +131,12 @@ if(isset($_GET['funcion'])) {
     } 
     else if($_GET['funcion'] === 'registrar-producto') {
         $producto = new ControladorProductos();
-        echo $producto -> ctrlRegistrarProducto();
+        echo $producto -> ctrlRegistrar();
+        die();
+    }
+    else if($_GET['funcion'] === 'tabla-productos') {
+        $producto = new ControladorProductos();
+        echo json_encode($producto -> ctrlLeerTodos());
         die();
     }
 }

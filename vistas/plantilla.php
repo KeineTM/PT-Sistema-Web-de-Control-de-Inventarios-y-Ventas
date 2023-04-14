@@ -35,6 +35,7 @@
     <link rel="stylesheet" href="vistas/css/modal.css">
     <link rel="stylesheet" href="vistas/css/formularios.css">
     <link rel="stylesheet" href="vistas/css/botones.css">
+    <link rel="stylesheet" href="vistas/css/tablas.css">
     <link rel="stylesheet" href="vistas/css/paginas/login.css">
     <link rel="stylesheet" href="vistas/css/paginas/inventario.css">
 

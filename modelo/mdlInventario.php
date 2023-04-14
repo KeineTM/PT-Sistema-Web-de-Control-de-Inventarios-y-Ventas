@@ -9,17 +9,26 @@ class ModeloProductos extends ModeloConexion{
     }
 
     /** Método que registra un nuevo producto en la tabla. Recibe una lista con los tados a registrar. */
-    public function registrarNuevoProducto($listaDatos) {
+    public function registrar($listaDatos) {
         $this->registros = $listaDatos;
         $this->sentenciaSQL = "INSERT INTO inventario VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
         return $this->consultasCUD();
     }
 
+    /** Metodo que devuelve todo el listado de productos en la tabla inventario */
     public function leer($id='') {
         $this->sentenciaSQL = ($id === '')
-            ? "SELECT * FROM productos"
-            : "";// TODO
-            
+            ? 'SELECT inventario.producto_id, inventario.nombre, categorias_inventario.categoria, inventario.descripcion,
+                inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta, inventario.precio_mayoreo,
+                inventario.foto_url, inventario.caducidad, inventario.estado
+                FROM inventario
+                INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id'
+            : 'SELECT inventario.producto_id, inventario.nombre, categorias_inventario.categoria, inventario.descripcion,
+                inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta, inventario.precio_mayoreo,
+                inventario.foto_url, inventario.caducidad, inventario.estado
+                FROM inventario
+                INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id WHERE inventario.producto_id = ?';
+        return  $this->consultaRead($id);
     }
 
     public function update() {
@@ -51,12 +60,12 @@ class ModeloProductos extends ModeloConexion{
     }
 
     /** Este método devuelve todas las categorias en la tabla. Si se le indica un id, sólo devuelve el registro correspondiente */
-    public function readCategorias($categoria='') {
-        $this->sentenciaSQL = ($categoria === '')
+    public function readCategorias($categoriaID='') {
+        $this->sentenciaSQL = ($categoriaID === '')
             ? "SELECT * FROM categorias_inventario"
             : "SELECT * FROM categorias_inventario WHERE categoria_id = ?";
         
-        return $this-> consultaRead($categoria);
+        return $this-> consultaRead($categoriaID);
     }
 
     /** Este método devuelve la lista de categorias activas ordenadas alfabéticamente */

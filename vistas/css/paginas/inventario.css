@@ -6,7 +6,7 @@
     .inventario-lista {
         display: grid;
         grid-template-columns: 50% 50%;
-        grid-template-rows: max-content;
+        height: min-content;
     }
 }
 
@@ -14,6 +14,6 @@
     .inventario-lista {
         display: grid;
         grid-template-columns: 50% 25% 25%;
-        grid-template-rows: max-content;
+        height: min-content;
     }
 }
