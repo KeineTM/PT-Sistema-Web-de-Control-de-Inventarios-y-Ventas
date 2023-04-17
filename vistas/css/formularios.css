@@ -1,6 +1,17 @@
 .formulario {
     display: grid;
-    gap: .3rem;
+    gap: .5rem;
+}
+
+.formulario__encabezado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 1rem;
+    padding: 0.5rem 0;
+    gap: 1rem;
+
+    border-bottom: 3px solid var(--color-naranja);
 }
 
 .campo {
@@ -23,7 +34,12 @@
     color: rgb(173, 171, 171);
 }
 
-.requerido {
+.formulario select {
+    overflow-y: scroll;
+}
+
+/* Agrega un asterisco en la esquina superior derecha de un campo requerido */
+.requerido { 
     background-image: url("../img/star-of-life.svg");
     background-repeat: no-repeat;
     background-size: 8px;
@@ -33,13 +49,11 @@
 
 .alerta {
     color: var(--color-rosa);
-    font-size: small;
     visibility: hidden;
 }
 
 .formulario__botones-contenedor {
     display: grid;
-    grid-template-columns: calc(50% - .25rem) calc(50% - .25rem);
     gap: .5rem;
     box-sizing: border-box;
 }
@@ -50,22 +64,42 @@
     color: var(--color-rosa);
 }
 
-.boton-registrar {
-    height: 3rem;
-}
-
 .formulario__fieldset {
-    display: flex;
-    justify-content: center;
+    display: grid;
     gap: .5rem;
 }
 
-.redondo {
+.formulario__fieldset-2-columnas {
+    display: grid;
+    align-items: center;
+    grid-template-columns: 40% calc(60% - 0.5rem);
+    gap: .5rem;
+}
+
+.formulario__fieldset-categorias {
+    display: grid;
+    align-items: center;
+    grid-template-columns: calc(100% - 3rem) 3rem;
+    gap: .5rem;
+}
+
+/* Estilo de botón */
+.redondo { 
     display: flex;
     justify-content: center;
     align-items: center;
     height: 3rem;
-    width: 3.5rem;
+    width: 3rem;
+}
+
+/********* Botón enviar del formulario **************************/
+.boton-registrar {
+    height: 3rem;
+}
+
+.formulario__icono {
+    height: 2rem;
+    filter: var(--filter-rosa);
 }
 
 .icono {
@@ -73,8 +107,30 @@
     height: 80%;
 }
 
+
 input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
   -webkit-appearance: none; 
   margin: 0; 
+}
+
+@media screen and (min-width: 600px) {
+    .formulario {
+        grid-template-columns: calc(50% - 1rem) calc(50% - 1rem);
+        gap: 2rem;
+    }
+
+    .formulario__encabezado {
+        flex-direction: row;
+    }
+
+    .formulario__botones-contenedor {
+        grid-template-columns: calc(50% - .25rem) calc(50% - .25rem);
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .formulario__botones-contenedor {
+        grid-template-columns: calc(33% - .25rem) calc(33% - .25rem) calc(33% - .25rem);
+    }
 }

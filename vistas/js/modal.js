@@ -1,28 +1,4 @@
 /**
- * Método que detecta el elemento desde el cual se hace click.
- * Parte de un diseño estricto de la ventana modal para poder cerrarla.
- * Así esta función cierra cualquier ventana modal siempre y cuando todos los botones de cierre 
- * tengan el id = 'btnCerrarModal'.
- * @param {} event 
- */
-const cerrarModalFormulario = (event) => {
-    event.preventDefault();
-    const contenedorBotones = event.target.parentNode;
-    const contenedorFormulario = contenedorBotones.parentNode;
-    const contenedorModal1 = contenedorFormulario.parentNode;
-    const contenedorModal2 = contenedorModal1.parentNode;
-    contenedorModal2.parentNode.classList.toggle("mostrar-modal");
-};
-
-const cerrarModalMiniFormulario = (event) => {
-    event.preventDefault();
-    const contenedorFormulario = event.target.parentNode;
-    const contenedorModal1 = contenedorFormulario.parentNode;
-    const contenedorModal2 = contenedorModal1.parentNode;
-    contenedorModal2.parentNode.classList.toggle("mostrar-modal");
-};
-
-/**
  * Con este método se despliega una ventana modal, 
  * es necesario que se defina el id del elemento HTML que se mostrará
  * @param {*} event 
@@ -33,8 +9,20 @@ const desplegarModal = (modal) => {
     modal.classList.toggle('mostrar-modal');
 };
 
+/**
+ * Método que detecta el elemento desde el cual se hace click.
+ * Parte de un diseño estricto de la ventana modal para poder cerrarla.
+ * Así esta función cierra cualquier ventana modal siempre y cuando todos los botones de cierre 
+ * tengan el id = 'btnCerrarModal'.
+ * @param {} event 
+ */
+const cerrarModal = (contenedor) => {
+    event.preventDefault();
+    contenedor.parentNode.classList.toggle("mostrar-modal");
+    contenedor.parentNode.innerHTML = "";
+};
+
 export const metodosModal = {
     desplegarModal,
-    cerrarModalFormulario,
-    cerrarModalMiniFormulario
+    cerrarModal
 }

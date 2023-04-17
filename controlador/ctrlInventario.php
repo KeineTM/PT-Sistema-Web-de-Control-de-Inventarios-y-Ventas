@@ -93,6 +93,14 @@ class ControladorProductos {
         return $listaProductos -> leer();
     }
 
+    static public function ctrlBuscar($id) {
+        if(strlen($id) > 0) {
+            $listaProductos = new ModeloProductos();
+            return $listaProductos -> leer($id);
+        } else
+            return "No ";
+    }
+
     ## Otros métodos
     /** Método para registrar una categoría, recibe una cadena con el nombre */
     static public function ctrlRegistrarCategoria($categoria) {

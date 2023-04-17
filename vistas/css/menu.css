@@ -65,7 +65,7 @@
         background: none;
         transition: none;
     
-        min-height: calc(100vh - 70px);
+        min-height: calc(100vh - 120px);
         height: fit-content;
         overflow: visible;
     }

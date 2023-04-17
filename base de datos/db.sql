@@ -55,7 +55,7 @@ SELECT *  FROM usuarios
 -- Tabla de categorías del inventario
 CREATE TABLE `categorias_inventario` (
     categoria_id INT PRIMARY KEY AUTO_INCREMENT,
-    categoria VARCHAR(100) UNIQUE NOT NULL,
+    categoria VARCHAR(50) UNIQUE NOT NULL,
     estado BOOLEAN DEFAULT 1
 );
 

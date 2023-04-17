@@ -1,0 +1,17 @@
+<input type="text" id="prueba">
+
+<input type="submit" value="Enviar" id="enviar">
+
+<script>
+  let boton = document.getElementById('enviar');
+
+  boton.addEventListener("click", () => {
+    let campo = document.getElementById('prueba');
+    regex = new RegExp('^([0-9])*$');
+    
+    if(!regex.test(campo.value)) console.log("NO VALIDO");
+    else console.log("VALIDO")
+  });
+
+</script>
+

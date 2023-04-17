@@ -64,7 +64,7 @@
         /** Recibe una lista de datos. Retorna true si todos los datos son tipo INT, de lo contrario devuelve false */
         static public function validarEnterno($listaDatos) {
             $contador = 0;
-            $regex = '/^[1-9][0-9]{0,3}$/'; # Números enteros de máximo 4 caracteres.
+            $regex = '/^([0-9])*$/'; # Números enteros de máximo 4 caracteres.
 
             foreach($listaDatos as $dato) {
                 if(preg_match($regex, $dato)) $contador++;

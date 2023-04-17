@@ -1,17 +1,23 @@
 .modal {
     position: absolute;
     display: flex;
+    justify-content: center;
+    align-items: center;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    margin: auto;
     background: #111111bd;
     z-index: 10; /* Este valor lo posiciona sobre cualquier elemento del sitio */
-
     opacity: 0;
     pointer-events: none;
     transition: opacity .5s;
+    height: 100vh;
+    overflow: auto;
+}
+
+.modal h2 {
+    text-align: justify;
 }
 
 .modal__contenedor {
@@ -20,7 +26,7 @@
     width: 90%;
     max-width: 400px;
     gap: .5rem;
-    margin: auto;
+    height: fit-content;
     padding: 1rem;
     border-radius: 5px;
     background: var(--color-blanco);
@@ -40,5 +46,5 @@
 }
 
 @media screen and (min-width: 720px){
-    
+
 }

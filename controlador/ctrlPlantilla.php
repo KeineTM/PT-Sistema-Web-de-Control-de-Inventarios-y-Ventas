@@ -59,7 +59,6 @@
                         include "vistas/paginas/".$_GET["pagina"].".php";
                     } else 
                         include "vistas/paginas/inicio-usuario.php";
-
                 }
 
             } else
