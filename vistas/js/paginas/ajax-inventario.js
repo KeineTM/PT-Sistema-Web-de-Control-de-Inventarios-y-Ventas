@@ -11,11 +11,13 @@ const cargarOptionsCategorias = (selectHTML, listaCategoriasJSON) => {
 };
 
 /** API FETCH para la recuperación y listado de categorías asíncronas */
-const recuperarCategorias = (selectCategorias) => {
+const recuperarCategorias = (selectCategorias, preseleccion="") => {
     fetch('controlador/ctrlInventario.php?funcion=listar-categorias') // Esta página de PHP se ejecuta y el resultado o respuesta (un echo) es el que regresa a este método
     .then(response => response.json()) // Aquí se recibe un JSON
     .then(data => {
         cargarOptionsCategorias(selectCategorias, data); // Carga la etiqueta select con el json recuperado
+        // Control de la categoría si se está recuperando un registro de la DB
+        if(preseleccion !== "") selectCategorias.value = preseleccion;
     }).catch(error => {
         console.error('Error:', error); // Devuelve el error si ocurrió uno
     });
@@ -150,44 +152,11 @@ const crearTablaProductos = (contenedor, listaProductosJSON) => {
     contenedor.appendChild(tabla);
 }
 
-/** Método que recibe un contenedor HTML y una lista JSON, construye una lista de productos y los incluye en el contenedor */
-const crearListaProductos = (contenedor, listaProductosJSON) => {
-    listaProductosJSON.forEach(producto => {
-        const tarjeta = document.createElement('span');
-        tarjeta.classList.add('tarjeta-producto');
 
-        const contenido = 
-            `<img src="${producto['foto_url']}" alt="Imagen ${producto['nombre']}">
-            <span>
-                <h3>${producto['nombre']}</h3>
-                <ul>
-                    <li>${producto['producto_id']}</li>
-                    <li>Categoría: ${producto['categoria']}</li>
-                    <li>Precio de venta: $${producto['precio_venta']}</li>
-                    <li><a onclick="verDetallesProducto(${producto['producto_id']})">Ver detalles y editar</a></li>
-                </ul>
-            </span>`;
-
-        tarjeta.innerHTML = contenido;
-        contenedor.appendChild(tarjeta);
-    });
-}
-
-const recuperarProductos = (contenedor) => {
-    fetch('controlador/ctrlInventario.php?funcion=tabla-productos')
-    .then(response => response.json())
-    .then(data => {
-        //crearTablaProductos(contenedorTabla, data); // Construye la tabla
-        crearListaProductos(contenedor, data);
-    }).catch(error => {
-        console.error('Error:', error);
-    });
-}
 
 export const metodosAJAX = {
     recuperarCategorias,
     cargarOptionsCategorias,
     registrarCategoria,
     registrarProducto,
-    recuperarProductos,
 }

@@ -18,12 +18,12 @@ class ModeloProductos extends ModeloConexion{
     /** Metodo que devuelve todo el listado de productos en la tabla inventario */
     public function leer($id='') {
         $this->sentenciaSQL = ($id === '')
-            ? 'SELECT inventario.producto_id, inventario.nombre, categorias_inventario.categoria, inventario.descripcion,
+            ? 'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
                 inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta, inventario.precio_mayoreo,
                 inventario.foto_url, inventario.caducidad, inventario.estado
                 FROM inventario
                 INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id'
-            : 'SELECT inventario.producto_id, inventario.nombre, categorias_inventario.categoria, inventario.descripcion,
+            : 'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
                 inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta, inventario.precio_mayoreo,
                 inventario.foto_url, inventario.caducidad, inventario.estado
                 FROM inventario

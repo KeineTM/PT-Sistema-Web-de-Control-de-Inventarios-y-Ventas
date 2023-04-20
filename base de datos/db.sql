@@ -78,7 +78,7 @@ CREATE TABLE `inventario` (
         ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-SELECT inventario.producto_id, inventario.nombre, categorias_inventario.categoria, inventario.descripcion,
+SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
 inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta, inventario.precio_mayoreo,
 inventario.foto_url, inventario.caducidad, inventario.estado
 FROM inventario
