@@ -293,12 +293,15 @@ if(isset($_GET['funcion'])) {
             die();
         }
     }
-    else if($_GET['funcion'] === 'tabla-productos') {
-        echo json_encode(ControladorProductos::ctrlLeerTodos());
-        die();
-    }
-    else if($_GET['funcion'] === 'buscar-productos') {
-        //echo json_encode(ControladorProductos::ctrlLeerTodos());
-        die();
+    else if($_GET['funcion'] === 'listar-productos') {
+        if(isset($_POST['buscarProducto-txt'])) {
+            $palabraClave = $_POST['buscarProducto-txt'];
+            echo json_encode(ControladorProductos::ctrlBuscar($palabraClave));
+            die();
+        } else {
+            echo json_encode(ControladorProductos::ctrlLeerTodos());
+            die();
+        }
+        
     }
 }

@@ -367,15 +367,35 @@ const crearListaProductos = (contenedor, listaProductosJSON) => {
     });
 }
 
-/** Método que recupera con AJAX los registros de la tabla de productos */
-const recuperarProductos = (contenedorHTML) => {
-    fetch('controlador/ctrlInventario.php?funcion=tabla-productos')
-    .then(response => response.json())
-    .then(data => {
-        crearListaProductos(contenedorHTML, data);
-    }).catch(error => {
-        console.error('Error:', error);
-    });
+/** Método que recupera con AJAX los registros de los productos en BD */
+const recuperarProductos = (contenedorHTML, palabraClave='') => {
+
+    if(palabraClave !== '') {
+        const formData = new FormData();
+        formData.append('buscarProducto-txt', palabraClave);
+
+        fetch('controlador/ctrlInventario.php?funcion=listar-productos', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data == '')
+                contenedorHTML.innerText = `No hay coincidencias para '${palabraClave}'`;
+            else 
+                crearListaProductos(contenedorHTML, data);
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    } else {
+        fetch('controlador/ctrlInventario.php?funcion=listar-productos')
+        .then(response => response.json())
+        .then(data => {
+            crearListaProductos(contenedorHTML, data);
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    }
 }
 
 const btnListarProductos = document.getElementById("abrir__tabla-productos");
@@ -388,3 +408,27 @@ btnListarProductos.addEventListener('click', () => {
     recuperarProductos(contenedorProductos); // AJAX
 });
 
+// -------------------------------------------------------------------------------------------------------
+// Formulario de búsqueda de producto por id o nombre
+// -------------------------------------------------------------------------------------------------------
+const btnBuscarProductos = document.getElementById('btnBuscarProducto');
+const campoBuscarProducto = document.getElementById('buscarProducto-txt');
+const alertaBuscar = document.getElementById('alertaBuscar');
+
+btnBuscarProductos.addEventListener('click', () => {
+    event.preventDefault();
+    alertaBuscar.innerText = ""
+    alertaBuscar.style.visibility = 'hidden';
+
+    if(campoBuscarProducto.value.length !== 0 && campoBuscarProducto.value.length < 80) {
+        contenedor.innerHTML = ""; // Limpia el contenedor antes de crear la tabla
+        let contenedorProductos = document.createElement('div');
+        contenedorProductos.classList.add('contenedor-productos');
+        contenedor.appendChild(contenedorProductos);
+        recuperarProductos(contenedorProductos, campoBuscarProducto.value); // AJAX
+    } else {
+        alertaBuscar.innerText = "Debe ingresar una palabra clave"
+        alertaBuscar.style.visibility = 'visible';
+    }
+    
+});

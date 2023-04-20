@@ -17,19 +17,27 @@ class ModeloProductos extends ModeloConexion{
 
     /** Metodo que devuelve todo el listado de productos en la tabla inventario */
     public function leer($palabraClave='') {
-        $this->sentenciaSQL = ($palabraClave === '')
-            ? 'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
+        if ($palabraClave === '') {
+            $this->sentenciaSQL =
+            'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
                 inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta, inventario.precio_mayoreo,
                 inventario.foto_url, inventario.caducidad, inventario.estado
                 FROM inventario
-                INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id'
-            : 'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
+                INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id';
+        
+            return  $this->consultaRead();
+
+        } else {
+            $this->sentenciaSQL =
+            'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
                 inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta, inventario.precio_mayoreo,
                 inventario.foto_url, inventario.caducidad, inventario.estado
                 FROM inventario
                 INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id 
-                WHERE MATCH (inventario.producto_id, inventario.nombre) AGAINST(?)';
-        return  $this->consultaRead($palabraClave);
+                WHERE inventario.nombre LIKE ?';
+
+            return  $this->consultaRead("%" . $palabraClave . "%");
+        }
     }
 
     public function update($listaDatos) {

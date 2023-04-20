@@ -6,10 +6,11 @@
         <li class="inventario-menu__opcion"><a class="boton-main" id="abrir__alta-inventario">Formulario de Alta</a></li>
         <li class="inventario-menu__opcion"><a class="boton-main" id="abrir__tabla-productos">Lista de Productos</a></li>
         <li class="inventario-menu__opcion">
-            <span class="boton-main" id="barra-busqueda">
-                <input type="text" class="campo" name="buscar-producto" id="buscar-producto" placeholder="Buscar un producto">
-                <button class="boton enviar"><img src="vistas/img/magnifying-glass.svg" alt=""></button>
-            </span>
+            <form class="boton-main" id="barra-busqueda">
+                <input type="text" class="campo" name="buscarProducto-txt" id="buscarProducto-txt" placeholder="Buscar por Nombre" maxlength="80" required>
+                <button class="boton enviar" id="btnBuscarProducto"><img src="vistas/img/magnifying-glass.svg" alt=""></button>
+                <span class="alerta" id="alertaBuscar"></span>
+            </form>
         </li>
     </ul>
 
