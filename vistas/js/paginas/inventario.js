@@ -9,18 +9,17 @@ import { metodosAJAX } from "./ajax-inventario.js";
 const btnAbrirAlta = document.getElementById("abrir__alta-inventario");
 const contenedor = document.getElementById("subcontenedor");
 
+/** Método que recorre todas las etiquetas input para validar su contenido */
 const validar = (campos, etiquetaHTML, lista) => {
     campos.forEach(campo => {
         campo.style.background = 'var(--color-blanco)'; // Reestablece el color del campo
         if(metodosValidacion.validarCampo(campo) !== null){ // Si detecta un error
             campo.style.background = 'var(--color-crema)'; // Resalta el campo
             lista.push("<br>" + metodosValidacion.validarCampo(campo)); // Almacena el mensaje asociado
-        } else
-            return true; // No se detectaron errores
+        }
     });
     etiquetaHTML.style.visibility = 'visible';
     etiquetaHTML.innerHTML = lista;
-    return false; // Hubo errores
 }
 
 const construirFormularioCategoria = (contenedor) => {
@@ -198,3 +197,8 @@ btnListarProductos.addEventListener('click', () => {
     contenedor.appendChild(contenedorProductos);
     metodosAJAX.recuperarProductos(contenedorProductos);
 });
+
+function verDetallesProducto($id) {
+    event.preventDefault();
+    console.log("Funcionando")
+}

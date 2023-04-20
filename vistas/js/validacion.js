@@ -5,13 +5,13 @@ const mensajesDeErrorAltaProducto = {
         muyLargo: 'El máximo de letras es 20'
     },
     nombreProducto: { 
-        vacio: 'El nombre no puede quedar vacío',
-        muyCorto: 'El nombre debe ser mayor de 4 letras',
-        muyLargo: 'El nombre no puede tener más de 80 letras'
+        vacio: 'El nombre del producto no puede quedar vacío',
+        muyCorto: 'El nombre del producto debe ser mayor de 4 letras',
+        muyLargo: 'El nombre del producto no puede tener más de 80 letras'
     },
     categoriaID: { 
         vacio: 'Debe seleccionar una categoria',
-        muyLargo: 'Seleccione una categoria valida'
+        muyLargo: 'Seleccione una categoria de la lista'
     },
     descripcion: { muyLargo: 'La descripción no debe sobrepasar las 400 letras' },
     unidades: { 
@@ -31,7 +31,7 @@ const mensajesDeErrorAltaProducto = {
         formato: 'El precio de compra sólo admite números con hasta 2 decimales. Ej: 0.50'
     },
     precioVenta: { 
-        vacio: 'Debe ingresar un precio de venta',
+        vacio: 'Debe ingresar un precio de venta válido',
         limiteMin: 'El precio de venta debe ser mayor de 0',
         limiteMax: 'El precio de venta debe ser menores de 9999',
         formato: 'El precio de venta sólo admite números con hasta 2 decimales. Ej: 0.50',
@@ -65,7 +65,7 @@ const mostrarMensajeDeError = (campo, errorEncontrado) => {
     return mensaje;
 }
 
-// Método para el evento del botón enviar que ejecuta las validaciones de los campos del formulario
+/** Método recibe un input y valida su contenido de acuerdo con el tipo de data-form asignado */
 const validarCampo = (campo) => {
     // Recupera la etiqueta del formulario de acuerdo con el data-form="tipoDeInput" para saber qué campo es.
     let dataform = campo.dataset.form;
@@ -175,7 +175,8 @@ const validarCampo = (campo) => {
         break;
         case 'caducidad': // Sólo se evalúa si existe un dato
             if(campo.value.length !== 0) {
-                const FECHA_REGEX = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/; // Formato yyyy-mm-dd
+                // Formato yyyy-mm-dd, además los meses no pueden superar 12 y los días 31
+                const FECHA_REGEX = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
                 if(campo.value.match(FECHA_REGEX)) {
                     // Establecimiento de fechas mínimas y máximas para el formulario:
                     let fechaIngresada = new Date(campo.value)

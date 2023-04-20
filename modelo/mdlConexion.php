@@ -11,7 +11,7 @@ abstract class ModeloConexion {
     protected $db_password;
     protected $conexion;
     protected $sentenciaSQL;
-    protected $registros = array();
+    protected $registros = array(); // lista para los registros recuperados o para datos por registrar
 
     /** Método que inicia conexión con la base de datos */
     protected function abrirConexion() {
@@ -41,7 +41,7 @@ abstract class ModeloConexion {
         try {
             $this->abrirConexion(); # Conecta
             $registro = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
-            # Recorre la lista ligando parámetros a la sentencia SQL:
+            # Recorre la lista de datos ligando parámetros a la sentencia SQL:
             for($i = 0; $i < sizeof($this->registros); $i++) {
                 $registro -> bindParam($i+1, $this->registros[$i]);
             }

@@ -50,7 +50,14 @@ const registrarProducto = (formulario) => {
         body: formData
     }).then(response => response.text()
     ).then(data => {
-        alert(data);
+        const alertaHTML = document.getElementById('alerta-formulario');
+        alertaHTML.style.visibility = 'visible';
+        alertaHTML.innerText = data;
+        console.log(data);
+        if(data === 'Registro exitoso.') {
+            document.getElementById('formulario-alta-producto').reset();
+            alert(data);
+        }
     }).catch(error => {
         console.error('Error:', error);
     });

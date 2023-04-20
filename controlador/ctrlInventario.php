@@ -14,7 +14,7 @@ class ControladorProductos {
     private $caducidad;
 
     ## Métodos Constructores y Destructores
-    /*public function __construct($producto_id, $nombre, $categoria_id, $descripcion, $unidades, $unidadesMinimas,
+    public function __construct($producto_id, $nombre, $categoria_id, $descripcion, $unidades, $unidadesMinimas,
                                 $precioCompra, $precioVenta, $precioMayoreo, $estado, $foto_url, $caducidad) {
         $this->producto_id = $producto_id;
         $this->nombre = $nombre;
@@ -28,63 +28,127 @@ class ControladorProductos {
         $this->estado = $estado;
         $this->foto_url = $foto_url;
         $this->caducidad = $caducidad;
-    }*/
+    }
+
+    /** Sí es válido retorna la lista de datos a registrar */
+    public function validarDato($campo) {
+        $mensaje = null;
+
+        switch ($campo) {
+            case 'Folio del producto': # Requerido
+                $regex = '/^[a-zA-Z0-9]{1,20}$/';
+                $referencia = 'numeros y letras';
+
+                $mensaje = ControladorSeguridad::validarLongitudCadena($campo, $this->producto_id, 1, 20);
+                if ($mensaje === null)
+                    $mensaje = ControladorSeguridad::validarFormato($campo, $this->producto_id, $regex, $referencia);
+                return $mensaje;
+                break;
+            case 'Nombre de producto': # Requerido
+                $mensaje = ControladorSeguridad::validarLongitudCadena($campo, $this->nombre, 4, 80);
+                return $mensaje;
+                break;
+            case 'Categoria': # Requerido
+                $mensaje = ControladorSeguridad::validarLongitudCadena($campo, $this->categoria_id, 1, 5);
+                return $mensaje;
+                break;
+            case 'Descripcion':
+                return $mensaje = (strlen($this->descripcion) !== 0)
+                    ? ControladorSeguridad::validarLongitudCadena($campo, $this->descripcion, 0, 400)
+                    : null;
+                break;
+            case 'Unidades': # Requerido
+                $regex = '/^([0-9])*$/';
+                $referencia = 'numeros enteros';
+
+                $mensaje = ControladorSeguridad::validarLongitudCadena($campo, $this->unidades, 1, 4);
+                if ($mensaje === null)
+                    $mensaje = ControladorSeguridad::validarFormato($campo, $this->unidades, $regex, $referencia);
+                if ($mensaje === null)
+                    $mensaje = ControladorSeguridad::validarRangoNumerico($campo, $this->unidades, 1, 9999);
+                return $mensaje;
+                break;
+            case 'Unidades Minimas':
+                $regex = '/^([0-9])*$/';
+                $referencia = 'numeros enteros';
+
+                if (strlen($this->unidadesMinimas) !== 0) {
+                    $mensaje = ControladorSeguridad::validarFormato($campo, $this->unidadesMinimas, $regex, $referencia);
+                    if ($mensaje === null)
+                        $mensaje = ControladorSeguridad::validarRangoNumerico($campo, $this->unidadesMinimas, 0, 9999);
+                }
+                return $mensaje;
+                break;
+            case 'Precio de Compra':
+                $regex = '/^[0-9]+(\\.[0-9]{1,2})?$/';
+                $referencia = 'numeros con hasta 2 decimales';
+
+                if (strlen($this->precioCompra) !== 0) {
+                    $mensaje = ControladorSeguridad::validarFormato($campo, $this->precioCompra, $regex, $referencia);
+                    if ($mensaje === null)
+                        $mensaje = ControladorSeguridad::validarRangoNumerico($campo, $this->precioCompra, 0, 9999);
+                }
+                return $mensaje;
+                break;
+            case 'Precio de Venta': # Requerido
+                $regex = '/^[0-9]+(\\.[0-9]{1,2})?$/';
+                $referencia = 'numeros con hasta 2 decimales';
+
+                $mensaje = ControladorSeguridad::validarLongitudCadena($campo, $this->precioVenta, 1, 7);
+                if ($mensaje === null)
+                    $mensaje = ControladorSeguridad::validarFormato($campo, $this->precioVenta, $regex, $referencia);
+                if ($mensaje === null)
+                    $mensaje = ControladorSeguridad::validarRangoNumerico($campo, $this->precioVenta, 1, 9999);
+                return $mensaje;
+                break;
+            case 'Precio de Mayoreo':
+                $regex = '/^[0-9]+(\\.[0-9]{1,2})?$/';
+                $referencia = 'numeros con hasta 2 decimales';
+
+                if (strlen($this->precioMayoreo) !== 0) {
+                    $mensaje = ControladorSeguridad::validarFormato($campo, $this->precioMayoreo, $regex, $referencia);
+                    if ($mensaje === null)
+                        $mensaje = ControladorSeguridad::validarRangoNumerico($campo, $this->precioMayoreo, 0, 9999);
+                }
+                return $mensaje;
+                break;
+            case 'Caducidad':
+                if (strlen($this->caducidad) !== 0) {
+                    $mensaje = ControladorSeguridad::validarFecha($campo, $this->caducidad);
+                }
+                return $mensaje;
+                break;
+            case 'Estado': # Requerido
+                $regex = '/^([0-9])*$/';
+                $referencia = 'numeros enteros';
+
+                $mensaje = ControladorSeguridad::validarLongitudCadena($campo, $this->estado, 1, 1);
+                if ($mensaje === null)
+                    $mensaje = ControladorSeguridad::validarFormato($campo, $this->estado, $regex, $referencia);
+                if ($mensaje === null)
+                    $mensaje = ControladorSeguridad::validarRangoNumerico($campo, $this->estado, 0, 1);
+                return $mensaje;
+                break;
+            case 'Imagen URL':
+                $regex = '/\.(jpg|jpeg|png|gif|webp|svg)$/i';
+                $referencia = 'extensiones .jpg, .jpeg, .png, .gif, .webp o .svg';
+
+                if (strlen($this->foto_url) !== 0) {
+                    $mensaje = ControladorSeguridad::validarFormato($campo, $this->foto_url, $regex, $referencia);
+                    if ($mensaje === null)
+                        $mensaje = ControladorSeguridad::validarLongitudCadena($campo, $this->foto_url, 0, 250);
+                }
+                return $mensaje;
+                break;
+        }
+    }
 
     /** Método que registra un nuevo producto en la base de datos */
     public function ctrlRegistrar() {
-        require_once 'ctrlSeguridad.php';
-        $this->producto_id = $_POST['idProducto-txt'];
-        $this->nombre = $_POST['nombreProducto-txt'];
-        $this->categoria_id = ($_POST['categoriaProducto-txt']);
-        $this->descripcion = $_POST['descripcionProducto-txt'];
-        $this->unidades = $_POST['unidadesProducto-txt'];
-        $this->unidadesMinimas = $_POST['unidadesMinimasProducto-txt'];
-        $this->precioCompra = (strlen($_POST['precioCompraProducto-txt']) > 0)
-                                ? $_POST['precioCompraProducto-txt']
-                                : null;
-        $this->precioVenta = $_POST['precioVentaProducto-txt'];
-        $this->precioMayoreo = (strlen($_POST['precioMayoreoProducto-txt']) > 0)
-                                ? $_POST['precioMayoreoProducto-txt']
-                                : null;
-        $this->estado = 1; // Todos los productos registrados se asignan con un estado '1' correspondiente a activos
-        $this->foto_url = (strlen($_POST['imagenProducto-txt']) > 0)
-                            ? $_POST['imagenProducto-txt']
-                            : "vistas/img/image.svg";
-        $this->caducidad = (strlen($_POST['caducidadProducto-txt']) > 0)
-                            ? $_POST['caducidadProducto-txt']
-                            : null;
-        
-        # Validaciones
-        $listaCamposObligatorios = [$this->producto_id, $this->nombre, $this->categoria_id, $this->unidades, $this->precioVenta];
-        $listaCamposInt = [$this->categoria_id, $this->unidades, $this->unidadesMinimas];
-        $listaCamposDecimal = [$this->precioVenta];
-        if($this->precioCompra) array_push($listaCamposDecimal, $this->precioCompra);
-        if($this->precioMayoreo) array_push($listaCamposDecimal, $this->precioMayoreo);
-
-        # Validación extra de caducidad
-        $validacionCaducidad = ($this->caducidad !== null) 
-                                ? ControladorSeguridad::validarCaducidad($this->caducidad)
-                                : true;
-
-        if(ControladorSeguridad::validarVacio($listaCamposObligatorios) &&
-            ControladorSeguridad::validarEnterno($listaCamposInt) &&
-            ControladorSeguridad::validarDecimal($listaCamposDecimal) &&
-            $validacionCaducidad) {
-
-            $listaDatos = [$this->producto_id, $this->nombre, $this->categoria_id, $this->descripcion, $this->unidades, $this->unidadesMinimas, 
-                            $this->precioCompra, $this->precioVenta, $this->precioMayoreo, $this->estado, $this->foto_url, $this->caducidad];
-            $producto = new ModeloProductos;
-            return $producto -> registrar($listaDatos);
-
-        } # Control de las validaciones
-        elseif (!ControladorSeguridad::validarVacio($listaCamposObligatorios))
-            return "No se han completado los campos obligatorios.";
-        elseif (!ControladorSeguridad::validarEnterno($listaCamposInt))
-            return "Los campos Categoría, Unidades y Unidades Mínimas sólo aceptan números enteros menores a 9999";
-        elseif (!ControladorSeguridad::validarDecimal($listaCamposDecimal))
-            return "Los campos Precio de Venta, Precio de Compra y Precio Mayoreo sólo aceptan números con un máximo de 2 decimales";
-        elseif (!$validacionCaducidad)
-            return "La fecha de caducidad no puede ser anterior al día de hoy.";
+        $listaDatos = [$this->producto_id, $this->nombre, $this->categoria_id, $this->descripcion, $this->unidades, $this->unidadesMinimas, 
+        $this->precioCompra, $this->precioVenta, $this->precioMayoreo, $this->estado, $this->foto_url, $this->caducidad];
+        $productoNuevo = new ModeloProductos;
+        return $productoNuevo -> registrar($listaDatos);
     }
 
     /** Método que devuelve todos los productos de la tabla inventario */
@@ -108,7 +172,7 @@ class ControladorProductos {
             $modelo = new ModeloProductos();
             return $modelo -> createCategoria($categoria);
         } else {
-            return "No se insertaron los datos solicitados";
+            return "Debe ingresar una categoria";
         }
     }
 
@@ -138,13 +202,50 @@ if(isset($_GET['funcion'])) {
         die();
     } 
     else if($_GET['funcion'] === 'registrar-producto') {
-        $producto = new ControladorProductos();
-        echo $producto -> ctrlRegistrar();
-        die();
+        # Recuperación de valores
+        $producto_id = $_POST['idProducto-txt'];
+        $nombre = $_POST['nombreProducto-txt'];
+        $categoria_id = ($_POST['categoriaProducto-txt']);
+        $descripcion = $_POST['descripcionProducto-txt'];
+        $unidades = $_POST['unidadesProducto-txt'];
+        $unidadesMinimas = $_POST['unidadesMinimasProducto-txt'];
+        $precioCompra = $_POST['precioCompraProducto-txt'];
+        $precioVenta = $_POST['precioVentaProducto-txt'];
+        $precioMayoreo = $_POST['precioMayoreoProducto-txt'];
+        $estado = (isset($_POST['estadoProducto-txt']))
+                    ? $_POST['estadoProducto-txt']
+                    : 1; // Todos los productos por defecto se crean con valor 1 = activo
+        $foto_url = (strlen($_POST['imagenProducto-txt']) > 0)
+                    ? $_POST['imagenProducto-txt']
+                    : "vistas/img/image.svg";
+        $caducidad = $_POST['caducidadProducto-txt'];
+
+        $productoNuevo = new ControladorProductos(
+            $producto_id, $nombre, $categoria_id, $descripcion, $unidades, $unidadesMinimas, 
+            $precioCompra, $precioVenta, $precioMayoreo, $estado, $foto_url, $caducidad);
+
+        require_once 'ctrlSeguridad.php';
+
+        $listaErrores = [];
+        $listaCampos = ['Folio del producto', 'Nombre de producto', 'Categoria', 'Descripcion', 'Unidades', 'Unidades Minimas', 'Precio de Compra', 'Precio de Venta', 'Precio de Mayoreo', 'Caducidad', 'Imagen URL', 'Estado'];
+        
+        # Validación de los campos
+        foreach($listaCampos as $campo) {
+            if($productoNuevo->validarDato($campo) !== null) { # Si hay un error
+                array_push($listaErrores, $productoNuevo->validarDato($campo)); # Se agrega a la lista
+            }
+        }
+
+        if(count($listaErrores) > 0) { // Si existen errores devuelve la lista con ellos
+            echo json_encode($listaErrores);
+            die();
+        } else { # Sino, ejecuta el registro
+            echo $productoNuevo->ctrlRegistrar();
+            die();
+        }
     }
     else if($_GET['funcion'] === 'tabla-productos') {
-        $producto = new ControladorProductos();
-        echo json_encode($producto -> ctrlLeerTodos());
+        echo json_encode(ControladorProductos::ctrlLeerTodos());
         die();
     }
 }

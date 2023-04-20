@@ -78,15 +78,4 @@ class ModeloProductos extends ModeloConexion{
         
     }
 
-    public function createCaducidad() {
-
-    }
-
-    public function readCaducidad() {
-
-    }
-
-    public function updateCaducidad() {
-        
-    }
 }

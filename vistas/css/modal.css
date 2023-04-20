@@ -38,6 +38,11 @@
     filter: var(--filter-rosa);
 }
 
+.popup {
+    background: var(--color-blanco);
+    padding: 1rem;
+}
+
 /* Clase para desplegarla o cerrarla */
 .mostrar-modal {
     opacity: 1;
