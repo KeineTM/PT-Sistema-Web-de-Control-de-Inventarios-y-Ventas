@@ -84,6 +84,11 @@ inventario.foto_url, inventario.caducidad, inventario.estado
 FROM inventario
 INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id;
 
+UPDATE inventario SET producto_id = ?, nombre = ?, categoria_id = ?, descripcion = ?, unidades = ?, unidades_minimas = ?,
+precio_compra = ?, precio_venta = ?, precio_mayoreo = ?, foto_url = ?, caducidad = ?, estado = ? 
+WHERE producto_id = ?
+
+SELECT * FROM inventario WHERE MATCH (producto_id, nombre) AGAINST(?);
 --------------------------------------------------------------------------------------------
 -- Tabla de tipos de contacto
 CREATE TABLE `tipos_contacto` (

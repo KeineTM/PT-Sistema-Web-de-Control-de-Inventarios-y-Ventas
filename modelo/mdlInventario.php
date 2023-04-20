@@ -16,8 +16,8 @@ class ModeloProductos extends ModeloConexion{
     }
 
     /** Metodo que devuelve todo el listado de productos en la tabla inventario */
-    public function leer($id='') {
-        $this->sentenciaSQL = ($id === '')
+    public function leer($palabraClave='') {
+        $this->sentenciaSQL = ($palabraClave === '')
             ? 'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
                 inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta, inventario.precio_mayoreo,
                 inventario.foto_url, inventario.caducidad, inventario.estado
@@ -27,12 +27,17 @@ class ModeloProductos extends ModeloConexion{
                 inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta, inventario.precio_mayoreo,
                 inventario.foto_url, inventario.caducidad, inventario.estado
                 FROM inventario
-                INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id WHERE inventario.producto_id = ?';
-        return  $this->consultaRead($id);
+                INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id 
+                WHERE MATCH (inventario.producto_id, inventario.nombre) AGAINST(?)';
+        return  $this->consultaRead($palabraClave);
     }
 
-    public function update() {
-        
+    public function update($listaDatos) {
+        $this->registros = $listaDatos; # Cuidar que a lista de datos tenga el orden de la consulta, incluyendo la repetición del ID
+        $this->sentenciaSQL = "UPDATE inventario SET producto_id = ?, nombre = ?, categoria_id = ?, descripcion = ?, unidades = ?, 
+        unidades_minimas = ?, precio_compra = ?, precio_venta = ?, precio_mayoreo = ?, estado = ?, foto_url = ?, caducidad = ?
+        WHERE producto_id = ?";
+        return $this->consultasCUD();
     }
 
     public function delete() {

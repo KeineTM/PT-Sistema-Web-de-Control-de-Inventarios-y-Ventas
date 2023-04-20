@@ -65,6 +65,23 @@ const registrarProducto = (formulario) => {
     });
 }
 
+/** API FETCH para el registro de productos */
+const editarProducto = (formulario) => {
+    const formData = new FormData(formulario);
+
+    fetch('controlador/ctrlInventario.php?funcion=editar-producto', {
+        method: 'POST',
+        body: formData
+    }).then(response => response.text()
+    ).then(data => {
+        const alertaHTML = document.getElementById('alerta-formulario');
+        alertaHTML.style.visibility = 'visible';
+        alertaHTML.innerText = data;
+    }).catch(error => {
+        console.error('Error:', error);
+    });
+}
+
 /** Método que construye y llena la tabla de productos */
 const crearTablaProductos = (contenedor, listaProductosJSON) => {
     const tabla = document.createElement('table'); // Tabla
@@ -159,4 +176,5 @@ export const metodosAJAX = {
     cargarOptionsCategorias,
     registrarCategoria,
     registrarProducto,
+    editarProducto
 }

@@ -186,7 +186,7 @@ btnAbrirAlta.addEventListener("click", construirFormularioAlta);
 
 
 // -------------------------------------------------------------------------------------------------------
-// Formulario de edición de producto que se despliega desde una tj de producto
+// Formulario de edición de producto que se despliega desde una tj de producto precargando los datos almacenados en BD
 // -------------------------------------------------------------------------------------------------------
 /** Método de contrucción del formulario de edición que incluye la recarga de la información recuperada de BD */
 const construirFormularioEdicion = (producto_id, nombre, categoria_id, descripcion, unidades, 
@@ -315,13 +315,13 @@ const construirFormularioEdicion = (producto_id, nombre, categoria_id, descripci
         validar(campos, alertaHTML, listaErrores);
 
         (listaErrores.length === 0) // Si no hay errores
-            ? console.log('Los datos son válidos') // metodosAJAX.registrarProducto(formularioEdicion)
+            ? metodosAJAX.editarProducto(formularioEdicion)
             : console.log('Los datos no son válidos');
     });
 }
 
 // -------------------------------------------------------------------------------------------------------
-// Recuperación y listado de productos de la BD en tarjetas
+// Recuperación por medio de AJAX y listado de productos de la BD en tarjetas // PENDIENTE LA PAGINACIÓN
 // -------------------------------------------------------------------------------------------------------
 /** Método que recibe un contenedor HTML y una lista JSON, construye una lista de productos y los incluye en el contenedor */
 const crearListaProductos = (contenedor, listaProductosJSON) => {

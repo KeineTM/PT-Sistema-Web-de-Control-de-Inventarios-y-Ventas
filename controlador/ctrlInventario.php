@@ -151,18 +151,26 @@ class ControladorProductos {
         return $productoNuevo -> registrar($listaDatos);
     }
 
+    /** Método que actualiza un producto existente en la base de datos */
+    public function ctrlEditar() {
+        $listaDatos = [$this->producto_id, $this->nombre, $this->categoria_id, $this->descripcion, $this->unidades, $this->unidadesMinimas, 
+        $this->precioCompra, $this->precioVenta, $this->precioMayoreo, $this->estado, $this->foto_url, $this->caducidad, $this->producto_id];
+        $producto = new ModeloProductos;
+        return $producto -> update($listaDatos);
+    }
+
     /** Método que devuelve todos los productos de la tabla inventario */
     static public function ctrlLeerTodos() {
         $listaProductos = new ModeloProductos();
         return $listaProductos -> leer();
     }
 
-    static public function ctrlBuscar($id) {
-        if(strlen($id) > 0) {
+    static public function ctrlBuscar($palabraClave) {
+        if(strlen($palabraClave) > 0) {
             $listaProductos = new ModeloProductos();
-            return $listaProductos -> leer($id);
+            return $listaProductos -> leer($palabraClave);
         } else
-            return "No ";
+            return "Debe ingresar un dato para buscar";
     }
 
     ## Otros métodos
@@ -244,8 +252,53 @@ if(isset($_GET['funcion'])) {
             die();
         }
     }
+    else if($_GET['funcion'] === 'editar-producto') {
+        # Recuperación de valores
+        $producto_id = $_POST['idProducto-txt'];
+        $nombre = $_POST['nombreProducto-txt'];
+        $categoria_id = ($_POST['categoriaProducto-txt']);
+        $descripcion = $_POST['descripcionProducto-txt'];
+        $unidades = $_POST['unidadesProducto-txt'];
+        $unidadesMinimas = $_POST['unidadesMinimasProducto-txt'];
+        $precioCompra = $_POST['precioCompraProducto-txt'];
+        $precioVenta = $_POST['precioVentaProducto-txt'];
+        $precioMayoreo = $_POST['precioMayoreoProducto-txt'];
+        $estado = $_POST['estadoProducto-txt'];
+        $foto_url = (strlen($_POST['imagenProducto-txt']) > 0)
+                    ? $_POST['imagenProducto-txt']
+                    : "vistas/img/image.svg";
+        $caducidad = $_POST['caducidadProducto-txt'];
+
+        $productoNuevo = new ControladorProductos(
+            $producto_id, $nombre, $categoria_id, $descripcion, $unidades, $unidadesMinimas, 
+            $precioCompra, $precioVenta, $precioMayoreo, $estado, $foto_url, $caducidad);
+
+        require_once 'ctrlSeguridad.php';
+
+        $listaErrores = [];
+        $listaCampos = ['Folio del producto', 'Nombre de producto', 'Categoria', 'Descripcion', 'Unidades', 'Unidades Minimas', 'Precio de Compra', 'Precio de Venta', 'Precio de Mayoreo', 'Caducidad', 'Imagen URL', 'Estado'];
+        
+        # Validación de los campos
+        foreach($listaCampos as $campo) {
+            if($productoNuevo->validarDato($campo) !== null) { # Si hay un error
+                array_push($listaErrores, $productoNuevo->validarDato($campo)); # Se agrega a la lista
+            }
+        }
+
+        if(count($listaErrores) > 0) { // Si existen errores devuelve la lista con ellos
+            echo json_encode($listaErrores);
+            die();
+        } else { # Sino, ejecuta el registro
+            echo $productoNuevo->ctrlEditar();
+            die();
+        }
+    }
     else if($_GET['funcion'] === 'tabla-productos') {
         echo json_encode(ControladorProductos::ctrlLeerTodos());
+        die();
+    }
+    else if($_GET['funcion'] === 'buscar-productos') {
+        //echo json_encode(ControladorProductos::ctrlLeerTodos());
         die();
     }
 }
