@@ -4,7 +4,6 @@
 import { metodosModal } from "../modal.js";
 import { metodosValidacion } from "../validacion.js";
 import { metodosAJAX } from "./ajax-inventario.js";
-//import { metodosValidacion } from "../validacion.js";
 
 const btnAbrirAlta = document.getElementById("abrir__alta-inventario");
 const contenedor = document.getElementById("subcontenedor");
@@ -222,7 +221,7 @@ const construirFormularioEdicion = (producto_id, nombre, categoria_id, descripci
             </fieldset>
 
             <label for="descripcionProducto-txt">Descripción:</label>
-            <textarea class="campo" placeholder="Descripción" rows="3" cols="50" name="descripcionProducto-txt" data-form="descripcion" maxlength="400">${descripcion}</textarea>
+            <textarea class="campo" placeholder="Descripción" rows="3" cols="50" name="descripcionProducto-txt" data-form="descripcion" maxlength="400"></textarea>
         
             <fieldset class="formulario__fieldset-2-columnas">
                 <label for="unidadesProducto-txt">Unidades:</label>
@@ -273,11 +272,13 @@ const construirFormularioEdicion = (producto_id, nombre, categoria_id, descripci
     contenedor.innerHTML = ""; // Se vacía el contenedor para evitar duplicaciones
     contenedor.innerHTML = formularioEdicionProducto; // Se llena el contenedor
 
+    if(descripcion !== 'null' && descripcion !== null)
+        contenedor.querySelector('[data-form=descripcion]').value = descripcion;
     // Control de fecha de caducidad
-    if (caducidad !== '0000-00-00')
+    if (caducidad && caducidad !== null)
         contenedor.querySelector('[data-form=caducidad]').value = caducidad;
     // Control estado del producto
-    (estado === 1)
+    (estado == 1)
         ? document.getElementById('estado-activo').checked = true
         : document.getElementById('estado-inactivo').checked = true;
 
@@ -309,11 +310,8 @@ const construirFormularioEdicion = (producto_id, nombre, categoria_id, descripci
     // Registro de producto
     btnEditarProducto.addEventListener("click", () => {
         event.preventDefault();
-        console.log('click ' + nombre)
         let listaErrores = []; // Lista que almacenará los errores detectados
-
         validar(campos, alertaHTML, listaErrores);
-
         (listaErrores.length === 0) // Si no hay errores
             ? metodosAJAX.editarProducto(formularioEdicion)
             : console.log('Los datos no son válidos');
@@ -369,6 +367,7 @@ const crearListaProductos = (contenedor, listaProductosJSON) => {
 
 /** Método que recupera con AJAX los registros de los productos en BD */
 const recuperarProductos = (contenedorHTML, palabraClave='') => {
+    contenedorHTML.innerText = 'Buscando...';
 
     if(palabraClave !== '') {
         const formData = new FormData();
@@ -380,6 +379,7 @@ const recuperarProductos = (contenedorHTML, palabraClave='') => {
         })
         .then(response => response.json())
         .then(data => {
+            contenedorHTML.innerText = '';
             if(data == '')
                 contenedorHTML.innerText = `No hay coincidencias para '${palabraClave}'`;
             else 
@@ -391,6 +391,7 @@ const recuperarProductos = (contenedorHTML, palabraClave='') => {
         fetch('controlador/ctrlInventario.php?funcion=listar-productos')
         .then(response => response.json())
         .then(data => {
+            contenedorHTML.innerText = '';
             crearListaProductos(contenedorHTML, data);
         }).catch(error => {
             console.error('Error:', error);
@@ -409,7 +410,7 @@ btnListarProductos.addEventListener('click', () => {
 });
 
 // -------------------------------------------------------------------------------------------------------
-// Formulario de búsqueda de producto por id o nombre
+// Métodos para la búsqueda de producto por nombre, emplea los mismo métodos del listado de productos anterior
 // -------------------------------------------------------------------------------------------------------
 const btnBuscarProductos = document.getElementById('btnBuscarProducto');
 const campoBuscarProducto = document.getElementById('buscarProducto-txt');

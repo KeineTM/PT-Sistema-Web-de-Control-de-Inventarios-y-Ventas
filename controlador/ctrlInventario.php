@@ -38,7 +38,6 @@ class ControladorProductos {
             case 'Folio del producto': # Requerido
                 $regex = '/^[a-zA-Z0-9]{1,20}$/';
                 $referencia = 'numeros y letras';
-
                 $mensaje = ControladorSeguridad::validarLongitudCadena($campo, $this->producto_id, 1, 20);
                 if ($mensaje === null)
                     $mensaje = ControladorSeguridad::validarFormato($campo, $this->producto_id, $regex, $referencia);
@@ -53,14 +52,13 @@ class ControladorProductos {
                 return $mensaje;
                 break;
             case 'Descripcion':
-                return $mensaje = (strlen($this->descripcion) !== 0)
+                return $mensaje = (strlen($this->descripcion) !== 0 && $this->descripcion !== null)
                     ? ControladorSeguridad::validarLongitudCadena($campo, $this->descripcion, 0, 400)
                     : null;
                 break;
             case 'Unidades': # Requerido
                 $regex = '/^([0-9])*$/';
                 $referencia = 'numeros enteros';
-
                 $mensaje = ControladorSeguridad::validarLongitudCadena($campo, $this->unidades, 1, 4);
                 if ($mensaje === null)
                     $mensaje = ControladorSeguridad::validarFormato($campo, $this->unidades, $regex, $referencia);
@@ -72,7 +70,7 @@ class ControladorProductos {
                 $regex = '/^([0-9])*$/';
                 $referencia = 'numeros enteros';
 
-                if (strlen($this->unidadesMinimas) !== 0) {
+                if (strlen($this->unidadesMinimas) !== 0 && $this->unidadesMinimas !== null) {
                     $mensaje = ControladorSeguridad::validarFormato($campo, $this->unidadesMinimas, $regex, $referencia);
                     if ($mensaje === null)
                         $mensaje = ControladorSeguridad::validarRangoNumerico($campo, $this->unidadesMinimas, 0, 9999);
@@ -82,8 +80,7 @@ class ControladorProductos {
             case 'Precio de Compra':
                 $regex = '/^[0-9]+(\\.[0-9]{1,2})?$/';
                 $referencia = 'numeros con hasta 2 decimales';
-
-                if (strlen($this->precioCompra) !== 0) {
+                if (strlen($this->precioCompra) !== 0 && $this->precioCompra !== null) {
                     $mensaje = ControladorSeguridad::validarFormato($campo, $this->precioCompra, $regex, $referencia);
                     if ($mensaje === null)
                         $mensaje = ControladorSeguridad::validarRangoNumerico($campo, $this->precioCompra, 0, 9999);
@@ -93,7 +90,6 @@ class ControladorProductos {
             case 'Precio de Venta': # Requerido
                 $regex = '/^[0-9]+(\\.[0-9]{1,2})?$/';
                 $referencia = 'numeros con hasta 2 decimales';
-
                 $mensaje = ControladorSeguridad::validarLongitudCadena($campo, $this->precioVenta, 1, 7);
                 if ($mensaje === null)
                     $mensaje = ControladorSeguridad::validarFormato($campo, $this->precioVenta, $regex, $referencia);
@@ -105,7 +101,7 @@ class ControladorProductos {
                 $regex = '/^[0-9]+(\\.[0-9]{1,2})?$/';
                 $referencia = 'numeros con hasta 2 decimales';
 
-                if (strlen($this->precioMayoreo) !== 0) {
+                if (strlen($this->precioMayoreo) !== 0 && $this->precioMayoreo !== null) {
                     $mensaje = ControladorSeguridad::validarFormato($campo, $this->precioMayoreo, $regex, $referencia);
                     if ($mensaje === null)
                         $mensaje = ControladorSeguridad::validarRangoNumerico($campo, $this->precioMayoreo, 0, 9999);
@@ -113,7 +109,7 @@ class ControladorProductos {
                 return $mensaje;
                 break;
             case 'Caducidad':
-                if (strlen($this->caducidad) !== 0) {
+                if (strlen($this->caducidad) !== 0 && $this->caducidad !== null) {
                     $mensaje = ControladorSeguridad::validarFecha($campo, $this->caducidad);
                 }
                 return $mensaje;
@@ -211,22 +207,32 @@ if(isset($_GET['funcion'])) {
     } 
     else if($_GET['funcion'] === 'registrar-producto') {
         # Recuperación de valores
-        $producto_id = $_POST['idProducto-txt'];
-        $nombre = $_POST['nombreProducto-txt'];
-        $categoria_id = ($_POST['categoriaProducto-txt']);
-        $descripcion = $_POST['descripcionProducto-txt'];
-        $unidades = $_POST['unidadesProducto-txt'];
-        $unidadesMinimas = $_POST['unidadesMinimasProducto-txt'];
-        $precioCompra = $_POST['precioCompraProducto-txt'];
-        $precioVenta = $_POST['precioVentaProducto-txt'];
-        $precioMayoreo = $_POST['precioMayoreoProducto-txt'];
-        $estado = (isset($_POST['estadoProducto-txt']))
+        $producto_id = $_POST['idProducto-txt']; # Requerido
+        $nombre = $_POST['nombreProducto-txt']; # Requerido
+        $categoria_id = ($_POST['categoriaProducto-txt']); # Requerido
+        $descripcion = (strlen($_POST['descripcionProducto-txt']))
+                        ? $_POST['descripcionProducto-txt']
+                        : null;
+        $unidades = $_POST['unidadesProducto-txt']; # Requerido
+        $unidadesMinimas = (strlen($_POST['unidadesMinimasProducto-txt']))
+                            ? $_POST['unidadesMinimasProducto-txt']
+                            : null;
+        $precioCompra = (strlen($_POST['precioCompraProducto-txt']))
+                        ? $_POST['precioCompraProducto-txt']
+                        : null;
+        $precioVenta = $_POST['precioVentaProducto-txt']; # Requerido
+        $precioMayoreo = (strlen($_POST['precioMayoreoProducto-txt']))
+                        ? $_POST['precioMayoreoProducto-txt']
+                        : null;
+        $estado = (isset($_POST['estadoProducto-txt'])) # Requerido
                     ? $_POST['estadoProducto-txt']
-                    : 1; // Todos los productos por defecto se crean con valor 1 = activo
+                    : 1;
         $foto_url = (strlen($_POST['imagenProducto-txt']) > 0)
                     ? $_POST['imagenProducto-txt']
                     : "vistas/img/image.svg";
-        $caducidad = $_POST['caducidadProducto-txt'];
+        $caducidad = (strlen($_POST['caducidadProducto-txt']) > 0)
+                    ? $_POST['caducidadProducto-txt']
+                    : null;
 
         $productoNuevo = new ControladorProductos(
             $producto_id, $nombre, $categoria_id, $descripcion, $unidades, $unidadesMinimas, 
@@ -254,20 +260,30 @@ if(isset($_GET['funcion'])) {
     }
     else if($_GET['funcion'] === 'editar-producto') {
         # Recuperación de valores
-        $producto_id = $_POST['idProducto-txt'];
-        $nombre = $_POST['nombreProducto-txt'];
-        $categoria_id = ($_POST['categoriaProducto-txt']);
-        $descripcion = $_POST['descripcionProducto-txt'];
-        $unidades = $_POST['unidadesProducto-txt'];
-        $unidadesMinimas = $_POST['unidadesMinimasProducto-txt'];
-        $precioCompra = $_POST['precioCompraProducto-txt'];
-        $precioVenta = $_POST['precioVentaProducto-txt'];
-        $precioMayoreo = $_POST['precioMayoreoProducto-txt'];
-        $estado = $_POST['estadoProducto-txt'];
+        $producto_id = $_POST['idProducto-txt']; # Requerido
+        $nombre = $_POST['nombreProducto-txt']; # Requerido
+        $categoria_id = ($_POST['categoriaProducto-txt']); # Requerido
+        $descripcion = (strlen($_POST['descripcionProducto-txt']))
+                        ? $_POST['descripcionProducto-txt']
+                        : null;
+        $unidades = $_POST['unidadesProducto-txt']; # Requerido
+        $unidadesMinimas = (strlen($_POST['unidadesMinimasProducto-txt']))
+                            ? $_POST['unidadesMinimasProducto-txt']
+                            : null;
+        $precioCompra = (strlen($_POST['precioCompraProducto-txt']))
+                        ? $_POST['precioCompraProducto-txt']
+                        : null;
+        $precioVenta = $_POST['precioVentaProducto-txt']; # Requerido
+        $precioMayoreo = (strlen($_POST['precioMayoreoProducto-txt']))
+                        ? $_POST['precioMayoreoProducto-txt']
+                        : null;
+        $estado = $_POST['estadoProducto-txt']; # Requerido
         $foto_url = (strlen($_POST['imagenProducto-txt']) > 0)
                     ? $_POST['imagenProducto-txt']
                     : "vistas/img/image.svg";
-        $caducidad = $_POST['caducidadProducto-txt'];
+        $caducidad = (strlen($_POST['caducidadProducto-txt']) > 0)
+                    ? $_POST['caducidadProducto-txt']
+                    : null;
 
         $productoNuevo = new ControladorProductos(
             $producto_id, $nombre, $categoria_id, $descripcion, $unidades, $unidadesMinimas, 

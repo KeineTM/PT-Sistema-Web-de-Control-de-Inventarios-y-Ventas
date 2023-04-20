@@ -22,6 +22,10 @@ main {
     font-weight: bold;
 }
 
+.main-menu__opcion {
+    padding: 0.4rem;
+}
+
 #subcontenedor {
     display: flex;
     flex-direction: column;
@@ -34,11 +38,23 @@ main {
         display: grid;
         grid-template-columns: 11rem calc(100% - 11rem);
     }
+
+    .main-menu {
+        display: grid;
+        grid-template-columns: 50% 50%;
+        height: min-content;
+    }
 }
 
 @media screen and (min-width: 1024px) {
     main {
         display: grid;
         grid-template-columns: 13rem calc(100% - 13rem);
+    }
+
+    .main-menu {
+        display: grid;
+        grid-template-columns: 25% 25% 25% 25%;
+        height: min-content;
     }
 }

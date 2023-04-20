@@ -11,7 +11,8 @@ class ModeloProductos extends ModeloConexion{
     /** Método que registra un nuevo producto en la tabla. Recibe una lista con los tados a registrar. */
     public function registrar($listaDatos) {
         $this->registros = $listaDatos;
-        $this->sentenciaSQL = "INSERT INTO inventario VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+        $this->sentenciaSQL = 
+            'INSERT INTO inventario VALUES (?,?,?,?,?,?,?,?,?,?,?,?)';
         return $this->consultasCUD();
     }
 
@@ -21,7 +22,7 @@ class ModeloProductos extends ModeloConexion{
             $this->sentenciaSQL =
             'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
                 inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta, inventario.precio_mayoreo,
-                inventario.foto_url, inventario.caducidad, inventario.estado
+                inventario.estado, inventario.foto_url, inventario.caducidad
                 FROM inventario
                 INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id';
         
@@ -31,7 +32,7 @@ class ModeloProductos extends ModeloConexion{
             $this->sentenciaSQL =
             'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
                 inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta, inventario.precio_mayoreo,
-                inventario.foto_url, inventario.caducidad, inventario.estado
+                inventario.estado, inventario.foto_url, inventario.caducidad
                 FROM inventario
                 INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id 
                 WHERE inventario.nombre LIKE ?';
@@ -42,9 +43,10 @@ class ModeloProductos extends ModeloConexion{
 
     public function update($listaDatos) {
         $this->registros = $listaDatos; # Cuidar que a lista de datos tenga el orden de la consulta, incluyendo la repetición del ID
-        $this->sentenciaSQL = "UPDATE inventario SET producto_id = ?, nombre = ?, categoria_id = ?, descripcion = ?, unidades = ?, 
-        unidades_minimas = ?, precio_compra = ?, precio_venta = ?, precio_mayoreo = ?, estado = ?, foto_url = ?, caducidad = ?
-        WHERE producto_id = ?";
+        $this->sentenciaSQL = 
+            'UPDATE inventario SET producto_id = ?, nombre = ?, categoria_id = ?, descripcion = ?, unidades = ?, 
+            unidades_minimas = ?, precio_compra = ?, precio_venta = ?, precio_mayoreo = ?, estado = ?, foto_url = ?, caducidad = ? 
+            WHERE producto_id = ?';
         return $this->consultasCUD();
     }
 
