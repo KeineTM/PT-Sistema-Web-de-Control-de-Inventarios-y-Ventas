@@ -77,8 +77,8 @@ class ModeloProductos extends ModeloConexion{
     /** Este método devuelve todas las categorias en la tabla. Si se le indica un id, sólo devuelve el registro correspondiente */
     public function readCategorias($categoriaID='') {
         $this->sentenciaSQL = ($categoriaID === '')
-            ? "SELECT * FROM categorias_inventario"
-            : "SELECT * FROM categorias_inventario WHERE categoria_id = ?";
+            ? "SELECT * FROM categorias_inventario  ORDER BY categoria"
+            : "SELECT * FROM categorias_inventario WHERE categoria_id = ?  ORDER BY categoria";
         
         return $this-> consultaRead($categoriaID);
     }
@@ -89,8 +89,10 @@ class ModeloProductos extends ModeloConexion{
         return $this-> consultaRead();
     }
 
-    public function updateCategoria() {
-        
+    public function updateCategoria($listaDatos) {
+        $this->registros = $listaDatos;
+        $this->sentenciaSQL = 'UPDATE categorias_inventario SET categoria = ?, estado = ? WHERE categoria_id = ?';
+        return $this-> consultasCUD();
     }
 
 }

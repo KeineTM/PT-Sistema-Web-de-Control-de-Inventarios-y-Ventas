@@ -3,7 +3,7 @@
     <h2>Inventario</h2>
     <!-- Lista de opciones -->
     <ul class="main-menu">
-        <li class="main-menu__opcion"><a class="boton-main" id="abrir__alta-inventario">Formulario de Alta</a></li>
+        <li class="main-menu__opcion"><a class="boton-main" id="abrir__alta-inventario">Registrar Producto</a></li>
         <li class="main-menu__opcion"><a class="boton-main" id="abrir__tabla-productos">Lista de Productos</a></li>
         <li class="main-menu__opcion">
             <form class="boton-main" id="barra-busqueda">
@@ -12,6 +12,8 @@
                 <span class="alerta" id="alertaBuscar"></span>
             </form>
         </li>
+        <li class="main-menu__opcion"><a class="boton-main" id="abrir__alta-categoria">Registrar categorías</a></li>
+        <li class="main-menu__opcion"><a class="boton-main" id="abrir__editar-categoria">Editar categorías</a></li>
     </ul>
 
     <article id="subcontenedor"><!-- Aquí se carga contenido con JS --></article>

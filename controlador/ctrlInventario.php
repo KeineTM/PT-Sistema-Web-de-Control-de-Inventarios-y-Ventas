@@ -181,9 +181,22 @@ class ControladorProductos {
     }
 
     /** Este método devuelve un listado de las categorías registradas */
+    static public function ctrlCategorias() {
+        $modelo = new ModeloProductos();
+        return $modelo -> readCategorias();
+    }
+
+    /** Este método devuelve un listado de las categorías registradas */
     static public function ctrlCategoriasActivas() {
         $modelo = new ModeloProductos();
         return $modelo -> readCategoriasActivas();
+    }
+
+    /** Este método devuelve un listado de las categorías registradas */
+    static public function ctrlEditarCategorias($categoria_id, $categoria, $estado) {
+        $listaDatos = [$categoria, $estado, $categoria_id];
+        $modelo = new ModeloProductos();
+        return $modelo -> updateCategoria($listaDatos);
     }
 
     public function __toString() {
@@ -195,16 +208,39 @@ class ControladorProductos {
 if(isset($_GET['funcion'])) {
     require '../modelo/mdlInventario.php';
 
-    if($_GET['funcion'] === 'listar-categorias') {
+    if($_GET['funcion'] === 'listar-categorias-activas') {
         echo json_encode(ControladorProductos::ctrlCategoriasActivas());
         die();
-    } 
+    }
+    else if($_GET['funcion'] === 'listar-categorias') {
+        echo json_encode(ControladorProductos::ctrlCategorias());
+        die();
+    }
     else if($_GET['funcion'] === 'registrar-categoria') {
         $categoria = $_POST['categoria-txt'];
         $resultado = ControladorProductos::ctrlRegistrarCategoria($categoria);
         echo $resultado;
         die();
-    } 
+    }
+    else if($_GET['funcion'] === 'editar-categoria') {
+        $categoria_id = $_POST['categoriaProducto-txt'];
+        $categoria = $_POST['categoria-txt'];
+        $estado = $_POST['estadoCategoria-txt'];
+
+        if(strlen($categoria_id) > 0 && 
+        strlen($categoria) > 3 &&
+        strlen($categoria) < 50 &&
+        strlen($estado) === 1) {
+            $resultado = ControladorProductos::ctrlEditarCategorias($categoria_id, $categoria, $estado);
+            echo $resultado;
+            die();
+        } else if(!strlen($categoria_id) > 0)
+            return 'Debe ingresar un id de categoria valido';
+        else if(!strlen($categoria) > 3 || !strlen($categoria) < 50)
+            return 'Debe ingresar un nombre entre 3 y 50 letras';
+        else if(!strlen($estado) === 1)
+            return 'Debe ingresar un estado valido: 0 o 1';
+    }
     else if($_GET['funcion'] === 'registrar-producto') {
         # Recuperación de valores
         $producto_id = $_POST['idProducto-txt']; # Requerido

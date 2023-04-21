@@ -11,17 +11,29 @@ const cargarOptionsCategorias = (selectHTML, listaCategoriasJSON) => {
 };
 
 /** API FETCH para la recuperación y listado de categorías asíncronas */
-const recuperarCategorias = (selectCategorias, preseleccion="") => {
+const recuperarCategorias = (selectCategorias) => {
     fetch('controlador/ctrlInventario.php?funcion=listar-categorias') // Esta página de PHP se ejecuta y el resultado o respuesta (un echo) es el que regresa a este método
     .then(response => response.json()) // Aquí se recibe un JSON
     .then(data => {
         cargarOptionsCategorias(selectCategorias, data); // Carga la etiqueta select con el json recuperado
-        // Control de la categoría si se está recuperando un registro de la DB
-        if(preseleccion !== "") selectCategorias.value = preseleccion;
     }).catch(error => {
         console.error('Error:', error); // Devuelve el error si ocurrió uno
     });
 };
+
+/** API FETCH para la recuperación y listado de categorías asíncronas */
+const recuperarCategoriasActivas = (selectCategorias, preseleccion="") => {
+    fetch('controlador/ctrlInventario.php?funcion=listar-categorias-activas') 
+    .then(response => response.json())
+    .then(data => {
+        cargarOptionsCategorias(selectCategorias, data);
+        // Control de la categoría si se está recuperando un registro de la DB
+        if(preseleccion !== "") selectCategorias.value = preseleccion;
+    }).catch(error => {
+        console.error('Error:', error);
+    });
+};
+
 
 /** API FETCH para el registro de categorías asíncronas */
 const registrarCategoria = (categoria, selectCategorias) => {
@@ -37,7 +49,26 @@ const registrarCategoria = (categoria, selectCategorias) => {
     ).then(data => {
         alert(data); // Impresión en pantalla de la respuesta del registro
         categoria.value = ''; // Limpia el campo
-        recuperarCategorias(selectCategorias); // RECARGA LA LISTA DE OPCIONES CON OTRO AJAX del archivo inventario-listar-categorias-asincrono.js
+        if (selectCategorias != undefined)
+        recuperarCategoriasActivas(selectCategorias); // RECARGA LA LISTA DE OPCIONES CON OTRO AJAX del archivo inventario-listar-categorias-asincrono.js
+    }).catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+/** API FETCH para el registro de categorías asíncronas */
+const editarCategoria = (formulario, selectCategorias, alertaHTML) => {
+    const formData = new FormData(formulario);
+
+    fetch('controlador/ctrlInventario.php?funcion=editar-categoria', {
+        method: 'POST',
+        body: formData
+    }).then(response => response.text()
+    ).then(data => {
+        alertaHTML.style.visibility = 'visible';
+        alertaHTML.innerText = data;
+        if (selectCategorias != undefined)
+        recuperarCategorias(selectCategorias);
     }).catch(error => {
         console.error('Error:', error);
     });
@@ -173,8 +204,10 @@ const crearTablaProductos = (contenedor, listaProductosJSON) => {
 
 export const metodosAJAX = {
     recuperarCategorias,
+    recuperarCategoriasActivas,
     cargarOptionsCategorias,
     registrarCategoria,
+    editarCategoria,
     registrarProducto,
     editarProducto
 }
