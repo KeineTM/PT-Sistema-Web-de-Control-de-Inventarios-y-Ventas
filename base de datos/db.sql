@@ -88,7 +88,6 @@ UPDATE inventario SET producto_id = ?, nombre = ?, categoria_id = ?, descripcion
 precio_compra = ?, precio_venta = ?, precio_mayoreo = ?, foto_url = ?, caducidad = ?, estado = ? 
 WHERE producto_id = ?
 
-SELECT * FROM inventario WHERE MATCH (producto_id, nombre) AGAINST(?);
 --------------------------------------------------------------------------------------------
 -- Tabla de tipos de contacto
 CREATE TABLE `tipos_contacto` (
@@ -130,12 +129,13 @@ INSERT INTO tipos_operacion VALUES
 
 -- Tabla de operaciones
 CREATE TABLE `operaciones` (
-    operacion_id VARCHAR(10) PRIMARY KEY NOT NULL,
-    descuento DECIMAL(8,2) DEFAULT 0,
+    operacion_id BIGINT(18) ZEROFILL AUTO_INCREMENT PRIMARY KEY NOT NULL,
     total DECIMAL(8,2) NOT NULL,
+    descuento DECIMAL(8,2) DEFAULT 0 NOT NULL,
+    subtotal DECIMAL(8,2) NOT NULL,
     notas VARCHAR(250),
     tipo_operacion CHAR(2) NOT NULL,
-    estado BOOLEAN DEFAULT 1,
+    estado BOOLEAN DEFAULT 1 NOT NULL,
     cliente_id INT,
     FOREIGN KEY (tipo_operacion) REFERENCES tipos_operacion(tipo_id),
     FOREIGN KEY (cliente_id) REFERENCES contactos(contacto_id)
@@ -144,9 +144,10 @@ CREATE TABLE `operaciones` (
 
 -- Tabla pivote de productos incluídos en las operaciones
 CREATE TABLE `productos_incluidos` (
-    operacion_id VARCHAR(10)  NOT NULL,
+    operacion_id BIGINT(18) NOT NULL,
     producto_id VARCHAR(20) NOT NULL,
     unidades INT NOT NULL,
+    total_acumulado DECIMAL(8,2) NOT NULL,
     -- Llave primaria compuesta
     PRIMARY KEY (operacion_id, producto_id),
     FOREIGN KEY (operacion_id) REFERENCES operaciones(operacion_id),
@@ -168,7 +169,7 @@ INSERT INTO metodos_pago(metodo) VALUES
 
 -- Tabla pivote de abonos a las operaciones realizados por los empleados
 CREATE TABLE `abonos` (
-    operacion_id VARCHAR(10) NOT NULL,
+    operacion_id BIGINT(18) NOT NULL,
     empleado_id VARCHAR(6) NOT NULL,
     fecha TIMESTAMP NOT NULL,
     abono DECIMAL(8,2) NOT NULL,
@@ -254,7 +255,6 @@ CREATE USER 'empleadoGloboKids'@'localhost' IDENTIFIED BY "Empleado_PassWord_1";
 GRANT SELECT ON *.* TO 'empleadoGloboKids'@'localhost';
 GRANT INSERT, UPDATE ON tienda.categorias_inventario TO 'empleadoGloboKids'@'localhost';
 GRANT INSERT, UPDATE ON tienda.inventario TO 'empleadoGloboKids'@'localhost';
-GRANT INSERT, UPDATE ON tienda.perecederos_inventario TO 'empleadoGloboKids'@'localhost';
 GRANT INSERT, UPDATE ON tienda.contactos TO 'empleadoGloboKids'@'localhost';
 GRANT INSERT, UPDATE ON tienda.operaciones TO 'empleadoGloboKids'@'localhost';
 GRANT INSERT, UPDATE ON tienda.productos_incluidos TO 'empleadoGloboKids'@'localhost';

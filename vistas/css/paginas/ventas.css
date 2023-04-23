@@ -1,0 +1,100 @@
+#productos-agregados {
+    display: grid;
+    gap: .5rem;
+    padding: .5rem;
+}
+
+#form-agregar-producto {
+    display: flex;
+    flex-direction: column;
+}
+
+.tarjeta-venta {
+    display: flex;
+    flex-direction: column;
+}
+
+.tarjeta-venta span {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.tarjeta-venta img {
+    max-width: 3rem;
+}
+
+.tarjeta-venta ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.tarjeta-venta li {
+    display: flex;
+}
+
+.tarjeta-venta li:last-child {
+    font-weight: bold;
+}
+
+.tarjeta-venta a {
+    font-size: xx-large;
+    transition: .2s;
+    border-radius: 50%;
+}
+
+.contenedor-campos-operaciones {
+    display: grid;
+    grid-template-columns: 40% 60%;
+    margin: 0 0 0 auto;
+    max-width: 250px;
+}
+
+.contenedor-campos-operaciones .campo {
+    padding: 0.3rem;
+    border-radius: 0px;
+}
+
+/* Animación para los botones '+' y '-' */
+.rojo:hover {
+    color: var(--color-blanco);
+    background: var(--color-rojo);
+}
+
+.verde:hover {
+    color: var(--color-blanco);
+    background: var(--color-verde);
+}
+
+@media screen and (min-width: 425px){
+    .tarjeta-venta div{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    #form-agregar-producto {
+        flex-direction: row;
+    }
+
+    .resumen-operacion {
+        display: flex;
+        align-items: center;
+    }
+}
+
+@media screen and (min-width: 940px){
+    .tarjeta-venta div{
+        flex-direction: row;
+    }
+
+    .tarjeta-venta ul {
+        flex-direction: row;
+        gap: .5rem;
+    }
+
+    .tarjeta-venta li {
+        flex-direction: column;
+    }
+}

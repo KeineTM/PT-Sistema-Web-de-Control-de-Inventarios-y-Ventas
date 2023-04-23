@@ -34,6 +34,14 @@
     color: rgb(173, 171, 171);
 }
 
+.destacado {
+    font-size: 20px;
+}
+
+.destacado-mas {
+    font-size: 28px;
+}
+
 .formulario select {
     overflow-y: scroll;
 }
@@ -49,6 +57,24 @@
 
 .alerta {
     color: var(--color-rosa);
+    visibility: hidden;
+}
+
+.alerta-roja {
+    color: var(--color-blanco);
+    background: var(--color-rosa);
+    font-size: x-large;
+    padding: 1rem;
+}
+
+.alerta-verde {
+    color: var(--color-blanco);
+    background: var(--color-verde-claro);
+    font-size: x-large;
+    padding: 1rem;
+}
+
+.oculto {
     visibility: hidden;
 }
 
@@ -83,6 +109,11 @@
     gap: .5rem;
 }
 
+/* Estilo para las formularios pequeños */
+.mini {
+    max-width: 500px;
+}
+
 /* Estilo de botón */
 .redondo { 
     display: flex;
@@ -115,22 +146,24 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 #barra-busqueda {
-    display: grid;
-    grid-template-columns: 80% 20%;
 }
 
 #barra-busqueda input {
     border-color: var(--color-naranja);
     padding: 5px;
+    border-radius: 0px;
 }
 
 #barra-busqueda button {
-    height: 100%;
     border-radius: 5px;
+    background: var(--color-naranja);
+    transition: .4s;
+    border-radius: 0px;
+    height: 100%;
 }
 
 #barra-busqueda img {
-    height: 1rem;
+    height: 100%;
     filter: var(--filter-blanco);
 }
 
@@ -143,14 +176,14 @@ input[type=number]::-webkit-outer-spin-button {
     .formulario__encabezado {
         flex-direction: row;
     }
-
-    .formulario__botones-contenedor {
-        grid-template-columns: calc(50% - .25rem) calc(50% - .25rem);
-    }
 }
 
 @media screen and (min-width: 1024px) {
     .formulario__botones-contenedor {
         grid-template-columns: calc(33% - .25rem) calc(33% - .25rem) calc(33% - .25rem);
+    }
+
+    .dos-botones {
+        grid-template-columns: calc(50% - .25rem) calc(50% - .25rem);
     }
 }

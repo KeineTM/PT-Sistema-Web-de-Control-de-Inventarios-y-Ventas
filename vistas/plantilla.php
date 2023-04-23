@@ -38,6 +38,7 @@
     <link rel="stylesheet" href="vistas/css/tablas.css">
     <link rel="stylesheet" href="vistas/css/paginas/login.css">
     <link rel="stylesheet" href="vistas/css/paginas/inventario.css">
+    <link rel="stylesheet" href="vistas/css/paginas/ventas.css">
 
     <!-- Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

@@ -27,9 +27,7 @@ main {
 }
 
 #subcontenedor {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    display: grid;
     gap: 0.7rem;
 }
 

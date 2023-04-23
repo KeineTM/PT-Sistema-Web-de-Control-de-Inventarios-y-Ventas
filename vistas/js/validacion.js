@@ -115,12 +115,12 @@ const validarCampo = (campo) => {
         case 'unidades': // Requerido
             regex = new RegExp('^([0-9])*$'); // Valida sólo números
             if(campo.value.length === 0 ||
-                campo.value < 1 ||
+                campo.value < 0 ||
                 campo.value > 9999 ||
                 !regex.test(campo.value)) {
                 
                 if(campo.value.length === 0) return mostrarMensajeDeError(dataform, 'vacio');
-                if(campo.value < 1) return mostrarMensajeDeError(dataform, 'limiteMin');
+                if(campo.value < 0) return mostrarMensajeDeError(dataform, 'limiteMin');
                 if(campo.value > 9999) return mostrarMensajeDeError(dataform, 'limiteMax');
                 if(!regex.test(campo.value)) return mostrarMensajeDeError(dataform, 'formato');
             } else

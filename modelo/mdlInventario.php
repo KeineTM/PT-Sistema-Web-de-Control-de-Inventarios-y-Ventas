@@ -41,12 +41,32 @@ class ModeloProductos extends ModeloConexion{
         }
     }
 
-    public function update($listaDatos) {
+    public function leerUno($producto_id) {
+        $this->sentenciaSQL = 'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
+            inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta, inventario.precio_mayoreo,
+            inventario.estado, inventario.foto_url, inventario.caducidad
+            FROM inventario
+            INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id 
+            WHERE inventario.producto_id = ?
+            LIMIT 1';
+
+        return $this->consultaRead($producto_id);
+    }
+
+    public function editar($listaDatos) {
         $this->registros = $listaDatos; # Cuidar que a lista de datos tenga el orden de la consulta, incluyendo la repetición del ID
         $this->sentenciaSQL = 
             'UPDATE inventario SET producto_id = ?, nombre = ?, categoria_id = ?, descripcion = ?, unidades = ?, 
             unidades_minimas = ?, precio_compra = ?, precio_venta = ?, precio_mayoreo = ?, estado = ?, foto_url = ?, caducidad = ? 
             WHERE producto_id = ?';
+        return $this->consultasCUD();
+    }
+
+    /** Método usado por la clase ctrlOperaciones para cambiar el número de unidades de un producto */
+    public function editarUnidades($listaDatos) {
+        $this->registros = $listaDatos;
+        $this->sentenciaSQL = 
+            'UPDATE inventario SET unidades = unidades - ? WHERE producto_id = ?';
         return $this->consultasCUD();
     }
 

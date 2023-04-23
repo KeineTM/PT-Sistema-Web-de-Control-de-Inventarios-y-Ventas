@@ -37,7 +37,7 @@ abstract class ModeloConexion {
     }
 
     /** Método para ejecutar consultas que realizan cambios en la base de datos sin devolver datos: Create, Update y Delete. */
-    protected function consultasCUD() {
+    protected function consultasCUD($retornar_id = false) {
         try {
             $this->abrirConexion(); # Conecta
             $registro = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
@@ -48,7 +48,11 @@ abstract class ModeloConexion {
 
             $registro -> execute(); # Ejecuta
 
-            return "Registro exitoso.";
+            if($retornar_id === true) { # Si se especifica que debe retornar el último ID registrado
+                $id = $this->conexion->lastInsertId();
+                return $id;
+            } else
+                return true;
 
         } catch(PDOException $e) {
             return 'Error: ' .$e->getMessage();

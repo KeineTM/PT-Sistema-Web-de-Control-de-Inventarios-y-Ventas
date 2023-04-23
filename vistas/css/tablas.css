@@ -3,9 +3,8 @@
 }
 
 .tabla thead{
-    border-top: 5px solid var(--color-verde);
+    border-top: 5px solid var(--color-cielo);
     background: var(--color-blanco);
-    font-weight: bold;
 }
 
 .tabla th, .tabla td {

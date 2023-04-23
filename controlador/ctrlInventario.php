@@ -1,17 +1,20 @@
 <?php
 class ControladorProductos {
-    private $producto_id;
-    private $nombre;
-    private $categoria_id;
-    private $descripcion;
-    private $unidades;
-    private $unidadesMinimas;
-    private $precioCompra;
-    private $precioVenta;
-    private $precioMayoreo;
-    private $estado;
-    private $foto_url;
-    private $caducidad;
+    public $producto_id;
+    public $nombre;
+    public $categoria_id;
+    public $descripcion;
+    public $unidades;
+    public $unidadesMinimas;
+    public $precioCompra;
+    public $precioVenta;
+    public $precioMayoreo;
+    public $estado;
+    public $foto_url;
+    public $caducidad;
+
+    public $cantidad;
+    public $total;
 
     ## Métodos Constructores y Destructores
     public function __construct($producto_id, $nombre, $categoria_id, $descripcion, $unidades, $unidadesMinimas,
@@ -35,7 +38,7 @@ class ControladorProductos {
         $mensaje = null;
 
         switch ($campo) {
-            case 'Folio del producto': # Requerido
+            case 'Codigo del producto': # Requerido
                 $regex = '/^[a-zA-Z0-9]{1,20}$/';
                 $referencia = 'numeros y letras';
                 $mensaje = ControladorSeguridad::validarLongitudCadena($campo, $this->producto_id, 1, 20);
@@ -63,7 +66,7 @@ class ControladorProductos {
                 if ($mensaje === null)
                     $mensaje = ControladorSeguridad::validarFormato($campo, $this->unidades, $regex, $referencia);
                 if ($mensaje === null)
-                    $mensaje = ControladorSeguridad::validarRangoNumerico($campo, $this->unidades, 1, 9999);
+                    $mensaje = ControladorSeguridad::validarRangoNumerico($campo, $this->unidades, 0, 9999);
                 return $mensaje;
                 break;
             case 'Unidades Minimas':
@@ -144,7 +147,10 @@ class ControladorProductos {
         $listaDatos = [$this->producto_id, $this->nombre, $this->categoria_id, $this->descripcion, $this->unidades, $this->unidadesMinimas, 
         $this->precioCompra, $this->precioVenta, $this->precioMayoreo, $this->estado, $this->foto_url, $this->caducidad];
         $productoNuevo = new ModeloProductos;
-        return $productoNuevo -> registrar($listaDatos);
+        $resultado = $productoNuevo -> registrar($listaDatos);
+        return ($resultado === true)
+                ? 'Registro correcto'
+                : 'Ocurrio un error, el codigo del producto ya esta registrado.';
     }
 
     /** Método que actualiza un producto existente en la base de datos */
@@ -152,7 +158,10 @@ class ControladorProductos {
         $listaDatos = [$this->producto_id, $this->nombre, $this->categoria_id, $this->descripcion, $this->unidades, $this->unidadesMinimas, 
         $this->precioCompra, $this->precioVenta, $this->precioMayoreo, $this->estado, $this->foto_url, $this->caducidad, $this->producto_id];
         $producto = new ModeloProductos;
-        return $producto -> update($listaDatos);
+        $resultado = $producto -> editar($listaDatos);
+        return ($resultado === true)
+                ? 'Registro editado correctamente'
+                : 'Ocurrio un error, el codigo del producto ya esta registrado. Detalles: ' . $resultado;
     }
 
     /** Método que devuelve todos los productos de la tabla inventario */
@@ -161,7 +170,8 @@ class ControladorProductos {
         return $listaProductos -> leer();
     }
 
-    static public function ctrlBuscar($palabraClave) {
+    /** Método que devuelve las coincidencias encontradas en una búsqueda */
+    static public function ctrlBuscarTodos($palabraClave) {
         if(strlen($palabraClave) > 0) {
             $listaProductos = new ModeloProductos();
             return $listaProductos -> leer($palabraClave);
@@ -169,12 +179,27 @@ class ControladorProductos {
             return "Debe ingresar un dato para buscar";
     }
 
+    static public function ctrlBuscarUno($producto_id) {
+        $producto = new ControladorProductos($producto_id, '', '', '', '', '', '', '', '', '', '', '');
+        $validacion = $producto->validarDato('Codigo de producto');
+        
+        if($validacion === null) {
+            $consulta = new ModeloProductos();
+            return $consulta -> leerUno($producto_id);
+        } else {
+            return $validacion;
+        }
+    }
+
     ## Otros métodos
     /** Método para registrar una categoría, recibe una cadena con el nombre */
     static public function ctrlRegistrarCategoria($categoria) {
         if(strlen($categoria) > 0) {
             $modelo = new ModeloProductos();
-            return $modelo -> createCategoria($categoria);
+            $respuesta = $modelo -> createCategoria($categoria);
+            return ($respuesta === true)
+                    ? 'Registro correcto'
+                    : 'Categoria duplicada';
         } else {
             return "Debe ingresar una categoria";
         }
@@ -186,17 +211,20 @@ class ControladorProductos {
         return $modelo -> readCategorias();
     }
 
-    /** Este método devuelve un listado de las categorías registradas */
+    /** Este método devuelve un listado de las categorías activas registradas */
     static public function ctrlCategoriasActivas() {
         $modelo = new ModeloProductos();
         return $modelo -> readCategoriasActivas();
     }
 
-    /** Este método devuelve un listado de las categorías registradas */
+    /** Este método edita una categoria */
     static public function ctrlEditarCategorias($categoria_id, $categoria, $estado) {
         $listaDatos = [$categoria, $estado, $categoria_id];
         $modelo = new ModeloProductos();
-        return $modelo -> updateCategoria($listaDatos);
+        $resultado = $modelo -> updateCategoria($listaDatos);
+        return ($resultado === true)
+                ? 'Categoria editada correctamente'
+                : 'Error: Categoria duplicada';
     }
 
     public function __toString() {
@@ -277,7 +305,7 @@ if(isset($_GET['funcion'])) {
         require_once 'ctrlSeguridad.php';
 
         $listaErrores = [];
-        $listaCampos = ['Folio del producto', 'Nombre de producto', 'Categoria', 'Descripcion', 'Unidades', 'Unidades Minimas', 'Precio de Compra', 'Precio de Venta', 'Precio de Mayoreo', 'Caducidad', 'Imagen URL', 'Estado'];
+        $listaCampos = ['Codigo del producto', 'Nombre de producto', 'Categoria', 'Descripcion', 'Unidades', 'Unidades Minimas', 'Precio de Compra', 'Precio de Venta', 'Precio de Mayoreo', 'Caducidad', 'Imagen URL', 'Estado'];
         
         # Validación de los campos
         foreach($listaCampos as $campo) {
@@ -328,7 +356,7 @@ if(isset($_GET['funcion'])) {
         require_once 'ctrlSeguridad.php';
 
         $listaErrores = [];
-        $listaCampos = ['Folio del producto', 'Nombre de producto', 'Categoria', 'Descripcion', 'Unidades', 'Unidades Minimas', 'Precio de Compra', 'Precio de Venta', 'Precio de Mayoreo', 'Caducidad', 'Imagen URL', 'Estado'];
+        $listaCampos = ['Codigo del producto', 'Nombre de producto', 'Categoria', 'Descripcion', 'Unidades', 'Unidades Minimas', 'Precio de Compra', 'Precio de Venta', 'Precio de Mayoreo', 'Caducidad', 'Imagen URL', 'Estado'];
         
         # Validación de los campos
         foreach($listaCampos as $campo) {
@@ -348,9 +376,13 @@ if(isset($_GET['funcion'])) {
     else if($_GET['funcion'] === 'listar-productos') {
         if(isset($_POST['buscarProducto-txt'])) {
             $palabraClave = $_POST['buscarProducto-txt'];
-            echo json_encode(ControladorProductos::ctrlBuscar($palabraClave));
+            #$limit = $_POST['limit-txt'];
+            #$offset = $_POST['offset-txt'];
+            echo json_encode(ControladorProductos::ctrlBuscarTodos($palabraClave));
             die();
         } else {
+            #$limit = $_POST['limit-txt'];
+            #$offset = $_POST['offset-txt'];
             echo json_encode(ControladorProductos::ctrlLeerTodos());
             die();
         }

@@ -32,8 +32,8 @@ const construirFormularioAltaCategoria = (contenedor) => {
             <form action="post" class="formulario" id="formulario-alta-categoria">
                 <h3>Agregar categoría</h3>
                 <input class="campo" type="text" placeholder="Categoria" maxlength="100" id="categoria-txt" name="categoria-txt" maxlength="50" required>
-                <button class="boton-registrar boton" id="btnRegistrarCategoria">Agregar</button>
-                <button class="boton" id="btnCerrarMiniModal"><div class="boton-interior-blanco">Cancelar</div></button>
+                <button class="boton-form enviar" id="btnRegistrarCategoria">Agregar</button>
+                <button class="boton-form otro" id="btnCerrarMiniModal">Cancelar</button>
             </form>
         </div>`;
 
@@ -70,33 +70,29 @@ const construirFormularioAltaCategoria = (contenedor) => {
 
 const construirFormularioEdicionCategoria = (contenedor) => {
     const formularioEdicionCategoria = 
-        `<div class="modal__contenedor" id="contenedorFormularioCategoria">
-            <span class="formulario__encabezado">
-                <img class="formulario__icono" src="vistas/img/file-invoice.svg" alt="Formulario">
-                <h2>Formulario de Edición de categoría</h2>
-                <span class="alerta" id="alerta-categoria"></span>
-            </span>
-            
-            <form action="post" class="formulario" id="formulario-edicion-categoria">
-                <h3>Seleccione la categoría a editar:</h3>
-                <select class="campo" id="categoriaProducto-txt" name="categoriaProducto-txt" data-form="categoriaID" required></select>
-                <br>
-                <label>Nombre de la categoría:</label>
-                <input class="campo" type="text" placeholder="Categoria" maxlength="100" id="categoria-txt" name="categoria-txt" maxlength="50" required>
+        `<span class="formulario__encabezado">
+            <img class="formulario__icono" src="vistas/img/file-invoice.svg" alt="Formulario">
+            <h2>Formulario de Edición de categoría</h2>
+            <span class="alerta" id="alerta-edicion-categoria"></span>
+        </span>
+        <form action="post" class="formulario mini" id="formulario-edicion-categoria">
+            <h3>Seleccione la categoría a editar:</h3>
+            <select class="campo" id="categoriaProducto-txt" name="categoriaProducto-txt" data-form="categoriaID" required></select>
+            <label>Nombre de la categoría:</label>
+            <input class="campo" type="text" placeholder="Categoria" maxlength="100" id="categoria-txt" name="categoria-txt" maxlength="50" required>
                 
-                Para retirar esta categoría de las opciones del Inventario seleccione la opción 'Dar de baja' y después haga clic en 'Editar'.<br><br>
-                Para reintegrarla, seleccione la opción 'Activo' y después haga clic en 'Editar'.
-                <fieldset class="formulario__fieldset-2-columnas">
-                    <label for="estadoProducto-txt">Activo</label>
-                    <input type="radio" id='estado-activo' name="estadoCategoria-txt" value="1" data-form="estado" required>
-                    <label for="estadoProducto-txt">Dar de baja</label>
-                    <input type="radio" id='estado-inactivo' name="estadoCategoria-txt" value="0" data-form="estado" required>
-                </fieldset>
+            Para retirar esta categoría de las opciones del Inventario seleccione la opción 'Dar de baja' y después haga clic en 'Editar'.<br><br>
+            Para reintegrarla, seleccione la opción 'Activo' y después haga clic en 'Editar'.
+            <fieldset class="formulario__fieldset-2-columnas">
+                <label for="estadoProducto-txt">Activo</label>
+                <input type="radio" id='estado-activo' name="estadoCategoria-txt" value="1" data-form="estado" required>
+                <label for="estadoProducto-txt">Dar de baja</label>
+                <input type="radio" id='estado-inactivo' name="estadoCategoria-txt" value="0" data-form="estado" required>
+            </fieldset>
                 
-                <button class="boton-registrar boton" id="btnEditarCategoria">Editar</button>
-                <button class="boton" id="btnCerrarMiniModal"><div class="boton-interior-blanco">Cancelar</div></button>
-            </form>
-        </div>`;
+            <button class="boton-form enviar" id="btnEditarCategoria">Editar</button>
+            <button class="boton-form otro" id="btnCerrarMiniModal">Cancelar</button>
+        </form>`;
 
     contenedor.innerHTML = "";
     contenedor.innerHTML = formularioEdicionCategoria;
@@ -120,7 +116,7 @@ const construirFormularioEdicionCategoria = (contenedor) => {
 
     // Edición de categoría
     const btnEditarCategoria = document.getElementById('btnEditarCategoria');
-    const alertaCategoria = document.getElementById('alerta-categoria');
+    const alertaCategoria = document.getElementById('alerta-edicion-categoria');
     const formulario = document.getElementById('formulario-edicion-categoria');
 
     
@@ -401,7 +397,7 @@ const construirFormularioEdicion = (producto_id, nombre, categoria_id, descripci
 
 
 // -------------------------------------------------------------------------------------------------------
-// Recuperación por medio de AJAX y listado de productos de la BD en tarjetas // PENDIENTE LA PAGINACIÓN
+// Recuperación por medio de AJAX y listado de productos de la BD en tarjetas por páginas
 // -------------------------------------------------------------------------------------------------------
 /** Método que recibe un contenedor HTML y una lista JSON, construye una lista de productos y los incluye en el contenedor */
 const crearListaProductos = (contenedor, listaProductosJSON) => {
@@ -447,7 +443,6 @@ const crearListaProductos = (contenedor, listaProductosJSON) => {
     });
 }
 
-
 /** Método que recupera con AJAX los registros de los productos en BD */
 const recuperarProductos = (contenedorHTML, palabraClave='') => {
     contenedorHTML.innerText = 'Buscando...';
@@ -480,6 +475,13 @@ const recuperarProductos = (contenedorHTML, palabraClave='') => {
             console.error('Error:', error);
         });
     }
+}
+
+const paginacion = () => {
+    let productosPorPagina = 12;
+    let pagina = 1;
+    let limit = productosPorPagina;
+    let offset = (pagina - 1) * productosPorPagina;
 }
 
 const btnListarProductos = document.getElementById("abrir__tabla-productos");
