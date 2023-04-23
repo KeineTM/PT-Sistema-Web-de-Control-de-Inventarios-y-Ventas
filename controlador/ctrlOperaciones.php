@@ -42,7 +42,7 @@ class ControladorOperaciones
         $this->abono = $abono;
         $this->metodo_pago = $metodo_pago;
     }
-    # Métodos
+    //------------------------ Métodos del carrito-------------------------------------
     /** Método que calcula el total de la suma de productos (sin descuentos) */
     static public function calcularSubtotal() {
         $total = 0;
@@ -196,6 +196,9 @@ class ControladorOperaciones
         exit;
     }
 
+    //---------------------------------------------------------------------------------------
+    //------------------------ Métodos de la operación-------------------------------------
+
     /** Método para validar un el descuento
      * Retorna false si el dato no coincide con el formato esperado (números y letras)
      * Retorna false si el descuento es mayor al 50% del total
@@ -215,7 +218,7 @@ class ControladorOperaciones
 
             if ($resultado === null) { # Pasó las 2 validaciones
                 $subtotal = self::calcularSubtotal();
-                if ($descuento >= ($subtotal / 2)) # Evalúa que el descuento con el subtotal
+                if ($descuento > ($subtotal / 2)) # Evalúa que el descuento con el subtotal
                     return $resultado = false; # El descuento es igual o supera el subtotal
                 else
                     return $resultado = true; # El descuento es válido
@@ -233,7 +236,7 @@ class ControladorOperaciones
      */
     public function ctrlRegistrarOperacion() {
         $regex = '/^([0-9])*$/'; # números
-        $datos_operacion = [
+        $listaDatos = [
             $this->total,
             $this->descuento,
             $this->subtotal,
@@ -243,12 +246,12 @@ class ControladorOperaciones
             $this->cliente_id
         ];
         $modelo_registro = new ModeloOperaciones();
-        $resultado = $modelo_registro->mdlRegistrarOperacion($datos_operacion);
+        $resultado = $modelo_registro->mdlRegistrarOperacion($listaDatos);
 
         # El resultado es una cadena que puede ser el ID o un error
         # Se evalúa que la cadena se componga únicamente por números, pues es el formato del ID
         return (preg_match($regex, $resultado))
-                ? $resultado
+                ? $resultado # devuelve el ID
                 : false;
     }
 
@@ -257,11 +260,11 @@ class ControladorOperaciones
      * Devuelve false si ocurrió un error. Y true si todo salió correcto.
      */
     public function ctrlRegistrarProductosIncuidos($operacion_id) {
-        $resultado = null;
+        $resultado = false;
         $registro_operacion = new ModeloOperaciones();
         $edicion_inventario = new ModeloProductos();
 
-        foreach($_SESSION['carrito'] as $producto) {
+        foreach($this->productos_incuidos as $producto) {
             $datos_por_producto = [$operacion_id];
             $datos_edicion_unidades = [];
 
@@ -271,7 +274,7 @@ class ControladorOperaciones
             # Registra los productos del carrito
             $resultado = $registro_operacion -> mdlRegistrarProductosIncluidos($datos_por_producto);
             
-            if($resultado === true) {
+            if($resultado === true) { # Si el resultado es estrictamente igual a true significa que todo salió correcto
                 array_push($datos_edicion_unidades, $producto->cantidad);
                 array_push($datos_edicion_unidades, $producto->producto_id);
                 # Los resta del inventario
@@ -279,11 +282,44 @@ class ControladorOperaciones
             }
         }
 
-        return true;
+        return $resultado;
     }
 
-    public function ctrlRegistrarAbono() {
+    /** Método que registra los datos del pago o abono y el usuario que la realizó en una operación previamente registrada */
+    public function ctrlRegistrarAbono($operacion_id) {
+        $resultado = null;
+        $listaDatos = [$operacion_id, $this->empleado_id, $this->fecha, $this->abono, $this->metodo_pago];
+        $modelo_registro = new ModeloOperaciones();
+        $resultado = $modelo_registro -> mdlRegistrarAbono($listaDatos);
+        return $resultado;
+    }
 
+    /** Método que ejecuta la serie de consultas que componen una operación completa:
+     * Registro en tabla operaciones.
+     * Registro en tabla productos incluidos.
+     * Actualización de unidades en tabla de productos.
+     * Registro en tabla de abonos.
+     * Retorna true si todo salió correctamente.
+     * De haber un error retorna dicho error.
+     */
+    public function ctrlRegistrarOperacionCompleta() {
+        $datos_operacion = [
+            $this->total,
+            $this->descuento,
+            $this->subtotal,
+            $this->notas,
+            $this->tipo_operacion,
+            $this->estado,
+            $this->cliente_id
+        ];
+        $datos_abono = [
+            $this->empleado_id, 
+            $this->fecha, 
+            $this->abono, 
+            $this->metodo_pago
+        ];
+        $registro = new ModeloOperaciones();
+        return $registro -> mdlRegistrarOperacionCompleta($datos_operacion, $this->productos_incuidos, $datos_abono);
     }
 
     static public function ctrlCrearVenta() {
@@ -313,9 +349,9 @@ class ControladorOperaciones
         $tipo_operacion = 'VE'; # Venta, Requerido
         $estado = 1; # 1 = Completada, Sólo se usa 0 para Apartados
         $cliente_id = null; # No se requiere cliente para la venta
-        $productos_incuidos = $_SESSION['carrito']; # Productos incluídos en el carrito al momento de procesar la venta
+        $productos_incuidos = new ArrayObject($_SESSION['carrito']); # Productos incluídos en el carrito al momento de procesar la venta
         $empleado_id = $_SESSION['idUsuarioSesion']; # Usuario con la sesión activa
-        $monto_abonado = $_POST['total-txt']; # En una venta es igual al total
+        $monto_abonado = null; # En una venta es igual al total pagado
         $metodo_pago = (strlen($_POST['metodo-pago-txt']) === 0)
             ? $_POST['metodo-pago-txt']
             : 1; # Por defecto asigna el pago en efectivo
@@ -328,27 +364,37 @@ class ControladorOperaciones
                 </script>';
             exit;
         }
-
         $total = $subtotal - $descuento;
+        $monto_abonado = $total; # En una venta es igual al total pagado
+
         $venta_nueva = new ControladorOperaciones($descuento, $subtotal, $total, $notas, $tipo_operacion, $estado, $cliente_id, $productos_incuidos, $empleado_id, $monto_abonado, $metodo_pago);
-        #1 Registra la operación y recupera su ID
+        
+        $venta_nueva -> ctrlRegistrarOperacionCompleta();
+
+        /*#1 Registra la operación y recupera su ID
         $resultado_operacion = $venta_nueva -> ctrlRegistrarOperacion();
 
+        # Evalúa si el resultado es diferente de false, porque en caso de éxito retorna un número de ID
         if($resultado_operacion !== false) {
             #2 Registra los productos incluídos (y resta unidades del inventario)
             $resultado_productos = $venta_nueva -> ctrlRegistrarProductosIncuidos($resultado_operacion);
 
-            if($resultado_productos !== false) {
-                echo # Indica que el la venta fue exitosa
-                    '<script type="text/javascript">
-                        window.location.href = "index.php?pagina=ventas&opciones=alta&estado=creada";
-                    </script>';
-                exit;
-            }
+            if($resultado_productos === true) {
+                # 3 Registra el abono
+                $resultado_abono = $venta_nueva -> ctrlRegistrarAbono($resultado_operacion);
 
-        } else {
-            echo '<div id="alerta-formulario" class="alerta-roja">Ocurrió un error</div>';
-            exit;
-        }
+                if($resultado_abono === true) {
+                    echo # Indica que el la venta fue exitosa
+                        '<script type="text/javascript">
+                            window.location.href = "index.php?pagina=ventas&opciones=alta&estado=creada";
+                        </script>';
+                    exit;
+                }
+            }
+        }*/
+
+        # Si llegó a este código significa que hubo un error
+        echo '<div id="alerta-formulario" class="alerta-roja">Ocurrió un error</div>';
+        exit;
     }
 }

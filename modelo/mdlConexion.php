@@ -36,7 +36,11 @@ abstract class ModeloConexion {
         $this->conexion = null;
     }
 
-    /** Método para ejecutar consultas que realizan cambios en la base de datos sin devolver datos: Create, Update y Delete. */
+    /** Método para ejecutar consultas que realizan cambios en la base de datos sin devolver datos: Create, Update y Delete.
+     * Si todo sale correcto devuelve true.
+     * Si se para el argumento $retornar_id como true, retornará el último ID registrado en caso de éxito
+     * En caso de error devuelve una cadena con dicho error
+     */
     protected function consultasCUD($retornar_id = false) {
         try {
             $this->abrirConexion(); # Conecta
@@ -50,12 +54,12 @@ abstract class ModeloConexion {
 
             if($retornar_id === true) { # Si se especifica que debe retornar el último ID registrado
                 $id = $this->conexion->lastInsertId();
-                return $id;
+                return $id; # Retorna el ID si se solicita y fue exitoso
             } else
-                return true;
+                return true; # Retorna true si fue exitoso
 
         } catch(PDOException $e) {
-            return 'Error: ' .$e->getMessage();
+            return 'Error: ' .$e->getMessage(); # Si hubo un error lo Retorna
         } finally {
             $registro = null; # Limpia
             $this->cerrarConexion(); # Cierra

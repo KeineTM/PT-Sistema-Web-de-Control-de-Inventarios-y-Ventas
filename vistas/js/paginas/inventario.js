@@ -282,7 +282,8 @@ const construirFormularioEdicion = (producto_id, nombre, categoria_id, descripci
         <fieldset  class="formulario__fieldset">
             <label for="idProducto-txt">Código o Folio:</label>
             <input type="text" class="campo requerido" placeholder="ID del producto" name="idProducto-txt" data-form="productoID" maxlength="20" pattern="^[a-zA-Z0-9]{1,20}$" required value="${producto_id}">
-                    
+            <input type="hidden" name="idProductoOriginal-txt" value = ${producto_id} required>
+
             <label for="nombreProducto-txt">Nombre del producto:</label>
             <input type="text" class="campo requerido" placeholder="Nombre" name="nombreProducto-txt" data-form='nombreProducto' maxlength="80" minlength="4" required value="${nombre}">
 
@@ -410,7 +411,7 @@ const crearListaProductos = (contenedor, listaProductosJSON) => {
             <span>
                 <h3>${producto['nombre']}</h3>
                 <ul>
-                    <li>${producto['producto_id']}</li>
+                    <li>Código: ${producto['producto_id']}</li>
                     <li>Categoría: ${producto['categoria']}</li>
                     <li>Precio de venta: $${producto['precio_venta']}</li>
                     <li><a data-edit>Ver detalles y editar</a></li>

@@ -152,11 +152,14 @@ class ControladorProductos {
                 ? 'Registro correcto'
                 : 'Ocurrio un error, el codigo del producto ya esta registrado.';
     }
-
+    #!!!!!!!!!!!!!!!!!!!!! NO CAMBIA EL ID SI ESTE SE EDITA; Y SI SE CAMBIA POR UNO PREEXISTENTE EDITA ESE PRODUCTO EN SU LUGAR
+    #!!!!!!!!!!!!!!!!!!!!!!!! HAY QUE CORREGIRLO PRONTO
+    # EL ID USADO EN LA SENTENCIA WHERE producto_id NO DEBE SER TOMADO DEL FORMULARIO
+    # DEBE SER EL QUE PERTENECE ORIGINALMENTE PARA QUE SI SE QUIERE CAMBIAR, LO HAGA SOBRE EL PRODUCTO CORRECTO
     /** Método que actualiza un producto existente en la base de datos */
-    public function ctrlEditar() {
+    public function ctrlEditar($producto_id) {
         $listaDatos = [$this->producto_id, $this->nombre, $this->categoria_id, $this->descripcion, $this->unidades, $this->unidadesMinimas, 
-        $this->precioCompra, $this->precioVenta, $this->precioMayoreo, $this->estado, $this->foto_url, $this->caducidad, $this->producto_id];
+        $this->precioCompra, $this->precioVenta, $this->precioMayoreo, $this->estado, $this->foto_url, $this->caducidad, $producto_id];
         $producto = new ModeloProductos;
         $resultado = $producto -> editar($listaDatos);
         return ($resultado === true)
@@ -324,7 +327,8 @@ if(isset($_GET['funcion'])) {
     }
     else if($_GET['funcion'] === 'editar-producto') {
         # Recuperación de valores
-        $producto_id = $_POST['idProducto-txt']; # Requerido
+        $producto_id_nuevo = $_POST['idProducto-txt']; # Requerido
+        $producto_id_original = $_POST['idProductoOriginal-txt']; #Requerido
         $nombre = $_POST['nombreProducto-txt']; # Requerido
         $categoria_id = ($_POST['categoriaProducto-txt']); # Requerido
         $descripcion = (strlen($_POST['descripcionProducto-txt']))
@@ -350,7 +354,7 @@ if(isset($_GET['funcion'])) {
                     : null;
 
         $productoNuevo = new ControladorProductos(
-            $producto_id, $nombre, $categoria_id, $descripcion, $unidades, $unidadesMinimas, 
+            $producto_id_nuevo, $nombre, $categoria_id, $descripcion, $unidades, $unidadesMinimas, 
             $precioCompra, $precioVenta, $precioMayoreo, $estado, $foto_url, $caducidad);
 
         require_once 'ctrlSeguridad.php';
@@ -369,7 +373,7 @@ if(isset($_GET['funcion'])) {
             echo json_encode($listaErrores);
             die();
         } else { # Sino, ejecuta el registro
-            echo $productoNuevo->ctrlEditar();
+            echo $productoNuevo->ctrlEditar($producto_id_original);
             die();
         }
     }

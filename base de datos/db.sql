@@ -144,7 +144,7 @@ CREATE TABLE `operaciones` (
 
 -- Tabla pivote de productos incluídos en las operaciones
 CREATE TABLE `productos_incluidos` (
-    operacion_id BIGINT(18) NOT NULL,
+    operacion_id BIGINT(18) ZEROFILL NOT NULL,
     producto_id VARCHAR(20) NOT NULL,
     unidades INT NOT NULL,
     total_acumulado DECIMAL(8,2) NOT NULL,
@@ -169,9 +169,9 @@ INSERT INTO metodos_pago(metodo) VALUES
 
 -- Tabla pivote de abonos a las operaciones realizados por los empleados
 CREATE TABLE `abonos` (
-    operacion_id BIGINT(18) NOT NULL,
+    operacion_id BIGINT(18) ZEROFILL NOT NULL,
     empleado_id VARCHAR(6) NOT NULL,
-    fecha TIMESTAMP NOT NULL,
+    fecha DATETIME NOT NULL,
     abono DECIMAL(8,2) NOT NULL,
     metodo_pago SMALLINT(2) DEFAULT 1,
     PRIMARY KEY (operacion_id, empleado_id),
