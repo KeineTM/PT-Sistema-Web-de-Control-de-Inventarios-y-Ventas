@@ -271,6 +271,9 @@ const construirFormularioAlta = () => {
     });
 }
 
+// Carga el formulario de alta al entrar en la página de inventario
+construirFormularioAlta();
+// Y también cuando se hace click sobre la opción
 btnAbrirAlta.addEventListener("click", construirFormularioAlta);
 
 

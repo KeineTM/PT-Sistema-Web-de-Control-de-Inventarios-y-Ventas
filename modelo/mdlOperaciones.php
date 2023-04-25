@@ -99,6 +99,44 @@ class ModeloOperaciones extends ModeloConexion {
         }
     }
 
+    /** Método que devuelve un array con los registros del conjunto de tablas que componen una operación
+     * Si se ingresa un ID (INTERGER), devolverá sólo el registro 
+     */
+    public function mdlLeer($id = '') {
+        $this->sentenciaSQL = ($id === '')
+            ? 'SELECT operaciones.operacion_id,
+                productos_incluidos.producto_id, productos_incluidos.unidades, 
+                inventario.nombre, inventario.precio_venta,
+                productos_incluidos.total_acumulado,
+                operaciones.subtotal, operaciones.descuento, operaciones.total, operaciones.notas,
+                metodos_pago.metodo,
+                abonos.fecha, abonos.empleado_id,
+                CONCAT(usuarios.nombre," ", usuarios.apellido_paterno," ", usuarios.apellido_materno) AS nombre_completo
+                FROM operaciones
+                INNER JOIN productos_incluidos ON operaciones.operacion_id = productos_incluidos.operacion_id
+                INNER JOIN inventario ON productos_incluidos.producto_id = inventario.producto_id
+                INNER JOIN abonos ON operaciones.operacion_id = abonos.operacion_id
+                INNER JOIN metodos_pago ON abonos.metodo_pago = metodos_pago.metodo_id
+                INNER JOIN usuarios ON usuarios.usuario_id = abonos.empleado_id'
+            : 'SELECT operaciones.operacion_id,
+                productos_incluidos.producto_id, productos_incluidos.unidades, 
+                inventario.nombre, inventario.precio_venta,
+                productos_incluidos.total_acumulado,
+                operaciones.subtotal, operaciones.descuento, operaciones.total, operaciones.notas,
+                metodos_pago.metodo,
+                abonos.fecha, abonos.empleado_id,
+                CONCAT(usuarios.nombre," ", usuarios.apellido_paterno," ", usuarios.apellido_materno) AS nombre_completo
+                FROM operaciones
+                INNER JOIN productos_incluidos ON operaciones.operacion_id = productos_incluidos.operacion_id
+                INNER JOIN inventario ON productos_incluidos.producto_id = inventario.producto_id
+                INNER JOIN abonos ON operaciones.operacion_id = abonos.operacion_id
+                INNER JOIN metodos_pago ON abonos.metodo_pago = metodos_pago.metodo_id
+                INNER JOIN usuarios ON usuarios.usuario_id = abonos.empleado_id
+                WHERE operaciones.operacion_id = ?';
+        
+        return $this->consultaRead($id);
+    }
+
     /** Método que devuelve los registros de operaciones tipo venta dentro de un rango de tiempo */
     public function mdlLeerVentasPorRangoDeFecha($fecha_inicio, $fecha_fin) {
         try {
@@ -139,37 +177,5 @@ class ModeloOperaciones extends ModeloConexion {
         
     }
 
-    /** Método que devuelve un array con los registros del conjunto de tablas que componen una operación
-     * Si se ingresa un ID (INTERGER), devolverá sólo el registro 
-     */
-    public function mdlLeer($id = '') {
-        $this->sentenciaSQL = ($id !== '')
-            ? 'SELECT operaciones.operacion_id,
-                productos_incluidos.producto_id, productos_incluidos.unidades, 
-                inventario.nombre, inventario.precio_venta,
-                productos_incluidos.total_acumulado,
-                operaciones.subtotal, operaciones.descuento, operaciones.total, operaciones.notas,
-                metodos_pago.metodo,
-                abonos.fecha, abonos.empleado_id
-                FROM operaciones
-                INNER JOIN productos_incluidos ON operaciones.operacion_id = productos_incluidos.operacion_id
-                INNER JOIN inventario ON productos_incluidos.producto_id = inventario.producto_id
-                INNER JOIN abonos ON operaciones.operacion_id = abonos.operacion_id
-                INNER JOIN metodos_pago ON abonos.metodo_pago = metodos_pago.metodo_id'
-            : 'SELECT operaciones.operacion_id,
-                productos_incluidos.producto_id, productos_incluidos.unidades, 
-                inventario.nombre, inventario.precio_venta,
-                productos_incluidos.total_acumulado,
-                operaciones.subtotal, operaciones.descuento, operaciones.total, operaciones.notas,
-                metodos_pago.metodo,
-                abonos.fecha, abonos.empleado_id
-                FROM operaciones
-                INNER JOIN productos_incluidos ON operaciones.operacion_id = productos_incluidos.operacion_id
-                INNER JOIN inventario ON productos_incluidos.producto_id = inventario.producto_id
-                INNER JOIN abonos ON operaciones.operacion_id = abonos.operacion_id
-                INNER JOIN metodos_pago ON abonos.metodo_pago = metodos_pago.metodo_id
-                WHERE operaciones.operacion_id = ? LIMIT 1';
-        
-        return $this->consultaRead($id);
-    }
+
 }

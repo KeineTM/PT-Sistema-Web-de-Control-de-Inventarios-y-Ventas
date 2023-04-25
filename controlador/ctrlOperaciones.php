@@ -405,6 +405,11 @@ class ControladorOperaciones
         
     }
 
+    static public function ctrlLeer($id='') {
+        $modelo_consulta = new ModeloOperaciones();
+        return $modelo_consulta->mdlLeer($id);
+    }
+
     /** Método que devuelve una lista de ventas dentro de un rango de fecha. */
     static public function ctrlLeerVentasPorRangoDeFecha($fecha_inicio='', $fecha_fin='') {
         $modelo_consulta = new ModeloOperaciones();

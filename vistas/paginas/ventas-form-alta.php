@@ -120,7 +120,7 @@ ControladorOperaciones::ctrlCrearVenta();
             </select>
 
             <label for="notas-txt">Notas:</label>
-            <textarea class="campo" name="notas-txt" cols="20" rows="1" maxlength="250"></textarea>
+            <textarea class="campo" autocomplete="off" name="notas-txt" cols="20" rows="1" maxlength="250"></textarea>
 
             <input name="total-txt" type="hidden" value="<?= $totalFinal; ?>">
         </fieldset>

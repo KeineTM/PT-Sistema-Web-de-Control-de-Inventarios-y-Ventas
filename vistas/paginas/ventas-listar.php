@@ -16,8 +16,11 @@ if($_GET['tiempo'] === 'dia') { # Dependiendo del valor del parámetro se cargan
 
 $consulta = ControladorOperaciones::ctrlLeerVentasPorRangoDeFecha($fecha_inicio, $fecha_fin);
 
-if(!is_array($consulta)) {
-    echo 'Ocurrió un error';
+# Valida el resultado de la consulta
+# Si no es una lista es porque retornó un error
+# Si es una lista vacía es porque no encontró coincidencias
+if (!is_array($consulta) || sizeof($consulta) === 0) {
+    echo '<p class="alerta-roja">Ocurrió un error: El folio no existe o hay un problema con la base de datos</p>';
     die();
 }
 
@@ -34,8 +37,7 @@ foreach($consulta as $fila) {
         'notas' => $fila['notas'],
         'metodo' => $fila['metodo'],
         'fecha' => $fila['fecha'],
-        'empleado_id' => $fila['empleado_id'],
-        'productos_incluidos' => new ArrayObject()
+        'empleado_id' => $fila['empleado_id']
     ];
     array_push($lista_operaciones, $operacion);
 }

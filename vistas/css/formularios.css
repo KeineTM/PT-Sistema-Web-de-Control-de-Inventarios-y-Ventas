@@ -70,6 +70,14 @@
     visibility: hidden;
 }
 
+.no-focus {
+    border: none;
+}
+
+.no-focus:focus {
+    outline: none;
+}
+
 .formulario__botones-contenedor {
     display: grid;
     gap: .5rem;
@@ -99,6 +107,11 @@
     align-items: center;
     grid-template-columns: calc(100% - 3rem) 3rem;
     gap: .5rem;
+}
+
+.fieldset__envoltura {
+    border: 1px solid var(--color-fuente-principal);
+    padding: 1rem;
 }
 
 /* Estilo para las formularios pequeños */
