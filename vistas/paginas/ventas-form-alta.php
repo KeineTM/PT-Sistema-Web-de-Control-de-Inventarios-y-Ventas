@@ -131,6 +131,6 @@ ControladorOperaciones::ctrlCrearVenta();
     <div class="formulario__botones-contenedor">
         <button type="submit" class="boton-form enviar" id="btnRegistrar">Terminar Venta</button>
         <span></span>
-        <a class="boton-form otro" id="btnCancelar" href="index.php?pagina=ventas&opciones=alta&vaciar=true>Cancelar">Cancelar</a>
+        <a class="boton-form otro" id="btnCancelar" href="index.php?pagina=ventas&opciones=alta&vaciar=true">Cancelar</a>
     </div>
 </form>

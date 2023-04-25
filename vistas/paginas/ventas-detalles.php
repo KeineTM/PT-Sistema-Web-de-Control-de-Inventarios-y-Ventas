@@ -70,8 +70,8 @@ ControladorOperaciones::ctrlEliminar();
         
     </fieldset>
 
-    <a class="boton-form otro" id="btnEliminar" href="index.php?pagina=ventas&opciones=detalles&folio=<?=$folio?>&eliminar">Eliminar Ticket</a>
-
+    <form method="post" id="formulario-eliminar-operacion">
+        <input name="folio-txt" type="hidden" value="<?=$folio?>" required readonly>
+        <button type="submit" class="boton-form otro" id="btnEliminar">Eliminar Ticket</button>
+    </form>
 </section>
-
-<script type="module" src="vistas/js/paginas/ventas.js"></script>

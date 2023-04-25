@@ -355,10 +355,9 @@ class ControladorOperaciones
 
     static public function ctrlEliminar() {
         # Validación de variables
-        if(!isset($_GET['eliminar'])) return;
-        if(!isset($_GET['folio'])) return;
+        if(!isset($_POST['folio-txt'])) return;
 
-        $operacion_id = $_GET['folio'];
+        $operacion_id = $_POST['folio-txt'];
         $modelo_consulta = new ModeloOperaciones();
         $resultado = $modelo_consulta -> mdlEliminarOperacionCompleta($operacion_id);
         
@@ -375,5 +374,36 @@ class ControladorOperaciones
                 </script>';
             exit;
         }
+    }
+}
+
+if(isset($_GET['funcion'])) {
+    require '../modelo/mdlOperaciones.php'; # Recordar llamar en estos casos al modelo
+
+    if($_GET['funcion'] === 'buscar') {
+        $operacion_id = $_POST['buscarOperacion-txt'];
+        $regex = '/^([0-9])*$/';
+        
+        if(strlen($operacion_id) === 0 || strlen($operacion_id) > 18) {
+            echo 'Servidor: El folio debe tener de 1 a 18 numeros';
+            die();
+        }
+
+        if(is_integer($operacion_id)) {
+            echo 'Servidor: El folio solo acepta numeros';
+            die();
+        }
+
+        if($operacion_id < 0) {
+            echo 'Servidor: El folio no puede ser menor a 0';
+            die();
+        }
+
+        $consulta = ControladorOperaciones::ctrlLeer($operacion_id);
+        
+        if(is_array($consulta))
+            echo json_encode($consulta);
+        else 
+            echo false;
     }
 }

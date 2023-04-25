@@ -92,7 +92,8 @@ $lista_operaciones = array_unique($lista_operaciones, SORT_REGULAR);
                     #echo strftime("%A, %d de %B de %Y", $fecha_formateada);
                     $fecha_formateada = date_create($operacion['fecha']);
                     echo date_format($fecha_formateada, 'g:ia d/m/y') 
-                    ?></td>
+                    ?>
+                </td>
                 <td><?= $operacion['nombre_completo'] ?></td>
             </tr>
             <?php } ?>
