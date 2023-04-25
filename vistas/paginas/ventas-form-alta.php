@@ -8,6 +8,7 @@ ControladorOperaciones::agregarAlCarrito();
 ControladorOperaciones::sumarDelCarrito();
 ControladorOperaciones::restarDelCarrito();
 ControladorOperaciones::quitarDelCarrito();
+ControladorOperaciones::btnVaciarCarrito();
 ControladorOperaciones::ctrlCrearVenta();
 ?>
 <span class="formulario__encabezado">
@@ -17,38 +18,39 @@ ControladorOperaciones::ctrlCrearVenta();
 
 <!-- Mensaje de estado de la venta -->
 <div id="alerta-formulario" class=<?php
-if (isset($_GET['estado'])) {
-    if ($_GET['estado'] === 'creada') { ?> "alerta-verde">VENTA CREADA
-<?php } else
-            if ($_GET['estado'] === 'cancelada') { ?>
-    "alerta-roja">VENTA CANCELADA
-<?php } else
-            if ($_GET['estado'] === 'maximo') { ?>
-    "alerta-verde">Ya se agregó el máximo de unidades existentes
-<?php } else
-            if ($_GET['estado'] === 'no-existe') { ?>
-    "alerta-roja">El Código del producto no es válido o no existe
-<?php } else
-            if ($_GET['estado'] === 'agotado') { ?>
-    "alerta-roja">¡Producto Agotado!
-<?php } else
-            if ($_GET['estado'] === 'eliminado') { ?>
-    "alerta-roja">Se eliminó un producto del carrito
-<?php } else
-            if ($_GET['estado'] === 'error-total') { ?>
-    "alerta-roja">El total de la venta no puede ser 0
-<?php } else
-            if ($_GET['estado'] === 'error-descuento') { ?>
-    "alerta-roja">El descuento no es válido
-<?php } else
-            if ($_GET['estado'] === 'error-carrito') { ?>
-    "alerta-roja">El carrito está vacio
-<?php }
-} else {
-    echo 'hidden >';
-}
-?>
+    if (isset($_GET['estado'])) {
+        if ($_GET['estado'] === 'creada') { ?> "alerta-verde">VENTA CREADA
+    <?php } else
+                if ($_GET['estado'] === 'cancelada') { ?>
+        "alerta-roja">VENTA CANCELADA
+    <?php } else
+                if ($_GET['estado'] === 'maximo') { ?>
+        "alerta-verde">Ya se agregó el máximo de unidades existentes
+    <?php } else
+                if ($_GET['estado'] === 'no-existe') { ?>
+        "alerta-roja">El Código del producto no es válido o no existe
+    <?php } else
+                if ($_GET['estado'] === 'agotado') { ?>
+        "alerta-roja">¡Producto Agotado!
+    <?php } else
+                if ($_GET['estado'] === 'eliminado') { ?>
+        "alerta-roja">Se eliminó un producto del carrito
+    <?php } else
+                if ($_GET['estado'] === 'error-total') { ?>
+        "alerta-roja">El total de la venta no puede ser 0
+    <?php } else
+                if ($_GET['estado'] === 'error-descuento') { ?>
+        "alerta-roja">El descuento no es válido
+    <?php } else
+                if ($_GET['estado'] === 'error-carrito') { ?>
+        "alerta-roja">El carrito está vacio
+    <?php }
+    } else {
+        echo 'hidden >';
+    }
+    ?>
 </div>
+<!-- -------------------------------------------- -->
 
 <!-- Formulario para agregar productos al carrito -->
 <form class="formulario destacado" method="post" id="form-agregar-producto">
@@ -57,6 +59,7 @@ if (isset($_GET['estado'])) {
     <button type="submit" class="boton-form enviar" id="btnAgregarAlCarrito">Agregar</button>
 </form>
 <br>
+<!-- -------------------------------------------- -->
 
 <!-- Lista de productos agregados -->
 <section id="productos-agregados">
@@ -67,28 +70,29 @@ if (isset($_GET['estado'])) {
         $totalFinal += $producto->total;
     ?>
         <div class="tarjeta-venta">
-            <h3 class="destacado"><?php echo $producto->nombre ?></h3>
+            <h3 class="destacado"><?= $producto->nombre ?></h3>
             <div>
                 <span>
-                    <img src="<?php echo $producto->foto_url ?>" alt="Imagen <?php echo $producto->nombre ?>">
+                    <img src="<?= $producto->foto_url ?>" alt="Imagen <?= $producto->nombre ?>">
                     <ul>
-                        <li>Folio: <span> <?php echo $producto->producto_id ?></span></li>
-                        <li>Categoría: <span> <?php echo $producto->categoria_id ?></span></li>
-                        <li>Existencias: <span> <?php echo $producto->unidades ?></span></li>
-                        <li>Caducidad: <span> <?php echo $producto->caducidad ?></span></li>
-                        <li>Precio unitario: <span> $<?php echo number_format($producto->precioVenta, 2) ?></span></li>
-                        <li>Subtotal: <span> $<?php echo number_format($producto->total, 2) ?></span></li>
+                        <li>Folio: <span> <?= $producto->producto_id ?></span></li>
+                        <li>Categoría: <span> <?= $producto->categoria_id ?></span></li>
+                        <li>Existencias: <span> <?= $producto->unidades ?></span></li>
+                        <li>Caducidad: <span> <?= $producto->caducidad ?></span></li>
+                        <li>Precio unitario: <span> $<?= number_format($producto->precioVenta, 2) ?></span></li>
+                        <li>Subtotal: <span> $<?= number_format($producto->total, 2) ?></span></li>
                     </ul>
                 </span>
                 <span class="contenedor-boton">
-                    <a class="rojo redondo" data-quitar="<?php echo $indice ?>" href="index.php?pagina=ventas&opciones=alta&restar=<?php echo $indice ?>">-</a>
-                    Cantidad: <p class="destacado"><?php echo $producto->cantidad ?></p>
-                    <a class="verde redondo" data-agregar="<?php echo $indice ?>" href="index.php?pagina=ventas&opciones=alta&sumar=<?php echo $indice ?>">+</a>
+                    <a class="rojo redondo" data-quitar="<?= $indice ?>" href="index.php?pagina=ventas&opciones=alta&restar=<?= $indice ?>">-</a>
+                    Cantidad: <p class="destacado"><?= $producto->cantidad ?></p>
+                    <a class="verde redondo" data-agregar="<?= $indice ?>" href="index.php?pagina=ventas&opciones=alta&sumar=<?= $indice ?>">+</a>
                 </span>
             </div>
         </div>
     <?php } ?>
 </section>
+<!-- -------------------------------------------- -->
 
 <!-- Formulario de registro de la venta -->
 <form method="post" id="form-alta">
@@ -118,7 +122,7 @@ if (isset($_GET['estado'])) {
             <label for="notas-txt">Notas:</label>
             <textarea class="campo" name="notas-txt" cols="20" rows="1" maxlength="250"></textarea>
 
-            <input name="total-txt" type="hidden" value="<?php echo $totalFinal; ?>">
+            <input name="total-txt" type="hidden" value="<?= $totalFinal; ?>">
         </fieldset>
     </fieldset>
     
@@ -126,6 +130,6 @@ if (isset($_GET['estado'])) {
     <div class="formulario__botones-contenedor">
         <button type="submit" class="boton-form enviar" id="btnRegistrar">Terminar Venta</button>
         <span></span>
-        <button class="boton-form otro" id="btnCancelar">Cancelar</button>
+        <a class="boton-form otro" id="btnCancelar" href="index.php?pagina=ventas&opciones=alta&vaciar=true>Cancelar">Cancelar</a>
     </div>
 </form>

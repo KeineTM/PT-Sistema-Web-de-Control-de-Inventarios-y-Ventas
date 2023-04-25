@@ -4,6 +4,8 @@ const cargarOptionsCategorias = (selectHTML, listaCategoriasJSON) => {
 
     for (const registro of listaCategoriasJSON) { // Recorre el array para entrar a cada registro (objeto tipo json)
         const nuevaOpcion = document.createElement('option');  // Crea una nueva option
+        nuevaOpcion.setAttribute("estado", registro['estado']); // Incluye a un atributo el estado de la categoría (0|1)
+        nuevaOpcion.classList.add('mayusculas');
         nuevaOpcion.value = registro['categoria_id']; // Asigna como value la llave primaria del registro
         nuevaOpcion.textContent = registro['categoria']; // Nombre de la categoria
         selectHTML.appendChild(nuevaOpcion); // Agrega la opción en la etiqueta select
@@ -27,7 +29,7 @@ const recuperarCategoriasActivas = (selectCategorias, preseleccion="") => {
     .then(response => response.json())
     .then(data => {
         cargarOptionsCategorias(selectCategorias, data);
-        // Control de la categoría si se está recuperando un registro de la DB
+        // Control de la categoría si se está recuperando un registro de la DB para el formulario de edición
         if(preseleccion !== "") selectCategorias.value = preseleccion;
     }).catch(error => {
         console.error('Error:', error);
@@ -36,7 +38,7 @@ const recuperarCategoriasActivas = (selectCategorias, preseleccion="") => {
 
 
 /** API FETCH para el registro de categorías asíncronas */
-const registrarCategoria = (categoria, selectCategorias) => {
+const registrarCategoria = (categoria, selectCategorias, aletaHTML) => {
     // Almacenamiento de los campos del formulario en un FormData
     const formData = new FormData();
     formData.append('categoria-txt', categoria.value);
@@ -47,7 +49,8 @@ const registrarCategoria = (categoria, selectCategorias) => {
         body: formData
     }).then(response => response.text() // Recuperación de la respuesta del servidor en texto plano
     ).then(data => {
-        alert(data); // Impresión en pantalla de la respuesta del registro
+        aletaHTML.style.visibility = 'visible';
+        aletaHTML.innerText = data; // Impresión en pantalla de la respuesta del registro
         categoria.value = ''; // Limpia el campo
         if (selectCategorias != undefined)
         recuperarCategoriasActivas(selectCategorias); // RECARGA LA LISTA DE OPCIONES CON OTRO AJAX del archivo inventario-listar-categorias-asincrono.js
@@ -67,7 +70,7 @@ const editarCategoria = (formulario, selectCategorias, alertaHTML) => {
     ).then(data => {
         alertaHTML.style.visibility = 'visible';
         alertaHTML.innerText = data;
-        if (selectCategorias != undefined)
+        if (selectCategorias != undefined) // Mientras exista el select donde se cargan las categorías
         recuperarCategorias(selectCategorias);
     }).catch(error => {
         console.error('Error:', error);
@@ -112,94 +115,6 @@ const editarProducto = (formulario) => {
         console.error('Error:', error);
     });
 }
-
-/** Método que construye y llena la tabla de productos */
-const crearTablaProductos = (contenedor, listaProductosJSON) => {
-    const tabla = document.createElement('table'); // Tabla
-    tabla.classList.add('tabla');
-
-    const thead =
-        `<thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Categoría</th>
-                <th>Descripción</th>
-                <th>Existencia</th>
-                <th>Unidades Mín</th>
-                <th>P Compra</th>
-                <th>P Venta</th>
-                <th>P Mayoreo</th>
-                <th>Estado</th>
-                <th>Foto</th>
-                <th>Caducidad</th>
-            </tr>
-        </thead>`;
-    const tbody = document.createElement('tbody');
-    tabla.innerHTML= thead; // Agrega código HTML al objeto HTML
-    tabla.appendChild(tbody); // Agrega un objeto HTML a otro objeto HTML
-
-    // Recorrido del archivo JSON para crear filas por cada registro y celdas con los valores
-    listaProductosJSON.forEach(producto => {
-        const fila = document.createElement('tr'); // Crea fila
-
-        // Celdas
-        const celdaID = document.createElement('td');
-        celdaID.innerText = producto['producto_id'];
-        fila.appendChild(celdaID);
-
-        const celdaNombre = document.createElement('td');
-        celdaNombre.innerText = producto['nombre'];
-        fila.appendChild(celdaNombre);
-
-        const celdaCategoria = document.createElement('td');
-        celdaCategoria.innerText = producto['categoria'];
-        fila.appendChild(celdaCategoria);
-
-        const celdaDescripcion = document.createElement('td');
-        celdaDescripcion.innerText = producto['descripcion'];
-        fila.appendChild(celdaDescripcion);
-
-        const celdaUnidades = document.createElement('td');
-        celdaUnidades.innerText = producto['unidades'];
-        fila.appendChild(celdaUnidades);
-
-        const celdaUnidadesMin = document.createElement('td');
-        celdaUnidadesMin.innerText = producto['unidades_minimas'];
-        fila.appendChild(celdaUnidadesMin);
-
-        const celdaPrecioCompra = document.createElement('td');
-        celdaPrecioCompra.innerText = producto['precio_compra'];
-        fila.appendChild(celdaPrecioCompra);
-
-        const celdaPrecioVenta = document.createElement('td');
-        celdaPrecioVenta.innerText = `$${producto['precio_venta']}`;
-        fila.appendChild(celdaPrecioVenta);
-
-        const celdaPrecioMayoreo = document.createElement('td');
-        celdaPrecioMayoreo.innerText = producto['precio_mayoreo'];
-        fila.appendChild(celdaPrecioMayoreo);
-
-        const celdaEstado = document.createElement('td');
-        celdaEstado.innerText = (producto['estado'])
-                                ? 'Activo'
-                                : 'Baja';
-        fila.appendChild(celdaEstado);
-
-        const celdaFotoURL = document.createElement('td');
-        celdaFotoURL.innerHTML = `<img src="${producto['foto_url']}">`;
-        fila.appendChild(celdaFotoURL);
-
-        const celdaCaducidad = document.createElement('td');
-        celdaCaducidad.innerText = producto['caducidad'];
-        fila.appendChild(celdaCaducidad);
-        
-        tbody.appendChild(fila); // Agrega fila al cuerpo de la tabla
-    });
-
-    contenedor.appendChild(tabla);
-}
-
 
 
 export const metodosAJAX = {

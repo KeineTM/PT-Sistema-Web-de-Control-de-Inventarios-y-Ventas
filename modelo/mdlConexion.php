@@ -44,13 +44,13 @@ abstract class ModeloConexion {
     protected function consultasCUD($retornar_id = false) {
         try {
             $this->abrirConexion(); # Conecta
-            $registro = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
+            $pdo = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
             # Recorre la lista de datos ligando parámetros a la sentencia SQL:
             for($i = 0; $i < sizeof($this->registros); $i++) {
-                $registro -> bindParam($i+1, $this->registros[$i]);
+                $pdo -> bindParam($i+1, $this->registros[$i]);
             }
 
-            $registro -> execute(); # Ejecuta
+            $pdo -> execute(); # Ejecuta
 
             if($retornar_id === true) { # Si se especifica que debe retornar el último ID registrado
                 $id = $this->conexion->lastInsertId();
@@ -61,7 +61,7 @@ abstract class ModeloConexion {
         } catch(PDOException $e) {
             return 'Error: ' .$e->getMessage(); # Si hubo un error lo Retorna
         } finally {
-            $registro = null; # Limpia
+            $pdo = null; # Limpia
             $this->cerrarConexion(); # Cierra
         }
     }
@@ -69,15 +69,15 @@ abstract class ModeloConexion {
     /** Método para ejecutar consultas que recuperan información de la base de datos. */
     protected function consultaRead($id = '') {
         $this->abrirConexion(); # Conecta
-        $resultado = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
+        $pdo = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
         
         if($id != '') { # Si contiene un parámetro este se liga para evitar SQLinjection
-            $resultado -> bindParam(1, $id, PDO::PARAM_STR);
+            $pdo -> bindParam(1, $id, PDO::PARAM_STR);
         }
 
-        $resultado -> execute(); # Ejecuta
-        $this->registros = $resultado -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos
-        $resultado = null; # Limpia memoria
+        $pdo -> execute(); # Ejecuta
+        $this->registros = $pdo -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos
+        $pdo = null; # Limpia memoria
         $this->cerrarConexion(); # Cierra
 
         return $this->registros;

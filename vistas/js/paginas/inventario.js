@@ -31,7 +31,7 @@ const construirFormularioAltaCategoria = (contenedor) => {
             </span>
             <form action="post" class="formulario" id="formulario-alta-categoria">
                 <h3>Agregar categoría</h3>
-                <input class="campo" type="text" placeholder="Categoria" maxlength="100" id="categoria-txt" name="categoria-txt" maxlength="50" required>
+                <input class="campo mayusculas" type="text" placeholder="Categoria" maxlength="100" id="categoria-txt" name="categoria-txt" maxlength="50" required>
                 <button class="boton-form enviar" id="btnRegistrarCategoria">Agregar</button>
                 <button class="boton-form otro" id="btnCerrarMiniModal">Cancelar</button>
             </form>
@@ -60,7 +60,7 @@ const construirFormularioAltaCategoria = (contenedor) => {
         alertaCategoria.style.visibility = 'hidden';
         alertaCategoria.innerHTML = '';
         if(categoriaTxt.value.length > 3 && categoriaTxt.value.length <= 50)
-            metodosAJAX.registrarCategoria(categoriaTxt, selectCategorias);
+            metodosAJAX.registrarCategoria(categoriaTxt, selectCategorias, alertaCategoria);
         else {
             alertaCategoria.style.visibility = 'visible';
             alertaCategoria.innerHTML = 'Ingrese un nombre para la categoría de 3 a 50 letras';
@@ -79,15 +79,15 @@ const construirFormularioEdicionCategoria = (contenedor) => {
             <h3>Seleccione la categoría a editar:</h3>
             <select class="campo" id="categoriaProducto-txt" name="categoriaProducto-txt" data-form="categoriaID" required></select>
             <label>Nombre de la categoría:</label>
-            <input class="campo" type="text" placeholder="Categoria" maxlength="100" id="categoria-txt" name="categoria-txt" maxlength="50" required>
+            <input class="campo mayusculas" type="text" placeholder="Categoria" maxlength="100" id="categoria-txt" name="categoria-txt" maxlength="50" required>
                 
             Para retirar esta categoría de las opciones del Inventario seleccione la opción 'Dar de baja' y después haga clic en 'Editar'.<br><br>
             Para reintegrarla, seleccione la opción 'Activo' y después haga clic en 'Editar'.
             <fieldset class="formulario__fieldset-2-columnas">
-                <label for="estadoProducto-txt">Activo</label>
-                <input type="radio" id='estado-activo' name="estadoCategoria-txt" value="1" data-form="estado" required>
-                <label for="estadoProducto-txt">Dar de baja</label>
-                <input type="radio" id='estado-inactivo' name="estadoCategoria-txt" value="0" data-form="estado" required>
+                <label for="estadoCategoria-txt">Activo</label>
+                <input type="radio" id='estado-activo' name="estadoCategoria-txt" value=1 data-form="estado" required>
+                <label for="estadoCategoria-txt">Dar de baja</label>
+                <input type="radio" id='estado-inactivo' name="estadoCategoria-txt" value=0 data-form="estado" required>
             </fieldset>
                 
             <button class="boton-form enviar" id="btnEditarCategoria">Editar</button>
@@ -100,14 +100,22 @@ const construirFormularioEdicionCategoria = (contenedor) => {
     // Carga de lista de categorías
     const selectCategorias = document.getElementById("categoriaProducto-txt");
     const categoriaTxt = document.getElementById('categoria-txt');
+    const radioEstadoActivo = document.getElementById('estado-activo');
+    const radioEstadoInactivo = document.getElementById('estado-inactivo');
+
+    // AJAX de categorías
     metodosAJAX.recuperarCategorias(selectCategorias);
 
-    // Carga de las opciones de la categoría con AJAX
+    // Precarga el formulario con los datos recuperados desde el método anterior
     selectCategorias.addEventListener('change', () => {
-        console.log(selectCategorias.value)
         categoriaTxt.value = selectCategorias.options[selectCategorias.selectedIndex].text;
+        
+        // Precargar radio button del estado:
+        (selectCategorias.options[selectCategorias.selectedIndex].getAttribute('estado') == 1)
+            ? radioEstadoActivo.checked = true
+            : radioEstadoInactivo.checked = true;
     });
-
+    
     // Control de cierre de la ventana:
     const btnCerrarModal = document.getElementById('btnCerrarMiniModal');
     btnCerrarModal.addEventListener("click", () => {
@@ -125,18 +133,29 @@ const construirFormularioEdicionCategoria = (contenedor) => {
         alertaCategoria.style.visibility = 'hidden';
         alertaCategoria.innerHTML = '';
 
+        // Validaciones
         if(selectCategorias.selectedIndex > 0 &&
-            categoriaTxt.value.length > 3 && categoriaTxt.value.length <= 50)
-            metodosAJAX.editarCategoria(formulario, selectCategorias, alertaCategoria);
-        else if (selectCategorias.selectedIndex == 0){
+            categoriaTxt.value.length > 3 && categoriaTxt.value.length <= 50) {
+
+            if(radioEstadoInactivo.checked == true && radioEstadoActivo.checked == true || radioEstadoInactivo.checked == false && radioEstadoActivo.checked == false) {
+                alertaCategoria.style.visibility = 'visible';
+                alertaCategoria.innerHTML = 'Seleccione una opción: Activo o Dar de baja';
+            } else
+                metodosAJAX.editarCategoria(formulario, selectCategorias, alertaCategoria);
+        }
+        else if (selectCategorias.selectedIndex == 0) {
             alertaCategoria.style.visibility = 'visible';
             alertaCategoria.innerHTML = 'Seleccione una categoría';
-        } else if(!categoriaTxt.value.length > 3 || !categoriaTxt.value.length <= 50) {
+        } else if(categoriaTxt.value.length < 3 || categoriaTxt.value.length >= 50) {
             alertaCategoria.style.visibility = 'visible';
             alertaCategoria.innerHTML = 'Ingrese un nombre para la categoría de 3 a 50 letras';
         }
+
+        categoriaTxt.value =''
     });
 }
+
+// FORMULARIO DE ALTA
 
 const construirFormularioAlta = () => {
     // Establecimiento de fechas mínimas y máximas para el formulario:
@@ -159,7 +178,7 @@ const construirFormularioAlta = () => {
         <!-- 1/2 -->
         <fieldset  class="formulario__fieldset">
             <label for="idProducto-txt">Código o Folio:</label>
-            <input type="text" class="campo requerido" placeholder="ID del producto" name="idProducto-txt" data-form="productoID" maxlength="20" pattern="^[a-zA-Z0-9]{1,20}$" required>
+            <input type="text" class="campo requerido mayusculas" placeholder="ID del producto" name="idProducto-txt" data-form="productoID" maxlength="20" pattern="^[a-zA-Z0-9]{1,20}$" required>
                     
             <label for="nombreProducto-txt">Nombre del producto:</label>
             <input type="text" class="campo requerido" placeholder="Nombre" name="nombreProducto-txt" data-form='nombreProducto' maxlength="80" minlength="4" required>
@@ -281,7 +300,7 @@ const construirFormularioEdicion = (producto_id, nombre, categoria_id, descripci
         <!-- 1/2 -->
         <fieldset  class="formulario__fieldset">
             <label for="idProducto-txt">Código o Folio:</label>
-            <input type="text" class="campo requerido" placeholder="ID del producto" name="idProducto-txt" data-form="productoID" maxlength="20" pattern="^[a-zA-Z0-9]{1,20}$" required value="${producto_id}">
+            <input type="text" class="campo requerido mayusculas" placeholder="ID del producto" name="idProducto-txt" data-form="productoID" maxlength="20" pattern="^[a-zA-Z0-9]{1,20}$" required value="${producto_id}">
             <input type="hidden" name="idProductoOriginal-txt" value = ${producto_id} required>
 
             <label for="nombreProducto-txt">Nombre del producto:</label>
@@ -346,6 +365,9 @@ const construirFormularioEdicion = (producto_id, nombre, categoria_id, descripci
     contenedor.innerHTML = formularioEdicionProducto; // Se llena el contenedor
 
     // Control de variables sin valor en la BD
+    const radioEstadoActivo = document.getElementById('estado-activo');
+    const radioEstadoInactivo = document.getElementById('estado-inactivo');
+    
     if(descripcion !== 'null' && descripcion !== null)
         contenedor.querySelector('[data-form=descripcion]').value = descripcion;
     if(unidades_minimas !== 'null' && unidades_minimas !== null)
@@ -357,8 +379,8 @@ const construirFormularioEdicion = (producto_id, nombre, categoria_id, descripci
     if(caducidad != '0000-00-00' && caducidad !== null)
         contenedor.querySelector('[data-form=caducidad]').value = caducidad;
     (estado == 1)
-        ? document.getElementById('estado-activo').checked = true
-        : document.getElementById('estado-inactivo').checked = true;
+        ? radioEstadoActivo.checked = true
+        : radioEstadoInactivo.checked = true;
 
     // Variables del contenedor:
     const contenedorMiniFormularioCategoria = document.getElementById('modal__mini-formulario');
@@ -389,7 +411,12 @@ const construirFormularioEdicion = (producto_id, nombre, categoria_id, descripci
     btnEditarProducto.addEventListener("click", () => {
         event.preventDefault();
         let listaErrores = []; // Lista que almacenará los errores detectados
-        validar(campos, alertaHTML, listaErrores);
+        
+        validar(campos, alertaHTML, listaErrores); // Método que retorna los errores encontrados
+
+        if(radioEstadoInactivo.checked === false && radioEstadoActivo.checked === false) // Validación de radio-buttons
+            listaErrores.push['Seleccione una opción: Activo o Inactivo'];
+
         (listaErrores.length === 0) // Si no hay errores
             ? metodosAJAX.editarProducto(formularioEdicion)
             : console.log('Los datos no son válidos');

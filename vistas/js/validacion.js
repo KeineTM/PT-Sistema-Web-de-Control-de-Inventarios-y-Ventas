@@ -115,7 +115,7 @@ const validarCampo = (campo) => {
         case 'unidades': // Requerido
             regex = new RegExp('^([0-9])*$'); // Valida sólo números
             if(campo.value.length === 0 ||
-                campo.value < 0 ||
+                campo.value < 1 ||
                 campo.value > 9999 ||
                 !regex.test(campo.value)) {
                 

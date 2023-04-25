@@ -9,6 +9,10 @@
     flex-direction: column;
 }
 
+#btnAgregarAlCarrito {
+    background: var(--color-naranja);
+}
+
 .tarjeta-venta {
     display: flex;
     flex-direction: column;

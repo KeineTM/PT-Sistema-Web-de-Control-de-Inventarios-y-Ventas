@@ -69,7 +69,6 @@ CREATE TABLE `inventario` (
     unidades_minimas INT,
     precio_compra DECIMAL(8,2),
     precio_venta DECIMAL(8,2) NOT NULL,
-    precio_mayoreo DECIMAL(8,2),
     foto_url VARCHAR(250) DEFAULT "no-foto.jpg",
     caducidad DATE,
     estado BOOLEAN DEFAULT 1,
@@ -130,9 +129,9 @@ INSERT INTO tipos_operacion VALUES
 -- Tabla de operaciones
 CREATE TABLE `operaciones` (
     operacion_id BIGINT(18) ZEROFILL AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    total DECIMAL(8,2) NOT NULL,
-    descuento DECIMAL(8,2) DEFAULT 0 NOT NULL,
     subtotal DECIMAL(8,2) NOT NULL,
+    descuento DECIMAL(8,2) DEFAULT 0 NOT NULL,
+    total DECIMAL(8,2) NOT NULL,
     notas VARCHAR(250),
     tipo_operacion CHAR(2) NOT NULL,
     estado BOOLEAN DEFAULT 1 NOT NULL,
@@ -180,6 +179,22 @@ CREATE TABLE `abonos` (
     FOREIGN KEY (metodo_pago) REFERENCES metodos_pago(metodo_id)
         ON DELETE RESTRICT ON UPDATE CASCADE
 );
+
+SELECT operaciones.operacion_id,
+productos_incluidos.producto_id, productos_incluidos.unidades, 
+inventario.nombre, inventario.precio_venta,
+productos_incluidos.total_acumulado,
+operaciones.subtotal, operaciones.descuento, operaciones.total, operaciones.notas,
+metodos_pago.metodo,
+abonos.fecha, abonos.empleado_id
+FROM operaciones
+INNER JOIN productos_incluidos ON operaciones.operacion_id = productos_incluidos.operacion_id
+INNER JOIN inventario ON productos_incluidos.producto_id = inventario.producto_id
+INNER JOIN abonos ON operaciones.operacion_id = abonos.operacion_id
+INNER JOIN metodos_pago ON abonos.metodo_pago = metodos_pago.metodo_id
+WHERE abonos.fecha >= '2023-04-23 00:00:00' AND abonos.fecha < '2023-04-23 23:00:00'
+GROUP BY operaciones.operacion_id;
+--WHERE operaciones.operacion_id = ?;
 
 --------------------------------------------------------------------------------------------
 

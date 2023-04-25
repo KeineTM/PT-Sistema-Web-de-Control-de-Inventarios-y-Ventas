@@ -17,32 +17,14 @@ class ModeloProductos extends ModeloConexion{
     }
 
     /** Metodo que devuelve todo el listado de productos en la tabla inventario */
-    public function leer($palabraClave='') {
-        if ($palabraClave === '') {
-            $this->sentenciaSQL =
-            'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
-                inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta, inventario.precio_mayoreo,
-                inventario.estado, inventario.foto_url, inventario.caducidad
-                FROM inventario
-                INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id';
-        
-            return  $this->consultaRead();
-
-        } else {
-            $this->sentenciaSQL =
-            'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
-                inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta, inventario.precio_mayoreo,
-                inventario.estado, inventario.foto_url, inventario.caducidad
-                FROM inventario
-                INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id 
-                WHERE inventario.nombre LIKE ?';
-
-            return  $this->consultaRead("%" . $palabraClave . "%");
-        }
-    }
-
-    public function leerUno($producto_id) {
-        $this->sentenciaSQL = 'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
+    public function mdlLeer($id='') {
+        $this->sentenciaSQL = ($id === '')
+        ? 'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
+            inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta, inventario.precio_mayoreo,
+            inventario.estado, inventario.foto_url, inventario.caducidad
+            FROM inventario
+            INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id'
+        : 'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
             inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta, inventario.precio_mayoreo,
             inventario.estado, inventario.foto_url, inventario.caducidad
             FROM inventario
@@ -50,7 +32,19 @@ class ModeloProductos extends ModeloConexion{
             WHERE inventario.producto_id = ?
             LIMIT 1';
 
-        return $this->consultaRead($producto_id);
+        return  $this->consultaRead($id);
+    }
+
+    public function mdlBuscarPorPalabraClave($palabraClave) {
+        $this->sentenciaSQL =
+            'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
+            inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta, inventario.precio_mayoreo,
+            inventario.estado, inventario.foto_url, inventario.caducidad
+            FROM inventario
+            INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id 
+            WHERE inventario.nombre LIKE ?';
+
+        return  $this->consultaRead("%" . $palabraClave . "%");
     }
 
     public function editar($listaDatos) {
@@ -58,7 +52,7 @@ class ModeloProductos extends ModeloConexion{
         $this->sentenciaSQL = 
             'UPDATE inventario SET producto_id = ?, nombre = ?, categoria_id = ?, descripcion = ?, unidades = ?, 
             unidades_minimas = ?, precio_compra = ?, precio_venta = ?, precio_mayoreo = ?, estado = ?, foto_url = ?, caducidad = ? 
-            WHERE producto_id = ?';
+            WHERE producto_id = ? LIMIT 1';
         return $this->consultasCUD();
     }
 
@@ -66,7 +60,7 @@ class ModeloProductos extends ModeloConexion{
     public function editarUnidades($listaDatos) {
         $this->registros = $listaDatos;
         $this->sentenciaSQL = 
-            'UPDATE inventario SET unidades = unidades - ? WHERE producto_id = ?';
+            'UPDATE inventario SET unidades = unidades - ? WHERE producto_id = ? LIMIT 1';
         return $this->consultasCUD();
     }
 
@@ -75,7 +69,7 @@ class ModeloProductos extends ModeloConexion{
     }
 
     /** Método que registra una categoría nueva */
-    public function createCategoria($categoria) {
+    public function mdlRegistrarCategoria($categoria) {
         $this->sentenciaSQL = "INSERT INTO categorias_inventario (categoria) VALUES (?)";
         $this -> abrirConexion();
 
@@ -84,7 +78,7 @@ class ModeloProductos extends ModeloConexion{
             $registro -> bindValue(1, $categoria, PDO::PARAM_STR);
             $registro -> execute();
 
-            return $categoria . ' registrado correctamente';
+            return true;
 
         } catch(PDOException $e) {
             return 'Error: ' .$e->getMessage();
@@ -95,7 +89,7 @@ class ModeloProductos extends ModeloConexion{
     }
 
     /** Este método devuelve todas las categorias en la tabla. Si se le indica un id, sólo devuelve el registro correspondiente */
-    public function readCategorias($categoriaID='') {
+    public function mdlLeerCategorias($categoriaID='') {
         $this->sentenciaSQL = ($categoriaID === '')
             ? "SELECT * FROM categorias_inventario  ORDER BY categoria"
             : "SELECT * FROM categorias_inventario WHERE categoria_id = ?  ORDER BY categoria";
@@ -104,12 +98,12 @@ class ModeloProductos extends ModeloConexion{
     }
 
     /** Este método devuelve la lista de categorias activas ordenadas alfabéticamente */
-    public function readCategoriasActivas() {
+    public function mdlLeerCategoriasActivas() {
         $this->sentenciaSQL = "SELECT * FROM categorias_inventario WHERE estado = 1 ORDER BY categoria"; 
         return $this-> consultaRead();
     }
 
-    public function updateCategoria($listaDatos) {
+    public function mdlEditarCategoria($listaDatos) {
         $this->registros = $listaDatos;
         $this->sentenciaSQL = 'UPDATE categorias_inventario SET categoria = ?, estado = ? WHERE categoria_id = ?';
         return $this-> consultasCUD();

@@ -28,8 +28,7 @@
 }
 
 .tarjeta-producto ul li:last-child {
-    color: var(--color-blanco);
-    background: var(--color-rojo);
+    color: var(--color-rosa);
     cursor: pointer;
     transition: 0.5s;
 }

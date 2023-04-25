@@ -31,6 +31,10 @@ main {
     gap: 0.7rem;
 }
 
+.texto-rosa {
+    color: var(--color-rosa);
+}
+
 @media screen and (min-width: 720px) and (max-width: 1023px) {
     main {
         display: grid;

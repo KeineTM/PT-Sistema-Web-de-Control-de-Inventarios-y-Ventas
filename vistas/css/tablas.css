@@ -1,10 +1,24 @@
+.contenedor__tabla {
+    overflow: auto;
+    max-height: 600px;
+}
+
+.tabla__titulo {
+    font-size: larger;
+    font-family: var(--fuente-subtitulo);
+    font-weight: bold;
+    padding: 1rem 0;
+}
+
 .tabla {
     background: var(--color-blanco);
+    width: 100%;
 }
 
 .tabla thead{
     border-top: 5px solid var(--color-cielo);
     background: var(--color-blanco);
+    font-family: var(--fuente-titulo);
 }
 
 .tabla th, .tabla td {
@@ -16,3 +30,8 @@
 .tabla img {
     height: 1.5rem;
 }
+
+/*.celda__lista {
+    list-style: decimal;
+    padding-left: 1rem;
+}*/

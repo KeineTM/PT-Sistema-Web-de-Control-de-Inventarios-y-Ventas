@@ -12,7 +12,7 @@ class ControladorProductos {
     public $estado;
     public $foto_url;
     public $caducidad;
-
+    // Atributos empleados para las operaciones de venta/apartados/devoluciones
     public $cantidad;
     public $total;
 
@@ -152,10 +152,7 @@ class ControladorProductos {
                 ? 'Registro correcto'
                 : 'Ocurrio un error, el codigo del producto ya esta registrado.';
     }
-    #!!!!!!!!!!!!!!!!!!!!! NO CAMBIA EL ID SI ESTE SE EDITA; Y SI SE CAMBIA POR UNO PREEXISTENTE EDITA ESE PRODUCTO EN SU LUGAR
-    #!!!!!!!!!!!!!!!!!!!!!!!! HAY QUE CORREGIRLO PRONTO
-    # EL ID USADO EN LA SENTENCIA WHERE producto_id NO DEBE SER TOMADO DEL FORMULARIO
-    # DEBE SER EL QUE PERTENECE ORIGINALMENTE PARA QUE SI SE QUIERE CAMBIAR, LO HAGA SOBRE EL PRODUCTO CORRECTO
+    
     /** Método que actualiza un producto existente en la base de datos */
     public function ctrlEditar($producto_id) {
         $listaDatos = [$this->producto_id, $this->nombre, $this->categoria_id, $this->descripcion, $this->unidades, $this->unidadesMinimas, 
@@ -170,25 +167,25 @@ class ControladorProductos {
     /** Método que devuelve todos los productos de la tabla inventario */
     static public function ctrlLeerTodos() {
         $listaProductos = new ModeloProductos();
-        return $listaProductos -> leer();
+        return $listaProductos -> mdlLeer();
     }
 
     /** Método que devuelve las coincidencias encontradas en una búsqueda */
     static public function ctrlBuscarTodos($palabraClave) {
         if(strlen($palabraClave) > 0) {
             $listaProductos = new ModeloProductos();
-            return $listaProductos -> leer($palabraClave);
+            return $listaProductos -> mdlBuscarPorPalabraClave($palabraClave);
         } else
             return "Debe ingresar un dato para buscar";
     }
 
-    static public function ctrlBuscarUno($producto_id) {
+    static public function ctrlLeerUno($producto_id) {
         $producto = new ControladorProductos($producto_id, '', '', '', '', '', '', '', '', '', '', '');
         $validacion = $producto->validarDato('Codigo de producto');
         
         if($validacion === null) {
             $consulta = new ModeloProductos();
-            return $consulta -> leerUno($producto_id);
+            return $consulta -> mdlLeer($producto_id);
         } else {
             return $validacion;
         }
@@ -197,9 +194,9 @@ class ControladorProductos {
     ## Otros métodos
     /** Método para registrar una categoría, recibe una cadena con el nombre */
     static public function ctrlRegistrarCategoria($categoria) {
-        if(strlen($categoria) > 0) {
+        if(strlen($categoria) > 3) {
             $modelo = new ModeloProductos();
-            $respuesta = $modelo -> createCategoria($categoria);
+            $respuesta = $modelo -> mdlRegistrarCategoria($categoria);
             return ($respuesta === true)
                     ? 'Registro correcto'
                     : 'Categoria duplicada';
@@ -211,20 +208,20 @@ class ControladorProductos {
     /** Este método devuelve un listado de las categorías registradas */
     static public function ctrlCategorias() {
         $modelo = new ModeloProductos();
-        return $modelo -> readCategorias();
+        return $modelo -> mdlLeerCategorias();
     }
 
     /** Este método devuelve un listado de las categorías activas registradas */
     static public function ctrlCategoriasActivas() {
         $modelo = new ModeloProductos();
-        return $modelo -> readCategoriasActivas();
+        return $modelo -> mdlLeerCategoriasActivas();
     }
 
     /** Este método edita una categoria */
     static public function ctrlEditarCategorias($categoria_id, $categoria, $estado) {
         $listaDatos = [$categoria, $estado, $categoria_id];
         $modelo = new ModeloProductos();
-        $resultado = $modelo -> updateCategoria($listaDatos);
+        $resultado = $modelo -> mdlEditarCategoria($listaDatos);
         return ($resultado === true)
                 ? 'Categoria editada correctamente'
                 : 'Error: Categoria duplicada';
@@ -248,14 +245,21 @@ if(isset($_GET['funcion'])) {
         die();
     }
     else if($_GET['funcion'] === 'registrar-categoria') {
-        $categoria = $_POST['categoria-txt'];
+        if(!isset($_POST['categoria-txt']) || strlen($_POST['categoria-txt']) < 3) {
+            echo 'Debe ingresar un nombre de categoria válido';
+            die();
+        }
+        $categoria = strtoupper($_POST['categoria-txt']);
         $resultado = ControladorProductos::ctrlRegistrarCategoria($categoria);
         echo $resultado;
         die();
     }
     else if($_GET['funcion'] === 'editar-categoria') {
+        if(!isset($_POST['categoriaProducto-txt'])) {echo 'Debe ingresar un id de categoria'; die();}
+        if(!isset($_POST['categoria-txt'])) {echo 'Debe ingresar un nombre para la categoria'; die();}
+        if(!isset($_POST['estadoCategoria-txt'])) {echo 'Debe ingresar un estado valido: Activo / Dar de baja'; die();}
         $categoria_id = $_POST['categoriaProducto-txt'];
-        $categoria = $_POST['categoria-txt'];
+        $categoria = strtoupper($_POST['categoria-txt']);
         $estado = $_POST['estadoCategoria-txt'];
 
         if(strlen($categoria_id) > 0 && 
@@ -274,7 +278,7 @@ if(isset($_GET['funcion'])) {
     }
     else if($_GET['funcion'] === 'registrar-producto') {
         # Recuperación de valores
-        $producto_id = $_POST['idProducto-txt']; # Requerido
+        $producto_id = strtoupper($_POST['idProducto-txt']); # Requerido
         $nombre = $_POST['nombreProducto-txt']; # Requerido
         $categoria_id = ($_POST['categoriaProducto-txt']); # Requerido
         $descripcion = (strlen($_POST['descripcionProducto-txt']))
@@ -327,7 +331,7 @@ if(isset($_GET['funcion'])) {
     }
     else if($_GET['funcion'] === 'editar-producto') {
         # Recuperación de valores
-        $producto_id_nuevo = $_POST['idProducto-txt']; # Requerido
+        $producto_id_nuevo = strtoupper($_POST['idProducto-txt']); # Requerido
         $producto_id_original = $_POST['idProductoOriginal-txt']; #Requerido
         $nombre = $_POST['nombreProducto-txt']; # Requerido
         $categoria_id = ($_POST['categoriaProducto-txt']); # Requerido

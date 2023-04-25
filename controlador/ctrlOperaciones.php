@@ -1,8 +1,8 @@
 <?php
 class ControladorOperaciones
 {
-    private $descuento;
     private $subtotal;
+    private $descuento;
     private $total;
     private $notas;
     private $tipo_operacion;
@@ -17,8 +17,8 @@ class ControladorOperaciones
     private const DESCUENTO_MAX = 0.5;
 
     public function __construct(
-        $descuento,
         $subtotal,
+        $descuento,
         $total,
         $notas,
         $tipo_operacion,
@@ -29,8 +29,9 @@ class ControladorOperaciones
         $abono,
         $metodo_pago
     ) {
-        $this->descuento = $descuento;
+        date_default_timezone_set('America/Mazatlan');
         $this->subtotal = $subtotal;
+        $this->descuento = $descuento;
         $this->total = $total;
         $this->notas = $notas;
         $this->tipo_operacion = $tipo_operacion;
@@ -57,7 +58,7 @@ class ControladorOperaciones
         if (!isset($_POST['idProducto-txt'])) return;
 
         $producto_id = $_POST['idProducto-txt'];
-        $busqueda = ControladorProductos::ctrlBuscarUno($producto_id);
+        $busqueda = ControladorProductos::ctrlLeerUno($producto_id);
         $productoPorAgregar = new ControladorProductos(
             $busqueda[0]['producto_id'],
             $busqueda[0]['nombre'],
@@ -180,7 +181,7 @@ class ControladorOperaciones
         exit;
     }
 
-    /** Método qur recibe un índice para quitar el carrito con el uso de variables de sesión */
+    /** Método que recibe un índice para quitar el carrito con el uso de variables de sesión */
     static public function quitarDelCarrito() {
         if (!isset($_GET['quitar'])) return;
 
@@ -194,6 +195,21 @@ class ControladorOperaciones
             window.location.href = "index.php?pagina=ventas&opciones=alta&estado=eliminado";
             </script>';
         exit;
+    }
+
+    /** Método que vacía la variable de sesión del carrito */
+    public function vaciarCarrito() {
+        unset($_SESSION['carrito']);
+        $_SESSION['carrito'] = [];
+    }
+
+    static function btnVaciarCarrito() {
+        if(!isset($_GET['vaciar'])) return;
+
+        unset($_SESSION['carrito']);
+        $_SESSION['carrito'] = [];
+
+        return;
     }
 
     //---------------------------------------------------------------------------------------
@@ -322,6 +338,7 @@ class ControladorOperaciones
         return $registro -> mdlRegistrarOperacionCompleta($datos_operacion, $this->productos_incuidos, $datos_abono);
     }
 
+    /** Método que recibe los datos del formulario para procesar una venta */
     static public function ctrlCrearVenta() {
         if (!isset($_POST['total-txt'])) return;
         if (($_POST['total-txt']) < 0) {
@@ -367,34 +384,30 @@ class ControladorOperaciones
         $total = $subtotal - $descuento;
         $monto_abonado = $total; # En una venta es igual al total pagado
 
-        $venta_nueva = new ControladorOperaciones($descuento, $subtotal, $total, $notas, $tipo_operacion, $estado, $cliente_id, $productos_incuidos, $empleado_id, $monto_abonado, $metodo_pago);
+        $venta_nueva = new ControladorOperaciones($subtotal, $descuento, $total, $notas, $tipo_operacion, $estado, $cliente_id, $productos_incuidos, $empleado_id, $monto_abonado, $metodo_pago);
         
-        $venta_nueva -> ctrlRegistrarOperacionCompleta();
+        $resultado = $venta_nueva -> ctrlRegistrarOperacionCompleta();
 
-        /*#1 Registra la operación y recupera su ID
-        $resultado_operacion = $venta_nueva -> ctrlRegistrarOperacion();
+        if($resultado === true) {
+            $venta_nueva -> vaciarCarrito();
+            echo # Indica que el la venta fue exitosa
+            '<script type="text/javascript">
+                window.location.href = "index.php?pagina=ventas&opciones=alta&estado=creada";
+            </script>';
+            exit;
+        } else { # Indica que hubo un error
+            echo '<div id="alerta-formulario" class="alerta-roja">
+                Ocurrió un error: Vuelva a intentar la venta
+            </div>';
+            var_dump($resultado);
+            exit;
+        }
+        
+    }
 
-        # Evalúa si el resultado es diferente de false, porque en caso de éxito retorna un número de ID
-        if($resultado_operacion !== false) {
-            #2 Registra los productos incluídos (y resta unidades del inventario)
-            $resultado_productos = $venta_nueva -> ctrlRegistrarProductosIncuidos($resultado_operacion);
-
-            if($resultado_productos === true) {
-                # 3 Registra el abono
-                $resultado_abono = $venta_nueva -> ctrlRegistrarAbono($resultado_operacion);
-
-                if($resultado_abono === true) {
-                    echo # Indica que el la venta fue exitosa
-                        '<script type="text/javascript">
-                            window.location.href = "index.php?pagina=ventas&opciones=alta&estado=creada";
-                        </script>';
-                    exit;
-                }
-            }
-        }*/
-
-        # Si llegó a este código significa que hubo un error
-        echo '<div id="alerta-formulario" class="alerta-roja">Ocurrió un error</div>';
-        exit;
+    /** Método que devuelve una lista de ventas dentro de un rango de fecha. */
+    static public function ctrlLeerVentasPorRangoDeFecha($fecha_inicio='', $fecha_fin='') {
+        $modelo_consulta = new ModeloOperaciones();
+        return $modelo_consulta -> mdlLeerVentasPorRangoDeFecha($fecha_inicio, $fecha_fin);
     }
 }
