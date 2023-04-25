@@ -27,12 +27,25 @@ main {
 }
 
 #subcontenedor {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 0.7rem;
 }
 
 .texto-rosa {
     color: var(--color-rosa);
+}
+
+.destacado {
+    font-size: 20px;
+}
+
+.destacado-mas {
+    font-size: 28px;
+}
+
+.mayusculas {
+    text-transform: uppercase;
 }
 
 @media screen and (min-width: 720px) and (max-width: 1023px) {

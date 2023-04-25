@@ -13,6 +13,13 @@
     background: var(--color-naranja);
 }
 
+#icono-quitar {
+    width: 1rem;
+    transition: .2s;
+}
+
+
+/* Tarjeta del producto agregado a la operación */
 .tarjeta-venta {
     display: flex;
     flex-direction: column;
@@ -69,6 +76,23 @@
 .verde:hover {
     color: var(--color-blanco);
     background: var(--color-verde);
+}
+
+.gris:hover {
+    filter: var(--filter-blanco);
+    background: var(--color-verde);
+}
+
+/* Formato del ticket con los detalles de la operación */
+.detalles-ticket {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.detalles-ticket a {
+    max-width: 300px;
+    margin-right: 0;
 }
 
 @media screen and (min-width: 425px){

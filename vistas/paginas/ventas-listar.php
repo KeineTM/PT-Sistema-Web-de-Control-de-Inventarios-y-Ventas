@@ -20,7 +20,7 @@ $consulta = ControladorOperaciones::ctrlLeerVentasPorRangoDeFecha($fecha_inicio,
 # Si no es una lista es porque retornó un error
 # Si es una lista vacía es porque no encontró coincidencias
 if (!is_array($consulta) || sizeof($consulta) === 0) {
-    echo '<p class="alerta-roja">Ocurrió un error: El folio no existe o hay un problema con la base de datos</p>';
+    echo '<p class="alerta-roja">No hay datos para estas fechas</p>';
     die();
 }
 
@@ -37,7 +37,8 @@ foreach($consulta as $fila) {
         'notas' => $fila['notas'],
         'metodo' => $fila['metodo'],
         'fecha' => $fila['fecha'],
-        'empleado_id' => $fila['empleado_id']
+        'empleado_id' => $fila['empleado_id'],
+        'nombre_completo' => $fila['nombre_completo']
     ];
     array_push($lista_operaciones, $operacion);
 }
@@ -47,7 +48,7 @@ $lista_operaciones = array_unique($lista_operaciones, SORT_REGULAR);
 ?> 
 <section class="contenedor__tabla">
     <h3 class="tabla__titulo"><?= $titulo ?></h3>
-    <p>Puede acceder a los detalles de la venta y editarlos haciendo clic en el <span class="texto-rosa">Folio</span> de la venta.</p><br>
+    <p>Puede acceder la información completa de la venta y editarlos haciendo clic en los <span class="texto-rosa">Detalles</span> de la venta.</p><br>
     <!-- -------------Tabla de ventas por tiempo ---------- -->
     <table class="tabla">
         <thead>
@@ -67,7 +68,7 @@ $lista_operaciones = array_unique($lista_operaciones, SORT_REGULAR);
             <!-- Contenido -->
             <?php foreach($lista_operaciones as $operacion) {  ?>
             <tr>
-                <td><a class="texto-rosa" href="index.php?pagina=ventas&opciones=editar&folio=<?= $operacion['operacion_id']?>"><?= preg_replace('/^0+/', '',$operacion['operacion_id']) ?> Detalles</a></td>
+                <td><a class="texto-rosa" href="index.php?pagina=ventas&opciones=detalles&folio=<?=$operacion['operacion_id']?>"><?= preg_replace('/^0+/', '',$operacion['operacion_id'])?><br>Detalles</a></td>
                 <td>
                     <ol class="celda__lista">
                     <?php 
@@ -92,7 +93,7 @@ $lista_operaciones = array_unique($lista_operaciones, SORT_REGULAR);
                     $fecha_formateada = date_create($operacion['fecha']);
                     echo date_format($fecha_formateada, 'g:ia d/m/y') 
                     ?></td>
-                <td><?= $operacion['empleado_id'] ?></td>
+                <td><?= $operacion['nombre_completo'] ?></td>
             </tr>
             <?php } ?>
         </tbody>

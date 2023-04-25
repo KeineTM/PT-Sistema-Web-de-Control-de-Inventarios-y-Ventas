@@ -84,9 +84,10 @@ ControladorOperaciones::ctrlCrearVenta();
                     </ul>
                 </span>
                 <span class="contenedor-boton">
-                    <a class="rojo redondo" data-quitar="<?= $indice ?>" href="index.php?pagina=ventas&opciones=alta&restar=<?= $indice ?>">-</a>
+                    <a class="rojo redondo" data-restar="<?=$indice?>" href="index.php?pagina=ventas&opciones=alta&restar=<?=$indice?>">-</a>
                     Cantidad: <p class="destacado"><?= $producto->cantidad ?></p>
-                    <a class="verde redondo" data-agregar="<?= $indice ?>" href="index.php?pagina=ventas&opciones=alta&sumar=<?= $indice ?>">+</a>
+                    <a class="verde redondo" data-agregar="<?=$indice?>" href="index.php?pagina=ventas&opciones=alta&sumar=<?=$indice?>">+</a>
+                    <a class="gris redondo" data-quitar="<?=$indice?>"  href="index.php?pagina=ventas&opciones=alta&quitar=<?=$indice?>"><img id="icono-quitar" src="vistas/img/trash-can.svg" alt="Quitar"></a>
                 </span>
             </div>
         </div>

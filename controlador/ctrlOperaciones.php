@@ -247,69 +247,6 @@ class ControladorOperaciones
 
     }
 
-    /** Método que registra la operación en BD recuperando el ID de la operación
-     * En caso de error retorna false
-     */
-    public function ctrlRegistrarOperacion() {
-        $regex = '/^([0-9])*$/'; # números
-        $listaDatos = [
-            $this->total,
-            $this->descuento,
-            $this->subtotal,
-            $this->notas,
-            $this->tipo_operacion,
-            $this->estado,
-            $this->cliente_id
-        ];
-        $modelo_registro = new ModeloOperaciones();
-        $resultado = $modelo_registro->mdlRegistrarOperacion($listaDatos);
-
-        # El resultado es una cadena que puede ser el ID o un error
-        # Se evalúa que la cadena se componga únicamente por números, pues es el formato del ID
-        return (preg_match($regex, $resultado))
-                ? $resultado # devuelve el ID
-                : false;
-    }
-
-    /** Método que registra los productos incluídos en una operación previamente registrada en BD y
-     * resta la cantidad de productos respectiva en su tabla. 
-     * Devuelve false si ocurrió un error. Y true si todo salió correcto.
-     */
-    public function ctrlRegistrarProductosIncuidos($operacion_id) {
-        $resultado = false;
-        $registro_operacion = new ModeloOperaciones();
-        $edicion_inventario = new ModeloProductos();
-
-        foreach($this->productos_incuidos as $producto) {
-            $datos_por_producto = [$operacion_id];
-            $datos_edicion_unidades = [];
-
-            array_push($datos_por_producto, $producto->producto_id);
-            array_push($datos_por_producto, $producto->cantidad);
-            array_push($datos_por_producto, $producto->total);
-            # Registra los productos del carrito
-            $resultado = $registro_operacion -> mdlRegistrarProductosIncluidos($datos_por_producto);
-            
-            if($resultado === true) { # Si el resultado es estrictamente igual a true significa que todo salió correcto
-                array_push($datos_edicion_unidades, $producto->cantidad);
-                array_push($datos_edicion_unidades, $producto->producto_id);
-                # Los resta del inventario
-                $resultado = $edicion_inventario -> editarUnidades($datos_edicion_unidades);
-            }
-        }
-
-        return $resultado;
-    }
-
-    /** Método que registra los datos del pago o abono y el usuario que la realizó en una operación previamente registrada */
-    public function ctrlRegistrarAbono($operacion_id) {
-        $resultado = null;
-        $listaDatos = [$operacion_id, $this->empleado_id, $this->fecha, $this->abono, $this->metodo_pago];
-        $modelo_registro = new ModeloOperaciones();
-        $resultado = $modelo_registro -> mdlRegistrarAbono($listaDatos);
-        return $resultado;
-    }
-
     /** Método que ejecuta la serie de consultas que componen una operación completa:
      * Registro en tabla operaciones.
      * Registro en tabla productos incluidos.
@@ -414,5 +351,29 @@ class ControladorOperaciones
     static public function ctrlLeerVentasPorRangoDeFecha($fecha_inicio='', $fecha_fin='') {
         $modelo_consulta = new ModeloOperaciones();
         return $modelo_consulta -> mdlLeerVentasPorRangoDeFecha($fecha_inicio, $fecha_fin);
+    }
+
+    static public function ctrlEliminar() {
+        # Validación de variables
+        if(!isset($_GET['eliminar'])) return;
+        if(!isset($_GET['folio'])) return;
+
+        $operacion_id = $_GET['folio'];
+        $modelo_consulta = new ModeloOperaciones();
+        $resultado = $modelo_consulta -> mdlEliminarOperacionCompleta($operacion_id);
+        
+        if($resultado == true) {
+            echo # Indica que la elminación fue exitosa
+                '<script type="text/javascript">
+                window.location.href = "index.php?pagina=ventas&opciones=exito";
+                </script>';
+            exit;
+        } else {
+            echo # Indica que hubo un error
+                '<script type="text/javascript">
+                window.location.href = "index.php?pagina=ventas&opciones=error";
+                </script>';
+            exit;
+        }
     }
 }
