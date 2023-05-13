@@ -11,7 +11,7 @@ ControladorOperaciones::sumarDelCarrito($nombre_carrito, $tipo_operacion);
 ControladorOperaciones::restarDelCarrito($nombre_carrito, $tipo_operacion);
 ControladorOperaciones::quitarDelCarrito($nombre_carrito, $tipo_operacion);
 ControladorOperaciones::btnVaciarCarrito($nombre_carrito, $tipo_operacion);
-# PONER CREACIÖN DE APARTADO
+# PONER CREACIÓN DE APARTADO
 ?>
 <span class="formulario__encabezado">
     <img class="formulario__icono" src="vistas/img/file-invoice.svg" alt="Formulario">
@@ -125,8 +125,8 @@ ControladorOperaciones::btnVaciarCarrito($nombre_carrito, $tipo_operacion);
                 <option value="2">Transferencia</option>
             </select>
 
-            <label for="notas-txt">Nombre del cliente:</label>
-            <textarea class="campo mayusculas requerido" autocomplete="off" name="notas-txt" cols="20" rows="2" maxlength="250" data-form="notas" required></textarea>
+            <label for="notas-txt">Número de teléfono del cliente:</label>
+            <input type="tel" class="campo mayusculas requerido" autocomplete="off" name="clienteID-txt" minlength="10" maxlength="10" data-form="cliente_id" required>
 
             <input name="total-txt" type="hidden" value="<?= $totalFinal; ?>"  data-form="total">
         </fieldset>

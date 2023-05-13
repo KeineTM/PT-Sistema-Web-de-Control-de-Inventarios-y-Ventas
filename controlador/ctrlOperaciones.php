@@ -504,13 +504,13 @@ class ControladorOperaciones
     }
 
     /** Método que elimina un ID de operación recibido */
-    static public function ctrlEliminar($tipo_operacion_url) {
+    static public function ctrlEliminar($tipo_operacion_url, $devolucion = false) {
         # Validación de variables
         if(!isset($_POST['folio-txt'])) return;
 
         $operacion_id = $_POST['folio-txt'];
         $modelo_consulta = new ModeloOperaciones();
-        $resultado = $modelo_consulta -> mdlEliminarOperacionCompleta($operacion_id);
+        $resultado = $modelo_consulta -> mdlEliminarOperacionCompleta($operacion_id, $devolucion);
         
         if($resultado == true) {
             echo # Indica que la elminación fue exitosa
@@ -535,7 +535,6 @@ if(isset($_GET['funcion'])) {
         if(!isset($_POST['buscarOperacion-txt'])) die();
 
         $operacion_id = $_POST['buscarOperacion-txt'];
-        $tipo_operacion = $_POST['tipoOperacion-txt'];
         $regex = '/^([0-9])*$/';
         
         if(strlen($operacion_id) === 0 || strlen($operacion_id) > 18) {

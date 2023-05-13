@@ -171,7 +171,11 @@ class ModeloOperaciones extends ModeloConexion {
         return $this->consultasCUD();
     }
 
-    public function mdlEliminarOperacionCompleta($operacion_id) {
+    /** Método que elimina todos los registros relacionados a un ID de operación en las tablas
+     * Operaciones, Abonos, Productos Incluídos.
+     * Y ajusta la cantidad de unidades disponibles en el inventario
+     */
+    public function mdlEliminarOperacionCompleta($operacion_id, $devolucion = false) {
         try {
             $this->abrirConexion();
             # ------------------ # Consulta de los productos de la operación ---------------------
@@ -189,8 +193,10 @@ class ModeloOperaciones extends ModeloConexion {
             $sentenciaEliminarProductos -> bindParam(1, $operacion_id);
             $sentenciaEliminarProductos -> execute();
 
-            # ------------------ # 2 Reintegración de todos los productos al inventario ---------------------
-            $this->sentenciaSQL = 'UPDATE inventario SET unidades = unidades + ? WHERE producto_id = ?';
+            # ------------------ # 2 Ajuste de unidades de los productos en inventario ---------------------
+            $this->sentenciaSQL = ($devolucion === false) 
+                ?'UPDATE inventario SET unidades = unidades + ? WHERE producto_id = ?' # Si se elimina una venta o apartado reintegra unidades
+                :'UPDATE inventario SET unidades = unidades - ? WHERE producto_id = ?'; # Si se elimina una devolución resta unidades
             $sentenciaRestaurarProductos = $this->conexion -> prepare($this->sentenciaSQL);
             foreach($productos_incluidos as $producto) {
                 $sentenciaRestaurarProductos -> bindParam(1, $producto['unidades']);

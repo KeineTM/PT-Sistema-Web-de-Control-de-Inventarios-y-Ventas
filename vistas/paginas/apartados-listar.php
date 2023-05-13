@@ -2,21 +2,9 @@
 # Definición de fechas:
 date_default_timezone_set('America/Mazatlan');
 
-if(!isset($_GET['tiempo'])) return; # Si no existe un parámetro de tiempo, no carga el código
-
-if($_GET['tiempo'] === 'dia') { # Dependiendo del valor del parámetro se cargan las opciones
-    $fecha_fin = date("Y-m-d") . " 23:59:00"; # Fin del día de hoy
-    $fecha_inicio = date("Y-m-d", strtotime($fecha_fin)) . " 00:00:00"; # Inicio del día de hoy
-    $titulo = 'Tabla de ventas del día';
-} else if($_GET['tiempo'] === 'semana') {
-    $fecha_fin = date("Y-m-d") . " 23:59:00"; # HOY
-    $fecha_inicio = date("Y-m-d", strtotime($fecha_fin."- 1 week")) . " 00:00:00"; # HACE 7 días
-    $titulo = 'Tabla de ventas de la semana';
-} else if($_GET['tiempo'] === 'mes') {
-    $fecha_fin = date("Y-m-d") . " 23:59:00"; # HOY
-    $fecha_inicio = date("Y-m-d", strtotime($fecha_fin."- 1 month")) . " 00:00:00"; # HACE UN MES
-    $titulo = 'Tabla de ventas de la semana';
-}
+$fecha_fin = date("Y-m-d") . " 23:59:00"; # HOY
+$fecha_inicio = date("Y-m-d", strtotime($fecha_fin."- 1 month")) . " 00:00:00"; # HACE UN MES
+$titulo = 'Tabla de apartados el mes';
 
 $consulta = ControladorOperaciones::ctrlLeerOperacionesPorRangoDeFecha($fecha_inicio, $fecha_fin, 'AP');
 

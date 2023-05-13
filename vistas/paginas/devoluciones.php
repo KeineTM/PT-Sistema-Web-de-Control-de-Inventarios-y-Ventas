@@ -3,12 +3,11 @@
     <h2>Devoluciones</h2>
     <!-- Submenú -->
     <ul class="main-menu destacado">
-        <li class="main-menu__opcion"><a class="boton-main" href="index.php?pagina=devoluciones&opciones=alta">Formulario de Venta</a></li>
+        <li class="main-menu__opcion"><a class="boton-main" href="index.php?pagina=devoluciones&opciones=alta">Formulario de Devolución</a></li>
         <li class="main-menu__opcion"><a class="boton-main" href="index.php?pagina=devoluciones&opciones=listar">Devoluciones del mes</a></li>
         <li class="main-menu__opcion">
             <form class="boton-main" id="barra-busqueda">
                 <input type="number" step="any" class="campo" name="buscarOperacion-txt" autocomplete="off" id="buscarOperacion-txt" placeholder="Buscar..." maxlength="18" min='1' required>
-                <input type="hidden" name="tipoOperacion-txt" value="DE">
                 <button class="boton enviar" id="btnBuscarOperacion"><img src="vistas/img/magnifying-glass.svg" alt=""></button>
             </form>
             <span class="alerta" id="alertaBuscar"></span>

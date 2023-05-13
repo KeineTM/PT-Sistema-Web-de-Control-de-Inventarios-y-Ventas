@@ -9,7 +9,6 @@
         <li class="main-menu__opcion">
             <form class="boton-main" id="barra-busqueda">
                 <input type="number" step="any" class="campo" name="buscarOperacion-txt" autocomplete="off" id="buscarOperacion-txt" placeholder="Buscar..." maxlength="18" min='1' required>
-                <input type="hidden" name="tipoOperacion-txt" value="VE">
                 <button class="boton enviar" id="btnBuscarOperacion"><img src="vistas/img/magnifying-glass.svg" alt=""></button>
             </form>
             <span class="alerta" id="alertaBuscar"></span>

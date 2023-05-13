@@ -110,7 +110,7 @@ ControladorOperaciones::ctrlCrearDevolucion($nombre_carrito, $tipo_operacion);
                 <option value="2">Transferencia</option>
             </select>
 
-            <label for="notas-txt">Notas:</label>
+            <label for="notas-txt">Motivo:</label>
             <textarea class="campo" autocomplete="off" name="notas-txt" cols="20" rows="2" maxlength="250"  data-form="notas" required placeholder="Razón de devolución..."></textarea>
 
             <input name="total-txt" type="hidden" value="<?= $totalFinal; ?>"  data-form="total">
