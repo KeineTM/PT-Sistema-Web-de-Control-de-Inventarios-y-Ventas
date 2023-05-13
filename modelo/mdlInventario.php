@@ -11,8 +11,7 @@ class ModeloProductos extends ModeloConexion{
     /** Método que registra un nuevo producto en la tabla. Recibe una lista con los tados a registrar. */
     public function registrar($listaDatos) {
         $this->registros = $listaDatos;
-        $this->sentenciaSQL = 
-            'INSERT INTO inventario VALUES (?,?,?,?,?,?,?,?,?,?,?,?)';
+        $this->sentenciaSQL = 'INSERT INTO inventario VALUES (?,?,?,?,?,?,?,?,?,?,?)';
         return $this->consultasCUD();
     }
 
@@ -20,12 +19,12 @@ class ModeloProductos extends ModeloConexion{
     public function mdlLeer($id='') {
         $this->sentenciaSQL = ($id === '')
         ? 'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
-            inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta, inventario.precio_mayoreo,
+            inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta,
             inventario.estado, inventario.foto_url, inventario.caducidad
             FROM inventario
             INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id'
         : 'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
-            inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta, inventario.precio_mayoreo,
+            inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta,
             inventario.estado, inventario.foto_url, inventario.caducidad
             FROM inventario
             INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id 
@@ -38,7 +37,7 @@ class ModeloProductos extends ModeloConexion{
     public function mdlBuscarPorPalabraClave($palabraClave) {
         $this->sentenciaSQL =
             'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
-            inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta, inventario.precio_mayoreo,
+            inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta,
             inventario.estado, inventario.foto_url, inventario.caducidad
             FROM inventario
             INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id 
@@ -51,7 +50,7 @@ class ModeloProductos extends ModeloConexion{
         $this->registros = $listaDatos; # Cuidar que a lista de datos tenga el orden de la consulta, incluyendo la repetición del ID
         $this->sentenciaSQL = 
             'UPDATE inventario SET producto_id = ?, nombre = ?, categoria_id = ?, descripcion = ?, unidades = ?, 
-            unidades_minimas = ?, precio_compra = ?, precio_venta = ?, precio_mayoreo = ?, estado = ?, foto_url = ?, caducidad = ? 
+            unidades_minimas = ?, precio_compra = ?, precio_venta = ?, estado = ?, foto_url = ?, caducidad = ? 
             WHERE producto_id = ? LIMIT 1';
         return $this->consultasCUD();
     }
@@ -71,30 +70,17 @@ class ModeloProductos extends ModeloConexion{
     /** Método que registra una categoría nueva */
     public function mdlRegistrarCategoria($categoria) {
         $this->sentenciaSQL = "INSERT INTO categorias_inventario (categoria) VALUES (?)";
-        $this -> abrirConexion();
-
-        try {
-            $registro = $this->conexion -> prepare($this->sentenciaSQL);
-            $registro -> bindValue(1, $categoria, PDO::PARAM_STR);
-            $registro -> execute();
-
-            return true;
-
-        } catch(PDOException $e) {
-            return 'Error: ' .$e->getMessage();
-        } finally {
-            $registro = null;
-            $this->cerrarConexion();
-        }
+        array_push($this->registros, $categoria);
+        return $this->consultasCUD();
     }
 
     /** Este método devuelve todas las categorias en la tabla. Si se le indica un id, sólo devuelve el registro correspondiente */
-    public function mdlLeerCategorias($categoriaID='') {
-        $this->sentenciaSQL = ($categoriaID === '')
+    public function mdlLeerCategorias($categoria_id='') { 
+        $this->sentenciaSQL = ($categoria_id === '')
             ? "SELECT * FROM categorias_inventario  ORDER BY categoria"
             : "SELECT * FROM categorias_inventario WHERE categoria_id = ?  ORDER BY categoria";
         
-        return $this-> consultaRead($categoriaID);
+        return $this-> consultaRead($categoria_id);
     }
 
     /** Este método devuelve la lista de categorias activas ordenadas alfabéticamente */

@@ -5,7 +5,6 @@ const cargarOptionsCategorias = (selectHTML, listaCategoriasJSON) => {
     for (const registro of listaCategoriasJSON) { // Recorre el array para entrar a cada registro (objeto tipo json)
         const nuevaOpcion = document.createElement('option');  // Crea una nueva option
         nuevaOpcion.setAttribute("estado", registro['estado']); // Incluye a un atributo el estado de la categoría (0|1)
-        nuevaOpcion.classList.add('mayusculas');
         nuevaOpcion.value = registro['categoria_id']; // Asigna como value la llave primaria del registro
         nuevaOpcion.textContent = registro['categoria']; // Nombre de la categoria
         selectHTML.appendChild(nuevaOpcion); // Agrega la opción en la etiqueta select

@@ -1,3 +1,36 @@
+//--------------------- Validación de Login -----------------------------
+
+/** Método para evaluar si un campo se ha llenado, retorna true si la cadena tiene datos.*/
+const validarCampoVacio = (input) => {
+    return (input.length !== 0)
+        ? true
+        : false
+};
+
+/**
+ * Método que valida que todos los campos obligatorios del formulario estén llenos, 
+ * en caso de no estarlo, colorea el borde de estos en rojo y previene al usuario. 
+ * Recibe el evento, la lista de campos a validar y retorna el resultado de la validacion
+ * @param {array} listaCamposObligatorios
+ */
+const validarLlenadoFormulario = (listaCamposObligatorios) => {
+    let camposObligatoriosLlenos = 0;
+    listaCamposObligatorios.forEach(campo => {
+        if (!validarCampoVacio(campo.value)) {
+            campo.style.borderColor = "red"
+        } else {
+            campo.style.borderColor = "gray";
+            camposObligatoriosLlenos++;
+        }
+    });
+    if(camposObligatoriosLlenos === listaCamposObligatorios.length)
+        return true;
+    else {
+        alert("Debe llenar los campos marcados con rojo.");
+        return false;
+    }
+}
+//--------------------------------------------------
 const mensajesDeErrorAltaProducto = {
     productoID: {
         vacio: 'El código del producto no puede quedar vacío',
@@ -66,7 +99,7 @@ const mostrarMensajeDeError = (campo, errorEncontrado) => {
 }
 
 /** Método recibe un input y valida su contenido de acuerdo con el tipo de data-form asignado */
-const validarCampo = (campo) => {
+const validarCampoProductos = (campo) => {
     // Recupera la etiqueta del formulario de acuerdo con el data-form="tipoDeInput" para saber qué campo es.
     let dataform = campo.dataset.form;
     let regex;
@@ -210,39 +243,61 @@ const validarCampo = (campo) => {
     }
 }
 
-/** Método para evaluar si un campo se ha llenado, retorna true si la cadena tiene datos.*/
-const validarCampoVacio = (input) => {
-    return (input.length !== 0)
-        ? true
-        : false
-};
+/** Método que contiene las validaciones para el formulario de contactos en el módulo de directorio */
+const validarCampoDirectorio = (campo) => {
+    let dataform = campo.dataset.form;
+    let regex;
 
-/**
- * Método que valida que todos los campos obligatorios del formulario estén llenos, 
- * en caso de no estarlo, colorea el borde de estos en rojo y previene al usuario. 
- * Recibe el evento, la lista de campos a validar y retorna el resultado de la validacion
- * @param {array} listaCamposObligatorios
- */
-const validarLlenadoFormulario = (listaCamposObligatorios) => {
-    let camposObligatoriosLlenos = 0;
-    listaCamposObligatorios.forEach(campo => {
-        if (!validarCampoVacio(campo.value)) {
-            campo.style.borderColor = "red"
-        } else {
-            campo.style.borderColor = "gray";
-            camposObligatoriosLlenos++;
-        }
-    });
-
-    if(camposObligatoriosLlenos === listaCamposObligatorios.length)
-        return true;
-    else {
-        alert("Debe llenar los campos marcados con rojo.");
-        return false;
+    switch(dataform) {
+        case 'nombre':
+            regex = new RegExp('[a-zA-Z ]{2,80}');
+            if(campo.value.length < 0) return 'El nombre no debe quedar vacío';
+            if(campo.value.length < 3) return 'El nombre no debe tener menos de 3 letras';
+            if(campo.value.length > 80) return 'El nombre no debe tener más de 80 letras';
+            if(!regex.test(campo.value)) return 'El nombre sólo acepta letras';
+            return null;
+        case 'apellido_paterno':
+            regex = new RegExp('[a-zA-Z ]{2,80}');
+            if(campo.value.length < 0) return 'El apellido paterno no debe quedar vacío';
+            if(campo.value.length < 3) return 'El apellido paterno no debe tener menos de 3 letras';
+            if(campo.value.length > 80) return 'El apellido paterno no debe tener más de 80 letras';
+            if(!regex.test(campo.value)) return 'El apellido paterno sólo acepta letras';
+            return null;
+        case 'apellido_materno':
+            if(campo.value.length !== 0) {
+                regex = new RegExp('[a-zA-Z ]{2,80}');
+                if(campo.value.length < 3) return 'El apellido materno no debe tener menos de 3 letras';
+                if(campo.value.length > 80) return 'El apellido materno no debe tener más de 80 letras';
+                if(!regex.test(campo.value)) return 'El apellido materno sólo acepta letras';
+            }
+            return null;
+        case 'contacto_id': // Número de teléfono
+            regex = new RegExp('^([0-9]+){10}$');
+            if(campo.value.length < 0) return 'El número de teléfono no debe quedar vacío';
+            if(campo.value.length != 10) return 'El número de teléfono debe tener 10 números';
+            if(!regex.test(campo.value)) return 'El número de teléfono sólo acepta números';
+            return null;
+        case 'notas': // Dirección
+            if(campo.value.length < 0) return 'Las notas no deben quedar vacía';
+            if(campo.value.length < 5) return 'Las notas no deben tener menos de 5 letras';
+            if(campo.value.length > 240) return 'Las notas no deben tener más de 240 letras';
+            return null;
+        case 'email':
+            if(campo.value.length !== 0) {
+                regex =  /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/;
+                if(campo.value.length > 150) return 'El email no debe tener más de 150 letras';
+                if(!regex.test(campo.value)) return 'El email debe contener un @ y un dominio. Ej: tienda@gobokids.com';
+            }
+            return null;
+        case 'tipo_id':
+            if(campo.value.length < 0) return 'Debe seleccionar un tipo para el contacto';
+            return null;
     }
 }
 
+
 export const metodosValidacion = {
-    validarCampo,
+    validarCampoProductos,
+    validarCampoDirectorio,
     validarLlenadoFormulario
 }

@@ -101,15 +101,14 @@ INSERT INTO tipos_contacto(tipo_contacto) VALUES
 
 -- Tabla de contactos
 CREATE TABLE `contactos` (
-    contacto_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    contacto_id VARCHAR(10) PRIMARY KEY NOT NULL, --TELÉFONO
     nombre VARCHAR(80) NOT NULL,
     apellido_paterno VARCHAR(80) NOT NULL,
     apellido_materno VARCHAR(80),
-    telefono VARCHAR(10) UNIQUE NOT NULL,
-    email VARCHAR(150) UNIQUE,
+    email VARCHAR(150),
     notas VARCHAR(250),
     tipo_contacto INT NOT NULL,
-    FULLTEXT KEY busqueda(nombre, apellido_paterno, apellido_materno),
+    FULLTEXT KEY busqueda(contacto_id, nombre, apellido_paterno, apellido_materno),
     FOREIGN KEY (tipo_contacto) REFERENCES tipos_contacto(tipo_id)
         ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -135,9 +134,9 @@ CREATE TABLE `operaciones` (
     notas VARCHAR(250),
     tipo_operacion CHAR(2) NOT NULL,
     estado BOOLEAN DEFAULT 1 NOT NULL,
-    cliente_id INT,
+    contacto_id VARCHAR(10),
     FOREIGN KEY (tipo_operacion) REFERENCES tipos_operacion(tipo_id),
-    FOREIGN KEY (cliente_id) REFERENCES contactos(contacto_id)
+    FOREIGN KEY (contacto_id) REFERENCES contactos(contacto_id)
         ON DELETE RESTRICT ON UPDATE CASCADE
 );
 

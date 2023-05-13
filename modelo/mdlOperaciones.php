@@ -18,7 +18,7 @@ class ModeloOperaciones extends ModeloConexion {
             # ------------------ # 1 Registro de la operación ---------------------
             $this->sentenciaSQL =
                 'INSERT INTO operaciones 
-                (operaciones.total, operaciones.descuento, operaciones.subtotal, operaciones.notas, operaciones.tipo_operacion, operaciones.estado, operaciones.cliente_id) 
+                (operaciones.total, operaciones.descuento, operaciones.subtotal, operaciones.notas, operaciones.tipo_operacion, operaciones.estado, operaciones.contacto_id) 
                 VALUES (?,?,?,?,?,?,?)';
             $consulta = $this->conexion -> prepare($this->sentenciaSQL); # PDOStatement
 
@@ -33,7 +33,9 @@ class ModeloOperaciones extends ModeloConexion {
 
             # ------------------ # 2 Registro de los productos incluídos ---------------------
             $sentenciaSQLProductosIncluidos = 'INSERT INTO productos_incluidos VALUES (?,?,?,?)';
-            $sentenciaSQLUnidadesInventario = 'UPDATE inventario SET unidades = unidades - ? WHERE producto_id = ?';
+            $sentenciaSQLUnidadesInventario = ($datos_operacion[4] === 'DE') # Evalúa si se trata de una devolución
+                ? 'UPDATE inventario SET unidades = unidades + ? WHERE producto_id = ?' # suma existencias
+                : 'UPDATE inventario SET unidades = unidades - ? WHERE producto_id = ?'; # resta existencias
             $consulta = $this->conexion -> prepare($sentenciaSQLProductosIncluidos); # PDOStatement
             $registro_unidades_inventario = $this->conexion -> prepare($sentenciaSQLUnidadesInventario); # PDOStatement
 
@@ -83,9 +85,9 @@ class ModeloOperaciones extends ModeloConexion {
                 productos_incluidos.producto_id, productos_incluidos.unidades, 
                 inventario.nombre, inventario.precio_venta,
                 productos_incluidos.total_acumulado,
-                operaciones.subtotal, operaciones.descuento, operaciones.total, operaciones.notas,
+                operaciones.subtotal, operaciones.descuento, operaciones.total, operaciones.notas, operaciones.tipo_operacion, operaciones.estado,
                 metodos_pago.metodo,
-                abonos.fecha, abonos.empleado_id,
+                abonos.fecha, abonos.empleado_id, abonos.abono,
                 CONCAT(usuarios.nombre," ", usuarios.apellido_paterno," ", usuarios.apellido_materno) AS nombre_completo
                 FROM operaciones
                 INNER JOIN productos_incluidos ON operaciones.operacion_id = productos_incluidos.operacion_id
@@ -97,9 +99,9 @@ class ModeloOperaciones extends ModeloConexion {
                 productos_incluidos.producto_id, productos_incluidos.unidades, 
                 inventario.nombre, inventario.precio_venta,
                 productos_incluidos.total_acumulado,
-                operaciones.subtotal, operaciones.descuento, operaciones.total, operaciones.notas,
+                operaciones.subtotal, operaciones.descuento, operaciones.total, operaciones.notas, operaciones.tipo_operacion, operaciones.estado,
                 metodos_pago.metodo,
-                abonos.fecha, abonos.empleado_id,
+                abonos.fecha, abonos.empleado_id, abonos.abono,
                 CONCAT(usuarios.nombre," ", usuarios.apellido_paterno," ", usuarios.apellido_materno) AS nombre_completo
                 FROM operaciones
                 INNER JOIN productos_incluidos ON operaciones.operacion_id = productos_incluidos.operacion_id
@@ -113,45 +115,43 @@ class ModeloOperaciones extends ModeloConexion {
     }
 
     /** Método que devuelve los registros de operaciones tipo venta dentro de un rango de tiempo */
-    public function mdlLeerVentasPorRangoDeFecha($fecha_inicio, $fecha_fin) {
-        try {
-            // Retorna 13 datos en total 
-            // En una venta 8 registros son únicos y pueden repetirse por el número de productos incluidos
-            $this->sentenciaSQL = 
-                'SELECT operaciones.operacion_id,
-                productos_incluidos.producto_id, productos_incluidos.unidades, 
-                inventario.nombre, inventario.precio_venta,
-                productos_incluidos.total_acumulado,
-                operaciones.subtotal, operaciones.descuento, operaciones.total, operaciones.notas,
-                metodos_pago.metodo,
-                abonos.fecha, abonos.empleado_id,
-                CONCAT(usuarios.nombre," ", usuarios.apellido_paterno," ", usuarios.apellido_materno) AS nombre_completo
-                FROM operaciones
-                INNER JOIN productos_incluidos ON operaciones.operacion_id = productos_incluidos.operacion_id
-                INNER JOIN inventario ON productos_incluidos.producto_id = inventario.producto_id
-                INNER JOIN abonos ON operaciones.operacion_id = abonos.operacion_id
-                INNER JOIN metodos_pago ON abonos.metodo_pago = metodos_pago.metodo_id
-                INNER JOIN usuarios ON usuarios.usuario_id = abonos.empleado_id
-                WHERE abonos.fecha >= ? AND abonos.fecha < ?';
+    public function mdlLeerOperacionesPorRangoDeFecha($fecha_inicio, $fecha_fin, $tipo_operacion_id) {
+        $this->sentenciaSQL =
+            'SELECT operaciones.operacion_id,
+            productos_incluidos.producto_id, productos_incluidos.unidades, 
+            inventario.nombre, inventario.precio_venta,
+            productos_incluidos.total_acumulado,
+            operaciones.subtotal, operaciones.descuento, operaciones.total, operaciones.notas, operaciones.tipo_operacion, operaciones.estado,
+            metodos_pago.metodo,
+            abonos.fecha, abonos.empleado_id, abonos.abono,
+            CONCAT(usuarios.nombre," ", usuarios.apellido_paterno," ", usuarios.apellido_materno) AS nombre_completo
+            FROM operaciones
+            INNER JOIN productos_incluidos ON operaciones.operacion_id = productos_incluidos.operacion_id
+            INNER JOIN inventario ON productos_incluidos.producto_id = inventario.producto_id
+            INNER JOIN abonos ON operaciones.operacion_id = abonos.operacion_id
+            INNER JOIN metodos_pago ON abonos.metodo_pago = metodos_pago.metodo_id
+            INNER JOIN usuarios ON usuarios.usuario_id = abonos.empleado_id
+            WHERE operaciones.tipo_operacion = ? AND abonos.fecha >= ? AND abonos.fecha < ?';
         
+        try {
             $this->abrirConexion(); # Conecta
             $pdo = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
             
-            $pdo -> bindParam(1, $fecha_inicio, PDO::PARAM_STR, 19);
-            $pdo -> bindParam(2, $fecha_fin, PDO::PARAM_STR, 19);
-
+            $pdo -> bindParam(1, $tipo_operacion_id);
+            $pdo -> bindParam(2, $fecha_inicio);
+            $pdo -> bindParam(3, $fecha_fin);
+    
             $pdo -> execute(); # Ejecuta
-
             $this->registros = $pdo -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos
-
+    
             return $this->registros;
+
         } catch(PDOException $e) {
-            return 'Error: ' .$e->getMessage(); # Si hubo un error lo Retorna
+            return 'Error: ' . $e->getMessage(); # Si hubo un error lo Retorna
         } finally {
             $pdo = null; # Limpia
             $this->cerrarConexion(); # Cierra
-        }
-        
+        } 
     }
 
     public function mdlRestaurarProductoAlInventario($listaDatos) {
@@ -164,10 +164,11 @@ class ModeloOperaciones extends ModeloConexion {
      * Si se omite deberá incluirse en la lista el id del empleado también.
     */
     public function mdlEliminarAbono($listaIDs, $todos = false) {
+        $this->registros = $listaIDs;
         $this->sentenciaSQL = ($todos === false)
             ? 'DELETE FROM abonos WHERE operacion_id = ? AND empleado_id = ?' # Borra un sólo abono de la operación
             : 'DELETE FROM abonos WHERE operacion_id = ?'; # Borra todos los abonos de la operación
-        return $this->consultasCUD($listaIDs);
+        return $this->consultasCUD();
     }
 
     public function mdlEliminarOperacionCompleta($operacion_id) {

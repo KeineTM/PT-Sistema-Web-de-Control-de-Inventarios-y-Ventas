@@ -8,7 +8,6 @@ class ControladorProductos {
     public $unidadesMinimas;
     public $precioCompra;
     public $precioVenta;
-    public $precioMayoreo;
     public $estado;
     public $foto_url;
     public $caducidad;
@@ -18,8 +17,8 @@ class ControladorProductos {
 
     ## Métodos Constructores y Destructores
     public function __construct($producto_id, $nombre, $categoria_id, $descripcion, $unidades, $unidadesMinimas,
-                                $precioCompra, $precioVenta, $precioMayoreo, $estado, $foto_url, $caducidad) {
-        $this->producto_id = $producto_id;
+                                $precioCompra, $precioVenta, $estado, $foto_url, $caducidad) {
+        $this->producto_id = strtoupper($producto_id);
         $this->nombre = $nombre;
         $this->categoria_id = $categoria_id;
         $this->descripcion = $descripcion;
@@ -27,7 +26,6 @@ class ControladorProductos {
         $this->unidadesMinimas = $unidadesMinimas;
         $this->precioCompra = $precioCompra;
         $this->precioVenta = $precioVenta;
-        $this->precioMayoreo = $precioMayoreo;
         $this->estado = $estado;
         $this->foto_url = $foto_url;
         $this->caducidad = $caducidad;
@@ -35,6 +33,7 @@ class ControladorProductos {
 
     /** Sí es válido retorna la lista de datos a registrar */
     public function validarDato($campo) {
+        require_once "ctrlSeguridad.php";
         $mensaje = null;
 
         switch ($campo) {
@@ -100,17 +99,6 @@ class ControladorProductos {
                     $mensaje = ControladorSeguridad::validarRangoNumerico($campo, $this->precioVenta, 1, 9999);
                 return $mensaje;
                 break;
-            case 'Precio de Mayoreo':
-                $regex = '/^[0-9]+(\\.[0-9]{1,2})?$/';
-                $referencia = 'numeros con hasta 2 decimales';
-
-                if (strlen($this->precioMayoreo) !== 0 && $this->precioMayoreo !== null) {
-                    $mensaje = ControladorSeguridad::validarFormato($campo, $this->precioMayoreo, $regex, $referencia);
-                    if ($mensaje === null)
-                        $mensaje = ControladorSeguridad::validarRangoNumerico($campo, $this->precioMayoreo, 0, 9999);
-                }
-                return $mensaje;
-                break;
             case 'Caducidad':
                 if (strlen($this->caducidad) !== 0 && $this->caducidad !== null) {
                     $mensaje = ControladorSeguridad::validarFecha($campo, $this->caducidad);
@@ -145,7 +133,7 @@ class ControladorProductos {
     /** Método que registra un nuevo producto en la base de datos */
     public function ctrlRegistrar() {
         $listaDatos = [$this->producto_id, $this->nombre, $this->categoria_id, $this->descripcion, $this->unidades, $this->unidadesMinimas, 
-        $this->precioCompra, $this->precioVenta, $this->precioMayoreo, $this->estado, $this->foto_url, $this->caducidad];
+        $this->precioCompra, $this->precioVenta, $this->estado, $this->foto_url, $this->caducidad];
         $productoNuevo = new ModeloProductos;
         $resultado = $productoNuevo -> registrar($listaDatos);
         return ($resultado === true)
@@ -156,7 +144,7 @@ class ControladorProductos {
     /** Método que actualiza un producto existente en la base de datos */
     public function ctrlEditar($producto_id) {
         $listaDatos = [$this->producto_id, $this->nombre, $this->categoria_id, $this->descripcion, $this->unidades, $this->unidadesMinimas, 
-        $this->precioCompra, $this->precioVenta, $this->precioMayoreo, $this->estado, $this->foto_url, $this->caducidad, $producto_id];
+        $this->precioCompra, $this->precioVenta, $this->estado, $this->foto_url, $this->caducidad, $producto_id];
         $producto = new ModeloProductos;
         $resultado = $producto -> editar($listaDatos);
         return ($resultado === true)
@@ -234,7 +222,7 @@ class ControladorProductos {
 
 # Invocación de métodos para API Fetch de JS:
 if(isset($_GET['funcion'])) {
-    require '../modelo/mdlInventario.php';
+    require_once '../modelo/mdlInventario.php';
 
     if($_GET['funcion'] === 'listar-categorias-activas') {
         echo json_encode(ControladorProductos::ctrlCategoriasActivas());
@@ -249,7 +237,7 @@ if(isset($_GET['funcion'])) {
             echo 'Debe ingresar un nombre de categoria válido';
             die();
         }
-        $categoria = strtoupper($_POST['categoria-txt']);
+        $categoria = $_POST['categoria-txt'];
         $resultado = ControladorProductos::ctrlRegistrarCategoria($categoria);
         echo $resultado;
         die();
@@ -259,7 +247,7 @@ if(isset($_GET['funcion'])) {
         if(!isset($_POST['categoria-txt'])) {echo 'Debe ingresar un nombre para la categoria'; die();}
         if(!isset($_POST['estadoCategoria-txt'])) {echo 'Debe ingresar un estado valido: Activo / Dar de baja'; die();}
         $categoria_id = $_POST['categoriaProducto-txt'];
-        $categoria = strtoupper($_POST['categoria-txt']);
+        $categoria = $_POST['categoria-txt'];
         $estado = $_POST['estadoCategoria-txt'];
 
         if(strlen($categoria_id) > 0 && 
@@ -278,7 +266,7 @@ if(isset($_GET['funcion'])) {
     }
     else if($_GET['funcion'] === 'registrar-producto') {
         # Recuperación de valores
-        $producto_id = strtoupper($_POST['idProducto-txt']); # Requerido
+        $producto_id = $_POST['idProducto-txt']; # Requerido
         $nombre = $_POST['nombreProducto-txt']; # Requerido
         $categoria_id = ($_POST['categoriaProducto-txt']); # Requerido
         $descripcion = (strlen($_POST['descripcionProducto-txt']))
@@ -292,9 +280,6 @@ if(isset($_GET['funcion'])) {
                         ? $_POST['precioCompraProducto-txt']
                         : null;
         $precioVenta = $_POST['precioVentaProducto-txt']; # Requerido
-        $precioMayoreo = (strlen($_POST['precioMayoreoProducto-txt']))
-                        ? $_POST['precioMayoreoProducto-txt']
-                        : null;
         $estado = (isset($_POST['estadoProducto-txt'])) # Requerido
                     ? $_POST['estadoProducto-txt']
                     : 1;
@@ -307,12 +292,10 @@ if(isset($_GET['funcion'])) {
 
         $productoNuevo = new ControladorProductos(
             $producto_id, $nombre, $categoria_id, $descripcion, $unidades, $unidadesMinimas, 
-            $precioCompra, $precioVenta, $precioMayoreo, $estado, $foto_url, $caducidad);
-
-        require_once 'ctrlSeguridad.php';
+            $precioCompra, $precioVenta, $estado, $foto_url, $caducidad);
 
         $listaErrores = [];
-        $listaCampos = ['Codigo del producto', 'Nombre de producto', 'Categoria', 'Descripcion', 'Unidades', 'Unidades Minimas', 'Precio de Compra', 'Precio de Venta', 'Precio de Mayoreo', 'Caducidad', 'Imagen URL', 'Estado'];
+        $listaCampos = ['Codigo del producto', 'Nombre de producto', 'Categoria', 'Descripcion', 'Unidades', 'Unidades Minimas', 'Precio de Compra', 'Precio de Venta', 'Caducidad', 'Imagen URL', 'Estado'];
         
         # Validación de los campos
         foreach($listaCampos as $campo) {
@@ -331,7 +314,7 @@ if(isset($_GET['funcion'])) {
     }
     else if($_GET['funcion'] === 'editar-producto') {
         # Recuperación de valores
-        $producto_id_nuevo = strtoupper($_POST['idProducto-txt']); # Requerido
+        $producto_id_nuevo = $_POST['idProducto-txt']; # Requerido
         $producto_id_original = $_POST['idProductoOriginal-txt']; #Requerido
         $nombre = $_POST['nombreProducto-txt']; # Requerido
         $categoria_id = ($_POST['categoriaProducto-txt']); # Requerido
@@ -346,9 +329,6 @@ if(isset($_GET['funcion'])) {
                         ? $_POST['precioCompraProducto-txt']
                         : null;
         $precioVenta = $_POST['precioVentaProducto-txt']; # Requerido
-        $precioMayoreo = (strlen($_POST['precioMayoreoProducto-txt']))
-                        ? $_POST['precioMayoreoProducto-txt']
-                        : null;
         $estado = $_POST['estadoProducto-txt']; # Requerido
         $foto_url = (strlen($_POST['imagenProducto-txt']) > 0)
                     ? $_POST['imagenProducto-txt']
@@ -359,12 +339,12 @@ if(isset($_GET['funcion'])) {
 
         $productoNuevo = new ControladorProductos(
             $producto_id_nuevo, $nombre, $categoria_id, $descripcion, $unidades, $unidadesMinimas, 
-            $precioCompra, $precioVenta, $precioMayoreo, $estado, $foto_url, $caducidad);
+            $precioCompra, $precioVenta, $estado, $foto_url, $caducidad);
 
         require_once 'ctrlSeguridad.php';
 
         $listaErrores = [];
-        $listaCampos = ['Codigo del producto', 'Nombre de producto', 'Categoria', 'Descripcion', 'Unidades', 'Unidades Minimas', 'Precio de Compra', 'Precio de Venta', 'Precio de Mayoreo', 'Caducidad', 'Imagen URL', 'Estado'];
+        $listaCampos = ['Codigo del producto', 'Nombre de producto', 'Categoria', 'Descripcion', 'Unidades', 'Unidades Minimas', 'Precio de Compra', 'Precio de Venta', 'Caducidad', 'Imagen URL', 'Estado'];
         
         # Validación de los campos
         foreach($listaCampos as $campo) {

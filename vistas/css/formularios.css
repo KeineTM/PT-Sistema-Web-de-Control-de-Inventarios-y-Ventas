@@ -48,6 +48,9 @@
 }
 
 .alerta {
+    display: flex;
+    padding: 5px;
+    text-align: justify;
     color: var(--color-rosa);
     visibility: hidden;
 }
@@ -91,7 +94,8 @@
 }
 
 .formulario__fieldset {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: .5rem;
 }
 
@@ -112,6 +116,8 @@
 .fieldset__envoltura {
     border: 1px solid var(--color-fuente-principal);
     padding: 1rem;
+    border-radius: 5px;
+    gap: .5rem;
 }
 
 /* Estilo para las formularios pequeños */

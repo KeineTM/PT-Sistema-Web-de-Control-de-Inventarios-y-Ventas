@@ -1,21 +1,22 @@
 <section class="main-contenedor">
 
     <h2>Ventas</h2>
-    <!-- Lista de opciones -->
-    <ul class="main-menu">
+    <!-- Submenú -->
+    <ul class="main-menu destacado">
         <li class="main-menu__opcion"><a class="boton-main" href="index.php?pagina=ventas&opciones=alta">Formulario de Venta</a></li>
         <li class="main-menu__opcion"><a class="boton-main" href="index.php?pagina=ventas&opciones=listar&tiempo=dia">Ventas del día</a></li>
         <li class="main-menu__opcion"><a class="boton-main" href="index.php?pagina=ventas&opciones=listar&tiempo=semana">Ventas de la semana</a></li>
         <li class="main-menu__opcion">
             <form class="boton-main" id="barra-busqueda">
                 <input type="number" step="any" class="campo" name="buscarOperacion-txt" autocomplete="off" id="buscarOperacion-txt" placeholder="Buscar..." maxlength="18" min='1' required>
+                <input type="hidden" name="tipoOperacion-txt" value="VE">
                 <button class="boton enviar" id="btnBuscarOperacion"><img src="vistas/img/magnifying-glass.svg" alt=""></button>
             </form>
+            <span class="alerta" id="alertaBuscar"></span>
         </li>
     </ul>
 
     <article id="subcontenedor">
-
     <?php
         if (isset($_GET['opciones'])) {
             if ($_GET['opciones'] === 'alta')
@@ -35,4 +36,4 @@
 
 </section>
 
-<script type="module" src="vistas/js/paginas/ventas.js"></script>
+<script src="vistas/js/paginas/ventas.js"></script>

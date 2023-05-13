@@ -1,7 +1,8 @@
-const contenedorHTML = document.getElementById('subcontenedor');
-const formularioBusqueda = document.getElementById('barra-busqueda');
-const campoBuscar = document.getElementById('buscarOperacion-txt');
-const btnBuscar = document.getElementById('btnBuscarOperacion');
+const contenedorHTML = document.querySelector('#subcontenedor');
+const formularioBusqueda = document.querySelector('#barra-busqueda');
+const campoBuscar = document.querySelector('#buscarOperacion-txt');
+const btnBuscar = document.querySelector('#btnBuscarOperacion');
+const alertaHTML = document.querySelector('#alertaBuscar');
 
 //----------------- AJAX búsqueda y despliegue de una operación ------------------
 /**
@@ -17,7 +18,7 @@ const validarCampo = (campo) => {
         campo.length > 18) {
         
         if(campo.length === 0) return 'Escriba un folio para buscar';
-        if(!regex.test(campo)) return 'Sólo acepta números';
+        if(!regex.test(campo)) return 'Sólo se aceptan números';
         if(campo < 0) return 'No puede ser menor que 0';
         if(campo.length > 18) return 'No debe sobrepasar 18 números';
 
@@ -69,7 +70,12 @@ const listarResultado = (contenedorHTML, data) => {
     (data[0]['notas'] === null)
         ? document.getElementById('notas').innerText = ''
         : document.getElementById('notas').innerText = `$${data[0]['notas']}`;
-    
+    let lista_productos = [];
+    data.forEach(producto => {
+        lista_productos.push(`<li>${producto['unidades']} x ${producto['nombre']}</li>`);
+    })
+    document.querySelector('.celda__lista').innerHTML = lista_productos.join('');
+
     let fecha = new Date(data[0]['fecha']);
     let hora = fecha.getHours();
     let minutos = fecha.getMinutes();
@@ -79,7 +85,7 @@ const listarResultado = (contenedorHTML, data) => {
     let dia = fecha.getDate();
     let mes = fecha.getMonth() + 1;
     let anio = fecha.getFullYear();
-    let fechaFormateada = `${hora}:${minutos}${ampm} ${dia}/${mes}/${anio.toString().slice(2)}`;
+    let fechaFormateada = `${hora}:${minutos}${ampm} ${dia.toString().padStart(2, '0')}/${mes.toString().padStart(2, '0')}/${anio.toString().slice(2)}`;
     document.getElementById('fecha').innerText = fechaFormateada;
 }
 
@@ -106,28 +112,96 @@ const bucarOperacionAJAX = (formulario, contenedorHTML) => {
 
 btnBuscar.addEventListener('click', (event) => {
     event.preventDefault();
+    alertaHTML.innerText = '';
     
-    let resultado = validarCampo(campoBuscar.value);
+    let validacionResultado = validarCampo(campoBuscar.value);
 
-    if(resultado !== true)
-        console.log(resultado);
-    else {
+    if(validacionResultado !== true) {
+        alertaHTML.style.visibility = 'visible';
+        alertaHTML.innerText = validacionResultado;
+    } else {
         bucarOperacionAJAX(formularioBusqueda, contenedorHTML);
     }
 });
 
 
 //----------------- Evento del botón de eliminación del registro que solicida confirmación ------------------
-if(document.getElementById('formulario-eliminar-operacion')) {
+if(document.querySelector('#formulario-eliminar-operacion')) {
     const formulario = document.getElementById('formulario-eliminar-operacion');
     const btnEliminar = document.getElementById('btnEliminar');
 
     btnEliminar.addEventListener('click', (event) => {
         event.preventDefault();
+        
         const confirmacion = confirm("¿Desea eliminar la información de esta operación?");
-
         (confirmacion === true)
             ? formulario.submit()
             : console.log('Canceló el envío del formulario');
+    });
+}
+
+//----------------- ------------------------ --------------------
+//----------------- JS del módulo de Operaciones ------------------
+const campoDescuento = document.querySelector('[data-form=descuento]');
+const campoTotal = document.querySelector('[data-form=total]');
+const campoDescuentoAplicado = document.querySelector('[name=descuento-aplicado]');
+const lblTotal = document.querySelector('#lbl-total');
+const lblDescuentoAplicado = document.querySelector('#lbl-descuento-aplicado');
+
+// Evalúa que exista el campo de descuento en el módulo: Ventas y Apartados
+// Para calcular e imprimir en pantalla el total con el descuento aplicado
+if(campoDescuento !== null) {
+    let resultadoResta;
+    campoDescuento.addEventListener('keyup', () => {
+        resultadoResta = campoTotal.value - campoDescuento.value;
+        if(campoTotal.value <= 0) {
+            lblTotal.style.textDecoration = 'none';
+            campoDescuentoAplicado.value = '';
+            campoDescuentoAplicado.placeholder = 'No hay productos';
+        } else if(campoDescuento.value.length < 1) {
+            lblTotal.style.textDecoration = 'none';
+            lblDescuentoAplicado.innerText = '';
+            campoDescuentoAplicado.placeholder = '';
+            campoDescuentoAplicado.value = '';
+        } else if(resultadoResta < 0 || campoDescuento.value < 0 ||campoDescuento.value > campoTotal.value/2) {
+            lblTotal.style.textDecoration = 'none';
+            campoDescuentoAplicado.value = '';
+            campoDescuentoAplicado.placeholder = 'Descuento no válido';
+        } else {
+            lblTotal.style.textDecoration = 'line-through';
+            lblDescuentoAplicado.innerText = 'Con Descuento:';
+            campoDescuentoAplicado.value = resultadoResta.toFixed(2);
+        }
+    });
+}
+
+//----------------- ------------------------ --------------------
+//----------------- JS del módulo de APARTADOS ------------------
+const campoMontoAbonado = document.querySelector('[data-form=abono]');
+const campoTotalRestante = document.querySelector('[data-form=restante]');
+const porcentajeDeAbonoSugerido = 0.3; // Regla del negocio para realizar apartados: 30%
+
+// Evalúa que exista un campo de abonos: Apartados
+// Para calcular e imprimir en pantalla el total restante después del abono
+if(campoMontoAbonado !== null) {
+    let minimoDeAbono = campoTotal.value * porcentajeDeAbonoSugerido;
+    let resultadoResta;
+
+    campoMontoAbonado.placeholder = 'Sugerido = ' + Math.ceil(minimoDeAbono);
+
+    campoMontoAbonado.addEventListener('keyup', () => {
+        resultadoResta = campoTotal.value - campoMontoAbonado.value;
+        if(campoTotal.value <= 0) {
+            campoTotalRestante.value = '';
+            campoTotalRestante.placeholder = 'No hay productos';
+        } else if(resultadoResta < 0) {
+            campoTotalRestante.value = '';
+            campoTotalRestante.placeholder = 'Error: Abono muy alto';
+        } else if(campoMontoAbonado.value < 0) {
+            campoTotalRestante.value = '';
+            campoTotalRestante.placeholder = 'Error: Número negativo';
+        } else {
+            campoTotalRestante.value = resultadoResta.toFixed(2);
+        }
     });
 }

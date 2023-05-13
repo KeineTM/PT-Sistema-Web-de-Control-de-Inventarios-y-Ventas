@@ -18,6 +18,8 @@ class ModeloUsuarios extends ModeloConexion {
      * Si se especifica un ID, entonces extraerá sólo la información correspondiente a este, de no encontrarlo retorna null.
      */
     public function read($usuario_id='') {
+        if($usuario_id !== '') array_push($this->registros, $usuario_id);
+
         $this->sentenciaSQL = ($usuario_id === '')  # Asigna el valor de consulta
             ? "SELECT * FROM usuarios"
             : "SELECT usuarios.usuario_id, usuarios.nombre, usuarios.apellido_paterno, usuarios.apellido_materno, usuarios.telefono,
@@ -26,7 +28,7 @@ class ModeloUsuarios extends ModeloConexion {
                 INNER JOIN tipos_usuario ON usuarios.tipo_usuario = tipos_usuario.tipo_id
                 WHERE usuarios.usuario_id = ? LIMIT 1";
         
-        return $this->consultaRead($usuario_id);
+        return $this->consultaRead();
     }
 
     /** Método que busca un usuario por su ID en la tabla para recuperar la información necesaria para el inicio de sesión, de no encontrarlo retorna null */

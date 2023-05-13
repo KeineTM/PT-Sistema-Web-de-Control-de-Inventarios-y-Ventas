@@ -12,9 +12,9 @@ const contenedor = document.getElementById("subcontenedor");
 const validar = (campos, etiquetaHTML, lista) => {
     campos.forEach(campo => {
         campo.style.background = 'var(--color-blanco)'; // Reestablece el color del campo
-        if(metodosValidacion.validarCampo(campo) !== null){ // Si detecta un error
+        if(metodosValidacion.validarCampoProductos(campo) !== null){ // Si detecta un error
             campo.style.background = 'var(--color-crema)'; // Resalta el campo
-            lista.push("<br>" + metodosValidacion.validarCampo(campo)); // Almacena el mensaje asociado
+            lista.push("<br>" + metodosValidacion.validarCampoProductos(campo)); // Almacena el mensaje asociado
         }
     });
     etiquetaHTML.style.visibility = 'visible';
@@ -31,7 +31,7 @@ const construirFormularioAltaCategoria = (contenedor) => {
             </span>
             <form action="post" class="formulario" id="formulario-alta-categoria">
                 <h3>Agregar categoría</h3>
-                <input class="campo mayusculas" type="text" placeholder="Categoria" id="categoria-txt" name="categoria-txt" autocomplete="off" minlength="3" maxlength="50" required>
+                <input class="campo" type="text" placeholder="Categoria" id="categoria-txt" name="categoria-txt" autocomplete="off" minlength="3" maxlength="50" required>
                 <button class="boton-form enviar" id="btnRegistrarCategoria">Agregar</button>
                 <button class="boton-form otro" id="btnCerrarMiniModal">Cancelar</button>
             </form>
@@ -79,7 +79,7 @@ const construirFormularioEdicionCategoria = (contenedor) => {
             <h3>Seleccione la categoría a editar:</h3>
             <select class="campo" id="categoriaProducto-txt" name="categoriaProducto-txt" data-form="categoriaID" required></select>
             <label>Nombre de la categoría:</label>
-            <input class="campo mayusculas" type="text" placeholder="Categoria" id="categoria-txt" name="categoria-txt" autocomplete="off" minlength="3" maxlength="50" required>
+            <input class="campo" type="text" placeholder="Categoria" id="categoria-txt" name="categoria-txt" autocomplete="off" minlength="3" maxlength="50" required>
                 
             Para retirar esta categoría de las opciones del Inventario seleccione la opción 'Dar de baja' y después haga clic en 'Editar'.<br><br>
             Para reintegrarla, seleccione la opción 'Activo' y después haga clic en 'Editar'.
@@ -184,7 +184,7 @@ const construirFormularioAlta = () => {
             <input type="text" class="campo requerido" placeholder="Nombre" name="nombreProducto-txt" autocomplete="off" data-form='nombreProducto' maxlength="80" minlength="4" required>
 
             <fieldset class="formulario__fieldset-categorias">
-                <select class="campo" id="categoriaProducto-txt" name="categoriaProducto-txt" data-form="categoriaID" required></select>
+                <select class="campo" id="categoriaProducto-txt" name="categoriaProducto-txt" autocomplete="off" data-form="categoriaID" required></select>
                 <button class="boton redondo" id="btnAgregarCategoria"><img class="icono" src="vistas/img/plus.svg" alt="Agregar"></button>
             </fieldset>
 
@@ -208,9 +208,6 @@ const construirFormularioAlta = () => {
 
                 <label for="precioVentaProducto-txt">Precio de venta:</label>
                 <input type="number" step="any" class="campo  requerido" placeholder="0.00" name="precioVentaProducto-txt" autocomplete="off" data-form="precioVenta" min="0" max="9999" required>
-
-                <label for="precioMayoreoProducto-txt">Precio de venta al mayoreo:</label>
-                <input type="number" step="any" class="campo" placeholder="0.00" name="precioMayoreoProducto-txt" autocomplete="off" data-form="precioMayoreo" min="0" max="9999">
 
                 <label for="fechaCaducidad-txt">Fecha de caducidad</label>
                 <input type="date" class="campo" placeholder="Fecha de caducidad" name="caducidadProducto-txt" autocomplete="off" data-form="caducidad"
@@ -282,7 +279,7 @@ btnAbrirAlta.addEventListener("click", construirFormularioAlta);
 // -------------------------------------------------------------------------------------------------------
 /** Método de contrucción del formulario de edición que incluye la recarga de la información recuperada de BD */
 const construirFormularioEdicion = (producto_id, nombre, categoria_id, descripcion, unidades, 
-    unidades_minimas, precio_compra, precio_venta, precio_mayoreo, foto_url, caducidad, estado) => {
+    unidades_minimas, precio_compra, precio_venta, foto_url, caducidad, estado) => {
     // Establecimiento de fechas mínimas y máximas para el formulario:
     let fechaMin = new Date();
     let fechaMax = new Date();
@@ -310,7 +307,7 @@ const construirFormularioEdicion = (producto_id, nombre, categoria_id, descripci
             <input type="text" class="campo requerido" placeholder="Nombre" name="nombreProducto-txt" autocomplete="off" data-form='nombreProducto' maxlength="80" minlength="4" required value="${nombre}">
 
             <fieldset class="formulario__fieldset-categorias">
-                <select class="campo" id="categoriaProducto-txt" name="categoriaProducto-txt" data-form="categoriaID" required></select>
+                <select class="campo" id="categoriaProducto-txt" name="categoriaProducto-txt" data-form="categoriaID" autocomplete="off" required></select>
                 <button class="boton redondo" id="btnAgregarCategoria"><img class="icono" src="vistas/img/plus.svg" alt="Agregar"></button>
             </fieldset>
 
@@ -333,10 +330,7 @@ const construirFormularioEdicion = (producto_id, nombre, categoria_id, descripci
                 <input type="number" step="any" class="campo" placeholder="0.00" name="precioCompraProducto-txt" autocomplete="off" data-form="precioCompra" min="0" max="9999">
 
                 <label for="precioVentaProducto-txt">Precio de venta:</label>
-                <input type="number" step="any" class="campo  requerido" placeholder="0.00" name="precioVentaProducto-txt" data-form="precioVenta" min="0" max="9999" required value="${precio_venta}">
-
-                <label for="precioMayoreoProducto-txt">Precio de venta al mayoreo:</label>
-                <input type="number" step="any" class="campo" placeholder="0.00" name="precioMayoreoProducto-txt" autocomplete="off" data-form="precioMayoreo" min="0" max="9999">
+                <input type="number" step="any" class="campo  requerido" placeholder="0.00" name="precioVentaProducto-txt" autocomplete="off" data-form="precioVenta" min="0" max="9999" required value="${precio_venta}">
 
                 <label for="fechaCaducidad-txt">Fecha de caducidad</label>
                 <input type="date" class="campo" placeholder="Fecha de caducidad" name="caducidadProducto-txt" autocomplete="off" data-form="caducidad"
@@ -377,8 +371,6 @@ const construirFormularioEdicion = (producto_id, nombre, categoria_id, descripci
         contenedor.querySelector('[data-form=unidadesMinimas]').value = unidades_minimas;
     if(precio_compra !== 'null' && precio_compra !== null)
         contenedor.querySelector('[data-form=precioCompra]').value = precio_compra;
-    if(precio_mayoreo !== 'null' && precio_mayoreo !== null)
-        contenedor.querySelector('[data-form=precioMayoreo]').value = precio_mayoreo;
     if(caducidad != '0000-00-00' && caducidad !== null)
         contenedor.querySelector('[data-form=caducidad]').value = caducidad;
     (estado == 1)
@@ -469,7 +461,6 @@ const crearListaProductos = (contenedor, listaProductosJSON) => {
                 producto['unidades_minimas'],
                 producto['precio_compra'],
                 producto['precio_venta'],
-                producto['precio_mayoreo'],
                 producto['foto_url'],
                 producto['caducidad'],
                 producto['estado'],

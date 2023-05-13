@@ -18,7 +18,6 @@ if (!is_array($consulta) || sizeof($consulta) === 0) {
     die();
 }
 
-# Eliminación de la operación en BD
 ControladorOperaciones::ctrlEliminar($tipo_operacion);
 ?>
 
@@ -84,9 +83,7 @@ ControladorOperaciones::ctrlEliminar($tipo_operacion);
         
     </fieldset>
 </section>
-<?php 
-# --------- Control: Sólo el administrador puede borrar operaciones de la BD
-if($_SESSION['tipoUsuarioSesion'] === 'Administrador') { ?>
+<?php if($_SESSION['tipoUsuarioSesion'] === 'Administrador') { ?>
     <form method="post" id="formulario-eliminar-operacion">
         <input name="folio-txt" type="hidden" value="<?=$folio?>" required readonly>
         <button type="submit" class="boton-form otro" id="btnEliminar">Eliminar Ticket</button>

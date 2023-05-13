@@ -45,6 +45,7 @@ abstract class ModeloConexion {
         try {
             $this->abrirConexion(); # Conecta
             $pdo = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
+            
             # Recorre la lista de datos ligando parámetros a la sentencia SQL:
             for($i = 0; $i < sizeof($this->registros); $i++) {
                 $pdo -> bindParam($i+1, $this->registros[$i]);
@@ -67,20 +68,26 @@ abstract class ModeloConexion {
     }
 
     /** Método para ejecutar consultas que recuperan información de la base de datos. */
-    protected function consultaRead($id = '') {
-        $this->abrirConexion(); # Conecta
-        $pdo = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
-        
-        if($id != '') { # Si contiene un parámetro este se liga para evitar SQLinjection
-            $pdo -> bindParam(1, $id, PDO::PARAM_STR);
+    protected function consultaRead($id='') {
+        try {
+            $this->abrirConexion(); # Conecta
+            $pdo = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
+            
+            if($id !== '') { # Si se determinaron condiciones para la lectura
+                $pdo -> bindParam(1, $id);
+            }
+    
+            $pdo -> execute(); # Ejecuta
+            $this->registros = $pdo -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos
+    
+            return $this->registros;
+
+        } catch(PDOException $e) {
+            return 'Error: ' . $e->getMessage(); # Si hubo un error lo Retorna
+        } finally {
+            $pdo = null; # Limpia
+            $this->cerrarConexion(); # Cierra
         }
-
-        $pdo -> execute(); # Ejecuta
-        $this->registros = $pdo -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos
-        $pdo = null; # Limpia memoria
-        $this->cerrarConexion(); # Cierra
-
-        return $this->registros;
     }
 }
 ?>

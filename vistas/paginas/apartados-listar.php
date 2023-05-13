@@ -12,9 +12,13 @@ if($_GET['tiempo'] === 'dia') { # Dependiendo del valor del parámetro se cargan
     $fecha_fin = date("Y-m-d") . " 23:59:00"; # HOY
     $fecha_inicio = date("Y-m-d", strtotime($fecha_fin."- 1 week")) . " 00:00:00"; # HACE 7 días
     $titulo = 'Tabla de ventas de la semana';
+} else if($_GET['tiempo'] === 'mes') {
+    $fecha_fin = date("Y-m-d") . " 23:59:00"; # HOY
+    $fecha_inicio = date("Y-m-d", strtotime($fecha_fin."- 1 month")) . " 00:00:00"; # HACE UN MES
+    $titulo = 'Tabla de ventas de la semana';
 }
 
-$consulta = ControladorOperaciones::ctrlLeerOperacionesPorRangoDeFecha($fecha_inicio, $fecha_fin, 'VE');
+$consulta = ControladorOperaciones::ctrlLeerOperacionesPorRangoDeFecha($fecha_inicio, $fecha_fin, 'AP');
 
 # Valida el resultado de la consulta
 # Si no es una lista es porque retornó un error

@@ -20,36 +20,36 @@
 
 
 /* Tarjeta del producto agregado a la operación */
-.tarjeta-venta {
+.tarjeta-operacion {
     display: flex;
     flex-direction: column;
 }
 
-.tarjeta-venta span {
+.tarjeta-operacion span {
     display: flex;
     gap: 1rem;
     align-items: center;
 }
 
-.tarjeta-venta img {
+.tarjeta-operacion img {
     max-width: 3rem;
 }
 
-.tarjeta-venta ul {
+.tarjeta-operacion ul {
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
 }
 
-.tarjeta-venta li {
+.tarjeta-operacion li {
     display: flex;
 }
 
-.tarjeta-venta li:last-child {
+.tarjeta-operacion li:last-child {
     font-weight: bold;
 }
 
-.tarjeta-venta a {
+.tarjeta-operacion a {
     font-size: xx-large;
     transition: .2s;
     border-radius: 50%;
@@ -58,13 +58,22 @@
 .contenedor-campos-operaciones {
     display: grid;
     grid-template-columns: 40% 60%;
-    margin: 0 0 0 auto;
-    max-width: 250px;
+    gap: 0.2rem;
 }
 
 .contenedor-campos-operaciones .campo {
     padding: 0.3rem;
     border-radius: 0px;
+}
+
+/* Estilo de formulario de alta de operaciones*/
+.form__operaciones {
+    display: flex;
+    flex-direction: column;
+}
+
+.no-borde {
+    border: none;
 }
 
 /* Animación para los botones '+' y '-' */
@@ -83,6 +92,7 @@
     background: var(--color-verde);
 }
 
+
 /* Formato del ticket con los detalles de la operación */
 .detalles-ticket {
     display: flex;
@@ -96,7 +106,7 @@
 }
 
 @media screen and (min-width: 425px){
-    .tarjeta-venta div{
+    .tarjeta-operacion div{
         display: flex;
         flex-direction: row;
         justify-content: space-between;
@@ -105,24 +115,28 @@
     #form-agregar-producto {
         flex-direction: row;
     }
-
-    .resumen-operacion {
-        display: flex;
-        align-items: center;
-    }
 }
 
 @media screen and (min-width: 940px){
-    .tarjeta-venta div{
+    .tarjeta-operacion div{
         flex-direction: row;
     }
 
-    .tarjeta-venta ul {
+    .tarjeta-operacion ul {
         flex-direction: row;
         gap: .5rem;
     }
 
-    .tarjeta-venta li {
+    .tarjeta-operacion li {
         flex-direction: column;
+    }
+
+    .detalles-ticket {
+        flex-direction: row;
+    }
+
+    .form__operaciones {
+        flex-direction: row;
+        justify-content: space-between;
     }
 }
