@@ -32,7 +32,7 @@ ControladorOperaciones::ctrlEliminar($tipo_operacion, $devolucion = true);
         <legend>Productos incluidos</legend>
         <?php foreach ($consulta as $fila) { ?>
             <fieldset class="fieldset__envoltura" id="<?= $fila['producto_id'] ?>">
-                <legend><?= $fila['nombre'] ?></legend>
+                <legend class="resaltado"><?= $fila['nombre'] ?></legend>
                 <ul class="formulario__fieldset-2-columnas">
                     <li>Código: <?= $fila['producto_id'] ?></li>
                     <li>Cantidad: <?= $fila['unidades'] ?></li>
@@ -45,12 +45,8 @@ ControladorOperaciones::ctrlEliminar($tipo_operacion, $devolucion = true);
 
     <fieldset class="fieldset__envoltura formulario__fieldset-2-columnas">
         <legend>Datos de facturación</legend>
-
-        <span>Subtotal</span>
-        <span>$<?= $consulta[0]['subtotal'] ?></span>
-
         <span>Total</span>
-        <span>$<?= $consulta[0]['total'] ?></span>
+        <span class="resaltado">$<?= $consulta[0]['total'] ?></span>
 
         <span>Motivo</span>
         <span><?= $consulta[0]['notas'] ?></span>

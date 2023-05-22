@@ -3,7 +3,7 @@ const formularioBusqueda = document.querySelector('#barra-busqueda');
 const campoBuscar = document.querySelector('#buscarOperacion-txt');
 const btnBuscar = document.querySelector('#btnBuscarOperacion');
 const alertaHTML = document.querySelector('#alertaBuscar');
-
+//----------------- ------------------------ --------------------
 //----------------- AJAX búsqueda y despliegue de una operación ------------------
 /**
  * Método que valida el campo de búsqueda
@@ -124,7 +124,7 @@ btnBuscar.addEventListener('click', (event) => {
     }
 });
 
-
+//----------------- ------------------------ --------------------
 //----------------- Evento del botón de eliminación del registro que solicida confirmación ------------------
 if(document.querySelector('#formulario-eliminar-operacion')) {
     const formulario = document.getElementById('formulario-eliminar-operacion');
@@ -187,7 +187,7 @@ if(campoMontoAbonado !== null) {
     let minimoDeAbono = campoTotal.value * porcentajeDeAbonoSugerido;
     let resultadoResta;
 
-    campoMontoAbonado.placeholder = 'Sugerido = ' + Math.ceil(minimoDeAbono);
+    campoMontoAbonado.placeholder = 'Sugerido: $' + Math.ceil(minimoDeAbono);
 
     campoMontoAbonado.addEventListener('keyup', () => {
         resultadoResta = campoTotal.value - campoMontoAbonado.value;
@@ -202,6 +202,17 @@ if(campoMontoAbonado !== null) {
             campoTotalRestante.placeholder = 'Error: Número negativo';
         } else {
             campoTotalRestante.value = resultadoResta.toFixed(2);
+        }
+    });
+}
+
+//----------------- Comprobación de que el número de teléfono del cliente existe ------------------
+const campoTelefono = document.querySelector('[name=cliente_id-txt]');
+
+if(campoTelefono !== null) {
+    campoTelefono.addEventListener('input', () => {
+        if(campoTelefono.value.length > 10) {
+            campoTelefono.value = campoTelefono.value.slice(0,10);
         }
     });
 }

@@ -18,19 +18,18 @@ if (!is_array($consulta) || sizeof($consulta) === 0) {
 
 #-------------- Organización de la información--------------
 # 1 Extrae datos asociados a la tabla operaciones y abonos, 
-# pues en una venta estos elementos son únicos y se pueden repetir por cada producto
 $lista_operaciones = [];
 foreach($consulta as $fila) {
     $operacion = [
         'operacion_id' => $fila['operacion_id'],
         'subtotal' => $fila['subtotal'],
-        'descuento' => $fila['descuento'],
         'total' => $fila['total'],
         'notas' => $fila['notas'],
         'metodo' => $fila['metodo'],
         'fecha' => $fila['fecha'],
         'empleado_id' => $fila['empleado_id'],
-        'nombre_completo' => $fila['nombre_completo']
+        'nombre_completo' => $fila['nombre_completo'],
+        'estado' => $fila['estado']
     ];
     array_push($lista_operaciones, $operacion);
 }
@@ -40,27 +39,26 @@ $lista_operaciones = array_unique($lista_operaciones, SORT_REGULAR);
 ?> 
 <section class="contenedor__tabla">
     <h3 class="tabla__titulo"><?= $titulo ?></h3>
-    <p>Puede acceder la información completa de la venta y editarlos haciendo clic en los <span class="texto-rosa">Detalles</span> de la venta.</p><br>
-    <!-- -------------Tabla de ventas por tiempo ---------- -->
+    <p>Puede acceder la información completa del apartado y editarlos haciendo clic en <span class="texto-rosa">Detalles</span>.</p><br>
+    <!-- -------------Tabla de apartados por tiempo ---------- -->
     <table class="tabla">
         <thead>
             <tr>
                 <th>Folio</th>
                 <th>Productos<br>incluidos</th>
-                <th>Subtotal</th>
-                <th>Descuento</th>
                 <th>Total</th>
                 <th>Notas</th>
                 <th>Método<br>de<br>pago</th>
                 <th>Fecha<br>y<br>hora</th>
                 <th>Empleado</th>
+                <th>Estado</th>
             </tr>
         </thead>
         <tbody>
             <!-- Contenido -->
             <?php foreach($lista_operaciones as $operacion) {  ?>
             <tr>
-                <td><a class="texto-rosa" href="index.php?pagina=ventas&opciones=detalles&folio=<?=$operacion['operacion_id']?>"><?= preg_replace('/^0+/', '',$operacion['operacion_id'])?><br>Detalles</a></td>
+                <td><a class="texto-rosa" href="index.php?pagina=apartados&opciones=detalles&folio=<?=$operacion['operacion_id']?>"><?= preg_replace('/^0+/', '',$operacion['operacion_id'])?><br>Detalles</a></td>
                 <td>
                     <ol class="celda__lista">
                     <?php 
@@ -72,8 +70,6 @@ $lista_operaciones = array_unique($lista_operaciones, SORT_REGULAR);
                     ?>
                     </ol>
                 </td>
-                <td>$<?= $operacion['subtotal'] ?></td>
-                <td>$<?= ($operacion['descuento']) ? $operacion['descuento'] : number_format(0,2) ?></td>
                 <td>$<?= $operacion['total'] ?></td>
                 <td><?= $operacion['notas'] ?></td>
                 <td><?= $operacion['metodo'] ?></td>
@@ -87,6 +83,7 @@ $lista_operaciones = array_unique($lista_operaciones, SORT_REGULAR);
                     ?>
                 </td>
                 <td><?= $operacion['nombre_completo'] ?></td>
+                <td><?php echo ($operacion['estado']) ?'Pagado' :'Pendiente' ?></td>
             </tr>
             <?php } ?>
         </tbody>

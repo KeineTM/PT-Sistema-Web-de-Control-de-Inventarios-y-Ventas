@@ -18,6 +18,19 @@
     transition: .2s;
 }
 
+#btn-abrir-formulario-cliente {
+    cursor: pointer;
+}
+
+#contenedor-formulario-cliente {
+    padding: 1rem 0;
+    transition: .2s;
+}
+
+#contenedor-formulario-cliente a:hover {
+    font-weight: bold;
+}
+
 
 /* Tarjeta del producto agregado a la operación */
 .tarjeta-operacion {

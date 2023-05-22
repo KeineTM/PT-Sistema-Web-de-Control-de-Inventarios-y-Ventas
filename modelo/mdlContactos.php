@@ -34,6 +34,11 @@ class ModeloContactos extends ModeloConexion {
         return $this->consultaRead($id);
     }
 
+    public function mdlExiste($id) {
+        $this->sentenciaSQL = 'SELECT COUNT(*) FROM contactos WHERE contacto_id = ?';
+        return $this->consultaRead($id);
+    }
+
     /** Método que retorna todos los registros de una categoría indicada.
      * En caso de ser exitoso devuelve un array con el resultado.
      * En caso de fallar, devuelve una cadena con el error.

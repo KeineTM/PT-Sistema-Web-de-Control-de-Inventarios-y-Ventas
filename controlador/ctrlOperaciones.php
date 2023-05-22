@@ -13,6 +13,7 @@ class ControladorOperaciones
     private $fecha;
     private $abono;
     private $metodo_pago;
+    private static $descuento_max = 0.5; # % descuento máximo
 
     public function __construct(
         $subtotal,
@@ -40,6 +41,7 @@ class ControladorOperaciones
         $this->abono = $abono;
         $this->metodo_pago = $metodo_pago;
     }
+
     //------------------------ Métodos del carrito-------------------------------------
     /** Método que calcula el total de la suma de productos (sin descuentos) */
     static public function calcularSubtotal($nombre_carrito) {
@@ -217,7 +219,7 @@ class ControladorOperaciones
     }
 
     //---------------------------------------------------------------------------------------
-    //------------------------ Métodos de la operación-------------------------------------
+    //------------------------ Métodos de las operaciones -------------------------------------
 
     /** Método para validar un el descuento
      * Retorna false si el dato no coincide con el formato esperado (números y letras)
@@ -238,7 +240,7 @@ class ControladorOperaciones
 
             if ($resultado === null) { # Pasó las 2 validaciones
                 $subtotal = self::calcularSubtotal($nombre_carrito);
-                if ($descuento > ($subtotal / 2)) # Evalúa que el descuento con el subtotal
+                if ($descuento > ($subtotal * self::$descuento_max)) # Evalúa que el descuento con el subtotal
                     return $resultado = false; # El descuento es igual o supera el subtotal
                 else
                     return $resultado = true; # El descuento es válido
@@ -316,17 +318,17 @@ class ControladorOperaciones
     /** Método que recibe los datos del formulario para procesar una venta */
     static public function ctrlCrearVenta($nombre_carrito, $tipo_operacion_url) {
         if (!isset($_POST['total-txt'])) return;
-        if (($_POST['total-txt']) < 0) {
-            echo # Indica que el total no puede ser 0 o menor
-            '<script type="text/javascript">
-                    window.location.href = "index.php?pagina='  . $tipo_operacion_url . '&opciones=alta&estado=error-total";
-                </script>';
-            exit;
-        }
         if (count($_SESSION[$nombre_carrito]) < 1) {
             echo # Indica que el carrito está vacío
             '<script type="text/javascript">
                     window.location.href = "index.php?pagina='  . $tipo_operacion_url . '&opciones=alta&estado=error-carrito";
+                </script>';
+            exit;
+        }
+        if (($_POST['total-txt']) <= 0) {
+            echo # Indica que el total no puede ser 0 o menor
+            '<script type="text/javascript">
+                    window.location.href = "index.php?pagina='  . $tipo_operacion_url . '&opciones=alta&estado=error-total";
                 </script>';
             exit;
         }
@@ -375,13 +377,6 @@ class ControladorOperaciones
     /** Método que recibe los datos del formulario para procesar un apartado */
     static public function ctrlCrearApartado($nombre_carrito, $tipo_operacion_url) {
         if (!isset($_POST['total-txt'])) return;
-        if (($_POST['total-txt']) < 0) {
-            echo # Indica que el total no puede ser 0 o menor
-            '<script type="text/javascript">
-                    window.location.href = "index.php?pagina='  . $tipo_operacion_url . '&opciones=alta&estado=error-total";
-                </script>';
-            exit;
-        }
         if (count($_SESSION[$nombre_carrito]) < 1) {
             echo # Indica que el carrito está vacío
             '<script type="text/javascript">
@@ -389,28 +384,47 @@ class ControladorOperaciones
                 </script>';
             exit;
         }
+        if (($_POST['total-txt']) <= 0) {
+            echo # Indica que el total no puede ser 0 o menor
+            '<script type="text/javascript">
+                    window.location.href = "index.php?pagina='  . $tipo_operacion_url . '&opciones=alta&estado=error-total";
+                </script>';
+            exit;
+        }
+        if(strlen($_POST['cliente_id-txt']) !== 10) {
+            echo # Indica que el número de teléfono del cliente incompleto
+            '<script type="text/javascript">
+                    window.location.href = "index.php?pagina='  . $tipo_operacion_url . '&opciones=alta&estado=incompleto";
+                </script>';
+            exit;
+        }
+        # Valida que el cliente está registrado:
+        $resultadoCliente = ControladorContactos::ctrlExiste($_POST['cliente_id-txt']);
+        if(!$resultadoCliente[0]['COUNT(*)']) {
+            echo # Indica que el número de teléfono del cliente no encontrado
+            '<script type="text/javascript">
+                    window.location.href = "index.php?pagina='  . $tipo_operacion_url . '&opciones=alta&estado=error-telefono";
+                </script>';
+            exit;
+        }
 
-        $descuento = (strlen($_POST['descuento-txt']) > 0)
-            ? abs($_POST['descuento-txt'])
-            : 0;
-        $subtotal = abs($_POST['total-txt']); # Requerido
+        $descuento = 0;
+        $subtotal = abs($_POST['total-txt']); # TOTAL DE LA OPERACIÓN
+        $total = $subtotal; # BAJO LA REGLA DE QUE EN APARTADOS NO HAY DESCUENTOS
+        $monto_abonado = abs($_POST['abono-txt']); # TOTAL APAGO O ABONADO
         $notas = (strlen($_POST['notas-txt']) > 0)
             ? $_POST['notas-txt']
             : null;
         $tipo_operacion = 'AP'; # Apartado, Requerido
-        $estado = 0; # 1 = Completada, Sólo se usa 0 para Apartados
+        $estado = ($total === $monto_abonado)
+            ? 1 # Finalizada
+            : 0; # Abierta
         $cliente_id = $_POST['cliente_id-txt']; # Requerido para un apartado
         $productos_incuidos = new ArrayObject($_SESSION[$nombre_carrito]); # Productos incluídos en el carrito al momento de procesar la venta
         $empleado_id = $_SESSION['idUsuarioSesion']; # Usuario con la sesión activa
-        $monto_abonado = $_POST['abono-txt'];
         $metodo_pago = (strlen($_POST['metodo-pago-txt']) !== 0)
             ? $_POST['metodo-pago-txt']
             : 1; # Por defecto asigna el pago en efectivo
-
-        $total = $subtotal - $descuento;
-
-        $total = $subtotal - $descuento;
-        $monto_abonado = abs($_POST['abono-txt']);
 
         $apartado_nuevo = new ControladorOperaciones($subtotal, $descuento, $total, $notas, $tipo_operacion, $estado, $cliente_id, $productos_incuidos, $empleado_id, $monto_abonado, $metodo_pago);
  
@@ -427,25 +441,30 @@ class ControladorOperaciones
             exit;
         } else { # Indica que hubo un error
             echo '<div id="alerta-formulario" class="alerta-roja">
-                Ocurrió un error: Vuelva a intentar la venta
+                Ocurrió un error: Vuelva a intentar
             </div>';
             exit;
-        }  
+        }
+    }
+
+    /** Método que recupera un apartado abierto (estado = 0) y agrega un abono */
+    static public function ctrolAbonarAlApartado() {
+
     }
 
     static public function ctrlCrearDevolucion($nombre_carrito, $tipo_operacion_url) {
         if(!isset($_POST['total-txt'])) return;
-        if (($_POST['total-txt']) < 0) {
-            echo
-            '<script type="text/javascript">
-                    window.location.href = "index.php?pagina='  . $tipo_operacion_url . '&opciones=alta&estado=error-total";
-                </script>';
-            exit;
-        }
         if (count($_SESSION[$nombre_carrito]) < 1) {
             echo # Indica que el carrito está vacío
             '<script type="text/javascript">
                     window.location.href = "index.php?pagina='  . $tipo_operacion_url . '&opciones=alta&estado=error-carrito";
+                </script>';
+            exit;
+        }
+        if (($_POST['total-txt']) <= 0) {
+            echo
+            '<script type="text/javascript">
+                    window.location.href = "index.php?pagina='  . $tipo_operacion_url . '&opciones=alta&estado=error-total";
                 </script>';
             exit;
         }
@@ -495,6 +514,11 @@ class ControladorOperaciones
     static public function ctrlLeer($id='') {
         $modelo_consulta = new ModeloOperaciones();
         return $modelo_consulta->mdlLeer($id);
+    }
+
+    static public function ctrlLeerAbonos($id='') {
+        $modelo_consulta = new ModeloOperaciones();
+        return $modelo_consulta->mdlLeerAbonos($id);
     }
 
     /** Método que devuelve una lista de ventas dentro de un rango de fecha. */

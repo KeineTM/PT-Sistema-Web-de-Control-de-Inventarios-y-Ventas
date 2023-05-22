@@ -3,7 +3,6 @@
 if (!isset($_SESSION['carrito-apartado-' . $_SESSION['idUsuarioSesion']])) $_SESSION['carrito-apartado-' . $_SESSION['idUsuarioSesion']] = [];
 $nombre_carrito = 'carrito-apartado-' . $_SESSION['idUsuarioSesion'];
 $tipo_operacion = 'apartados';
-$descuento = 0;
 $totalFinal = 0;
 
 ControladorOperaciones::agregarAlCarrito($nombre_carrito, $tipo_operacion);
@@ -11,7 +10,7 @@ ControladorOperaciones::sumarDelCarrito($nombre_carrito, $tipo_operacion);
 ControladorOperaciones::restarDelCarrito($nombre_carrito, $tipo_operacion);
 ControladorOperaciones::quitarDelCarrito($nombre_carrito, $tipo_operacion);
 ControladorOperaciones::btnVaciarCarrito($nombre_carrito, $tipo_operacion);
-# PONER CREACIÓN DE APARTADO
+ControladorOperaciones::ctrlCrearApartado($nombre_carrito, $tipo_operacion);
 ?>
 <span class="formulario__encabezado">
     <img class="formulario__icono" src="vistas/img/file-invoice.svg" alt="Formulario">
@@ -42,6 +41,8 @@ ControladorOperaciones::btnVaciarCarrito($nombre_carrito, $tipo_operacion);
     "alerta-roja">El carrito está vacio
 <?php } else if ($_GET['estado'] === 'incompleto') { ?>
     "alerta-roja">Algunos datos están incompletos o no son válidos
+<?php } else if ($_GET['estado'] === 'error-telefono') { ?>
+    "alerta-roja">El número de teléfono no está registrado.
 <?php }
     } else {
         echo 'hidden >';
@@ -99,10 +100,8 @@ ControladorOperaciones::btnVaciarCarrito($nombre_carrito, $tipo_operacion);
         <fieldset class="contenedor-campos-operaciones">
             <!-- TOTAL FINAL -->
             <h3 class="destacado-mas">Total: </h3>
-            <h3 class="destacado-mas">$
+            <h3 class="destacado-mas" id="lbl-total">$
                 <?php
-                $totalFinal -= $descuento;
-
                 if ($totalFinal >= 0)
                     echo number_format($totalFinal, 2);
                 else
@@ -119,35 +118,23 @@ ControladorOperaciones::btnVaciarCarrito($nombre_carrito, $tipo_operacion);
         </fieldset>
         
         <fieldset class="contenedor-campos-operaciones">
+            <label for="cliente_id-txt">Teléfono del cliente:</label>
+            <input type="number" step="any" class="campo requerido" placeholder="1234567890" name="cliente_id-txt" autocomplete="off" data-form="contacto_id" minlength="10" maxlength="10" required>
+
+            <label for="notas-txt">Notas:</label>
+            <textarea class="campo" autocomplete="off" name="notas-txt" cols="20" rows="2" maxlength="250"  data-form="notas"></textarea>
+            
             <label for="metodo-pago-txt">Método de pago:</label>
             <select class="campo" name="metodo-pago-txt" required  data-form="metodo-pago">
                 <option value="1" selected>Efectivo</option>
                 <option value="2">Transferencia</option>
             </select>
 
-            <label for="notas-txt">Número de teléfono del cliente:</label>
-            <input type="tel" class="campo mayusculas requerido" autocomplete="off" name="clienteID-txt" minlength="10" maxlength="10" data-form="cliente_id" required>
-
             <input name="total-txt" type="hidden" value="<?= $totalFinal; ?>"  data-form="total">
         </fieldset>
     </fieldset>
-
-    <!--<fieldset class="fieldset__envoltura formulario__fieldset-2-columnas">
-        <legend>Datos del cliente</legend>
-        
-        <label for="cliente_nombre-txt">Nombre:</label>
-        <input class="campo" type="text" name="cliente_nombre-txt" autocomplete="off" minlength="3" maxlength="80" required>
-
-        <label for="cliente_apellido1-txt">Apellido 1:</label>
-        <input class="campo" type="text" name="cliente_apellido1-txt" autocomplete="off" minlength="3" maxlength="80" required>
-
-        <label for="cliente_apellido2-txt">Apellido 2:</label>
-        <input class="campo" type="text" name="cliente_apellido2-txt" autocomplete="off" minlength="3" maxlength="80">
-
-        <label for="cliente-telefono-txt">Teléfono:</label>
-        <input class="campo" type="tel" name="cliente-telefono-txt" autocomplete="off" maxlength="10" pattern="[0-9]{10}">
-    </fieldset>-->
-
+    <br>
+    <p id="contenedor-formulario-cliente">Para registrar un cliente nuevo haga click <a class="texto-rosa" href="index.php?pagina=directorio&opciones=alta">AQUÍ</a>.</p>
     <br>
     <div class="formulario__botones-contenedor">
         <button type="submit" class="boton-form enviar" id="btnRegistrar">Terminar Apartado</button>

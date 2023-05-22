@@ -3,7 +3,6 @@
 if (!isset($_SESSION['carrito'.$_SESSION['idUsuarioSesion']])) $_SESSION['carrito'.$_SESSION['idUsuarioSesion']] = [];
 $nombre_carrito = 'carrito'.$_SESSION['idUsuarioSesion'];
 $tipo_operacion = 'ventas';
-$descuento = 0;
 $totalFinal = 0;
 
 ControladorOperaciones::agregarAlCarrito($nombre_carrito, $tipo_operacion);
@@ -105,8 +104,6 @@ ControladorOperaciones::ctrlCrearVenta($nombre_carrito, $tipo_operacion);
             <h3 class="destacado-mas">Total:</h3>
             <h3 class="destacado-mas" id="lbl-total">$
                 <?php
-                $totalFinal -= $descuento;
-
                 if ($totalFinal >= 0)
                     echo number_format($totalFinal, 2);
                 else

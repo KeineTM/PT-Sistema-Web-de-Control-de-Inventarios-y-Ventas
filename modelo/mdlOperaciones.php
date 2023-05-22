@@ -94,7 +94,8 @@ class ModeloOperaciones extends ModeloConexion {
                 INNER JOIN inventario ON productos_incluidos.producto_id = inventario.producto_id
                 INNER JOIN abonos ON operaciones.operacion_id = abonos.operacion_id
                 INNER JOIN metodos_pago ON abonos.metodo_pago = metodos_pago.metodo_id
-                INNER JOIN usuarios ON usuarios.usuario_id = abonos.empleado_id'
+                INNER JOIN usuarios ON usuarios.usuario_id = abonos.empleado_id
+                GROUP BY productos_incluidos.producto_id'
             : 'SELECT operaciones.operacion_id,
                 productos_incluidos.producto_id, productos_incluidos.unidades, 
                 inventario.nombre, inventario.precio_venta,
@@ -109,15 +110,40 @@ class ModeloOperaciones extends ModeloConexion {
                 INNER JOIN abonos ON operaciones.operacion_id = abonos.operacion_id
                 INNER JOIN metodos_pago ON abonos.metodo_pago = metodos_pago.metodo_id
                 INNER JOIN usuarios ON usuarios.usuario_id = abonos.empleado_id
-                WHERE operaciones.operacion_id = ?';
+                WHERE operaciones.operacion_id = ?
+                GROUP BY productos_incluidos.producto_id';
         
         return $this->consultaRead($id);
     }
 
+    public function mdlLeerAbonos($id='') {
+        $this->sentenciaSQL = ($id === '')
+            ? 'SELECT abonos.empleado_id, abonos.fecha, abonos.abono, abonos.metodo_pago,
+                metodos_pago.metodo, contactos.contacto_id,
+                CONCAT(usuarios.nombre," ", usuarios.apellido_paterno," ", usuarios.apellido_materno) AS nombre_completo, 
+                CONCAT(contactos.nombre," ", contactos.apellido_paterno," ", contactos.apellido_materno) AS nombre_completo_cliente 
+                FROM abonos
+                INNER JOIN metodos_pago ON abonos.metodo_pago = metodos_pago.metodo_id
+                INNER JOIN usuarios ON usuarios.usuario_id = abonos.empleado_id
+                INNER JOIN operaciones ON operaciones.operacion_id = abonos.operacion_id
+                INNER JOIN contactos ON contactos.contacto_id = operaciones.contacto_id'
+            : 'SELECT abonos.empleado_id, abonos.fecha, abonos.abono, abonos.metodo_pago,
+                metodos_pago.metodo, contactos.contacto_id,
+                CONCAT(usuarios.nombre," ", usuarios.apellido_paterno," ", usuarios.apellido_materno) AS nombre_completo, 
+                CONCAT(contactos.nombre," ", contactos.apellido_paterno," ", contactos.apellido_materno) AS nombre_completo_cliente 
+                FROM abonos
+                INNER JOIN metodos_pago ON abonos.metodo_pago = metodos_pago.metodo_id
+                INNER JOIN usuarios ON usuarios.usuario_id = abonos.empleado_id
+                INNER JOIN operaciones ON operaciones.operacion_id = abonos.operacion_id
+                INNER JOIN contactos ON contactos.contacto_id = operaciones.contacto_id
+                WHERE abonos.operacion_id = ?';
+        return $this -> consultaRead($id); 
+    }
+
     /** Método que devuelve los registros de operaciones tipo venta dentro de un rango de tiempo */
     public function mdlLeerOperacionesPorRangoDeFecha($fecha_inicio, $fecha_fin, $tipo_operacion_id) {
-        $this->sentenciaSQL =
-            'SELECT operaciones.operacion_id,
+        $this->sentenciaSQL = ($tipo_operacion_id !== 'AP')
+            ? 'SELECT operaciones.operacion_id,
             productos_incluidos.producto_id, productos_incluidos.unidades, 
             inventario.nombre, inventario.precio_venta,
             productos_incluidos.total_acumulado,
@@ -131,7 +157,23 @@ class ModeloOperaciones extends ModeloConexion {
             INNER JOIN abonos ON operaciones.operacion_id = abonos.operacion_id
             INNER JOIN metodos_pago ON abonos.metodo_pago = metodos_pago.metodo_id
             INNER JOIN usuarios ON usuarios.usuario_id = abonos.empleado_id
-            WHERE operaciones.tipo_operacion = ? AND abonos.fecha >= ? AND abonos.fecha < ?';
+            WHERE operaciones.tipo_operacion = ? AND abonos.fecha >= ? AND abonos.fecha < ?'
+            : 'SELECT operaciones.operacion_id,
+            productos_incluidos.producto_id, productos_incluidos.unidades, 
+            inventario.nombre, inventario.precio_venta,
+            productos_incluidos.total_acumulado,
+            operaciones.subtotal, operaciones.descuento, operaciones.total, operaciones.notas, operaciones.tipo_operacion, operaciones.estado,
+            metodos_pago.metodo,
+            abonos.fecha, abonos.empleado_id, abonos.abono,
+            CONCAT(usuarios.nombre," ", usuarios.apellido_paterno," ", usuarios.apellido_materno) AS nombre_completo
+            FROM operaciones
+            INNER JOIN productos_incluidos ON operaciones.operacion_id = productos_incluidos.operacion_id
+            INNER JOIN inventario ON productos_incluidos.producto_id = inventario.producto_id
+            INNER JOIN abonos ON operaciones.operacion_id = abonos.operacion_id
+            INNER JOIN metodos_pago ON abonos.metodo_pago = metodos_pago.metodo_id
+            INNER JOIN usuarios ON usuarios.usuario_id = abonos.empleado_id
+            WHERE operaciones.tipo_operacion = ? AND abonos.fecha >= ? AND abonos.fecha < ?
+            GROUP BY operaciones.operacion_id';
         
         try {
             $this->abrirConexion(); # Conecta

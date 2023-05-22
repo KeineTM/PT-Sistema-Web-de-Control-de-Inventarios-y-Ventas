@@ -78,6 +78,11 @@ class ControladorContactos {
         return $modelo_consulta -> mdlBuscarEnFullText($palabra_clave);
     }
 
+    public static function ctrlExiste($id) {
+        $modelo_consulta = new ModeloContactos();
+        return $modelo_consulta -> mdlExiste($id);
+    }
+
     /** Método para registrar un contacto.
      * En caso de ejecutarse con éxito retorna true, de lo contrario retorna un string con el error.
      */

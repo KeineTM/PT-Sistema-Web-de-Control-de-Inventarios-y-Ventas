@@ -20,7 +20,14 @@ const formulario = document.querySelector('#formulario-directorio')
 if(formulario !== null) {
     const alertaHTML = document.querySelector('#alerta-formulario');
     const listaCampos = document.querySelectorAll('[data-form]');
+    const campoTelefono = document.querySelector('[data-form=contacto_id]');
     const btnEnviar = document.querySelector('#btnRegistrar');
+
+    campoTelefono.addEventListener('input', () => {
+        if(campoTelefono.value.length > 10) {
+            campoTelefono.value = campoTelefono.value.slice(0,10);
+        }
+    });
 
     btnEnviar.addEventListener('click', (event) => {
         event.preventDefault();
@@ -134,7 +141,6 @@ btnBuscar.addEventListener('click', (event) => {
 const formularioEliminarContacto = document.querySelector('#formulario-eliminar-contacto');
 if(formularioEliminarContacto !== null) {
     const btnEliminar = document.querySelector('#btnEliminar');
-    const campoContacto_id = document.querySelector('[name=contacto_id_eliminar-txt]');
 
     btnEliminar.addEventListener('click', (event)=> {
         event.preventDefault();

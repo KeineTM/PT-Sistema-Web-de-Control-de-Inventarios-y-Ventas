@@ -37,8 +37,6 @@ main {
 }
 
 .destacado {
-    display: flex;
-    align-items: center;
     font-size: 20px;
 }
 
@@ -50,8 +48,22 @@ main {
     text-transform: uppercase;
 }
 
+.resaltado {
+    font-weight: bold;
+}
+
 .texto-centrado {
     text-align: center;
+}
+
+.banner {
+    width: 100%;
+    max-width: 400px;
+}
+
+.contenido-centrado {
+    display: grid;
+    place-content: center;
 }
 
 @media screen and (min-width: 720px) and (max-width: 1023px) {

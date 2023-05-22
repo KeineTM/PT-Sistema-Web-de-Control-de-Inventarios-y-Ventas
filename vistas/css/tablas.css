@@ -1,5 +1,5 @@
 .contenedor__tabla {
-    overflow: auto;
+    overflow: scroll;
     max-height: 800px;
 }
 

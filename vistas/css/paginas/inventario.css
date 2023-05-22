@@ -19,7 +19,7 @@
 }
 
 .tarjeta-producto img {
-    height: 5rem;
+    width: 50%;
 }
 
 .tarjeta-producto h3 {
