@@ -57,7 +57,10 @@
     text-align: center;
 
     cursor: pointer;
-    transition: 0.4s; 
+    transition: 0.4s;
+
+    max-width: 300px;
+
 }
 
 
@@ -76,7 +79,6 @@
 .otro {
     color: var(--color-blanco);
     background: var(--color-rojo);
-    height: 3rem;
     font-size: x-large;
 }
 

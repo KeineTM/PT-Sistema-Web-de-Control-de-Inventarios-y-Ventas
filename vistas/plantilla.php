@@ -12,6 +12,8 @@
     # Recordar que al trabajar con sesiones, cada página del sitio en php debe iniciar con session_start();
     # En este caso sólo se usa en esta página plantilla, ya que su contenido es dinámico
     session_start();
+
+    date_default_timezone_set('America/Mexico_City');
 ?>
 
 <!-- Inicia el código de la plantilla -->

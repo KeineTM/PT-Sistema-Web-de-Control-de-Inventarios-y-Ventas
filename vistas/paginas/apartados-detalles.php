@@ -98,14 +98,26 @@ ControladorOperaciones::ctrlEliminar($tipo_operacion);
         
     </fieldset>
 </section>
+
+<h2>Abonar al apartado:</h2>
+<span class="texto-rosa" id="error-abono"></span>
+
+<?php if(!$consulta[0]['estado']) { ?>
+    <form method="post" class="formulario" id="formulario-abonar">
+        <input name="folio-txt" type="hidden" value="<?=$folio?>" required readonly>
+        <input name="saldo_pendiente" type="hidden" id="saldo_pendiente" value='<?= $consulta[0]['total'] - $total_abonado ?>'>
+        
+        <label for="abono_nuevo-txt">Monto a abonar $:</label>
+        <input type="text" class="campo destacado requerido" autocomplete="off" type="number" placeholder="0.00" name="abono_nuevo-txt" step="any" min="1" max="9999" required  data-form="abono_nuevo">
+
+        <label for="restante">Restante $:</label>
+        <input type="text" class="sin-borde" name="restante" id="restante" disabled>
+
+        <button type="submit" class="boton-form enviar" id="btnAbonar">Abonar al Apartado</button>
+    </form>
+<?php } ?>
+
 <form method="post" id="formulario-eliminar-operacion">
     <input name="folio-txt" type="hidden" value="<?=$folio?>" required readonly>
     <button type="submit" class="boton-form otro" id="btnEliminar">Cancelar Apartado</button>
 </form>
-
-<?php if(!$consulta[0]['estado']) { ?>
-    <form method="post" id="formulario-abonar">
-        <input name="folio-txt" type="hidden" value="<?=$folio?>" required readonly>
-        <button type="submit" class="boton-form enviar" id="btnAbonar">Abonar al Apartado</button>
-    </form>
-<?php } ?>

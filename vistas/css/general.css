@@ -5,10 +5,12 @@
     --fuente-contenido: 'Signika Negative';
     --color-fuente-principal: rgb(100, 100, 100);
     --color-blanco: #fff;
-    --degradado-principal: linear-gradient(180deg, rgba(255,120,153,1) 15%, rgba(252,208,163,1) 200%);
+    /*--degradado-principal: linear-gradient(180deg, rgba(255,120,153,1) 15%, rgba(252,208,163,1) 200%);*/
+    --degradado-principal: linear-gradient(180deg, rgba(250,89,130,1) 15%, rgba(252,208,163,1) 200%);
     --degradado-secundario: linear-gradient(180deg, rgba(246,160,231,1) 0%, rgba(250,118,140,1) 200%);
     --color-crema-alternativo: #fd9e9d;
-    --color-rosa: #ff7899;
+    /*--color-rosa: #fc5c84;*/
+    --color-rosa: #fa5982;
     --color-crema: #f8ebde;
     --color-naranja: #f3bb71;
     --color-rosa-claro: #f89bb4;

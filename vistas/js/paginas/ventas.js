@@ -2,6 +2,9 @@ const contenedorHTML = document.querySelector('#subcontenedor');
 const formularioBusqueda = document.querySelector('#barra-busqueda');
 const campoBuscar = document.querySelector('#buscarOperacion-txt');
 const btnBuscar = document.querySelector('#btnBuscarOperacion');
+const formularioBusquedaProducto = document.querySelector('#barra-busqueda-producto');
+const campoBuscarProducto = document.querySelector('#buscarProducto-txt');
+const btnBuscarProducto = document.querySelector('#btnBuscarProductos');
 const alertaHTML = document.querySelector('#alertaBuscar');
 //----------------- ------------------------ --------------------
 //----------------- AJAX búsqueda y despliegue de una operación ------------------
@@ -110,19 +113,21 @@ const bucarOperacionAJAX = (formulario, contenedorHTML) => {
     })
 }
 
-btnBuscar.addEventListener('click', (event) => {
-    event.preventDefault();
-    alertaHTML.innerText = '';
+if(btnBuscar !== null) {
+    btnBuscar.addEventListener('click', (event) => {
+        event.preventDefault();
+        alertaHTML.innerText = '';
+        
+        let validacionResultado = validarCampo(campoBuscar.value);
     
-    let validacionResultado = validarCampo(campoBuscar.value);
-
-    if(validacionResultado !== true) {
-        alertaHTML.style.visibility = 'visible';
-        alertaHTML.innerText = validacionResultado;
-    } else {
-        bucarOperacionAJAX(formularioBusqueda, contenedorHTML);
-    }
-});
+        if(validacionResultado !== true) {
+            alertaHTML.style.visibility = 'visible';
+            alertaHTML.innerText = validacionResultado;
+        } else {
+            bucarOperacionAJAX(formularioBusqueda, contenedorHTML);
+        }
+    });
+}
 
 //----------------- ------------------------ --------------------
 //----------------- Evento del botón de eliminación del registro que solicida confirmación ------------------
@@ -139,6 +144,8 @@ if(document.querySelector('#formulario-eliminar-operacion')) {
             : console.log('Canceló el envío del formulario');
     });
 }
+
+
 
 //----------------- ------------------------ --------------------
 //----------------- JS del módulo de Operaciones ------------------
@@ -175,11 +182,15 @@ if(campoDescuento !== null) {
     });
 }
 
+
+
 //----------------- ------------------------ --------------------
 //----------------- JS del módulo de APARTADOS ------------------
 const campoMontoAbonado = document.querySelector('[data-form=abono]');
 const campoTotalRestante = document.querySelector('[data-form=restante]');
 const porcentajeDeAbonoSugerido = 0.3; // Regla del negocio para realizar apartados: 30%
+
+const campoMontoAbonadoNuevo = document.querySelector('[data-form=abono_nuevo]');
 
 // Evalúa que exista un campo de abonos: Apartados
 // Para calcular e imprimir en pantalla el total restante después del abono
@@ -206,6 +217,45 @@ if(campoMontoAbonado !== null) {
     });
 }
 
+// Validación del campo de abono
+const validarAbono = (campo) => {
+    let regex = new RegExp('^[0-9]+(\\.[0-9]{1,2})?$');
+    if(campo.value <= 0 ||
+        campo.value > 9999 ||
+        !regex.test(campo.value)) {
+
+        if(campo.value <= 0) return 'Sólo se aceptan números mayores a 0.'
+        if(campo.value > 9999) return 'Sólo se aceptan números menores a 9999.'
+        if(!regex.test(campo.value)) return 'Sólo se aceptan números con un máximo de 2 decimales.'
+
+    } else return false;
+}
+
+// Evalúa la existencia del campo para el nuevo abono y realiza las operaciones de cálculo de nuevo total 
+// y las restricciones necesarias
+if(campoMontoAbonadoNuevo !== null) {
+    const saldo_pendiente = document.querySelector('#saldo_pendiente');
+    const campoRestante = document.querySelector('#restante');
+    const errorAbono = document.querySelector('#error-abono');
+
+    campoRestante.value = saldo_pendiente.value;
+
+    campoMontoAbonadoNuevo.addEventListener('keyup', () => {
+        
+        // Si hay error en el monto abonado:
+        if(validarAbono(campoMontoAbonadoNuevo) !== false) {
+            errorAbono.innerText = validarAbono(campoMontoAbonadoNuevo);
+        } else {
+            errorAbono.innerText = '';
+            (saldo_pendiente.value - campoMontoAbonadoNuevo.value < 0) 
+                ? campoRestante.value = 'El abono no puede ser mayor a la deuda.'
+                : campoRestante.value = saldo_pendiente.value - campoMontoAbonadoNuevo.value; 
+        }
+
+    })
+}
+
+
 //----------------- Comprobación de que el número de teléfono del cliente existe ------------------
 const campoTelefono = document.querySelector('[name=cliente_id-txt]');
 
@@ -214,5 +264,22 @@ if(campoTelefono !== null) {
         if(campoTelefono.value.length > 10) {
             campoTelefono.value = campoTelefono.value.slice(0,10);
         }
+    });
+}
+
+//----------------- Búsqueda de productos ------------------
+if(btnBuscarProducto !== null) {
+    btnBuscarProducto.addEventListener('click', () => {
+        event.preventDefault();
+        alertaBuscar.innerText = ""
+        alertaBuscar.style.visibility = 'hidden';
+    
+        if(campoBuscarProducto.value.length !== 0 && campoBuscarProducto.value.length < 80) {
+            formularioBusquedaProducto.submit();
+        } else {
+            alertaBuscar.innerText = "Debe ingresar una palabra clave"
+            alertaBuscar.style.visibility = 'visible';
+        }
+        
     });
 }

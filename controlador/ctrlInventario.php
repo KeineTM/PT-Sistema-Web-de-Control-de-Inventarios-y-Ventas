@@ -31,6 +31,53 @@ class ControladorProductos {
         $this->caducidad = $caducidad;
     }
 
+    /** PAGINACIÓN */
+    public static function paginarLista($productosPorPagina=20) {
+        $pagina = 1;
+
+        if(isset($_GET['pag'])) $pagina = intval($_GET['pag']);
+
+        $limit = $productosPorPagina; # No. productos en pantalla
+        $offset = ($pagina - 1) * $productosPorPagina; # Saltado de productos en páginas != 1
+
+        $modelo = new ModeloProductos();
+        $conteo = $modelo -> mdlConteoProductos(true); # Recupera el no. de productos
+
+        // Calcula el no. de páginas totales
+        $paginas = ceil($conteo[0]['conteo'] / $productosPorPagina);
+        
+        // Retorna los productos por página
+        $productos = $modelo -> mdlLeerParaPaginacion($limit, $offset);
+
+        echo '<h2>Total de productos activos: ' . $conteo[0]['conteo'] . '</h2>';
+
+        echo 'Página: ' . $pagina;
+
+        for ($x = 1; $x <= $paginas; $x++) {
+        
+        }
+
+        echo '<section class="contenedor-productos">';
+        foreach($productos as $producto) {
+            echo '
+            <article class="tarjeta-producto">
+                <img src="' . $producto['foto_url'] . '" alt="Imagen ' . $producto['nombre'] . '">
+                <span>
+                    <h3>' . $producto['nombre'] . '</h3>
+                    <ul>
+                        <li>Código: ' . $producto['producto_id'] . '</li>
+                        <li>Categoría: ' . $producto['categoria'] . '</li>
+                        <li>Unidades: ' . $producto['unidades'] . '</li>
+                        <li>Precio de venta: $' . $producto['precio_venta'] . '</li>
+                        <li class="texto-rosa">Agregar a la venta</li>
+                    </ul>
+                </span>
+            </article>';
+        }
+        echo '</section>';
+        
+    }
+
     /** Sí es válido retorna la lista de datos a registrar */
     public function validarDato($campo) {
         require_once "ctrlSeguridad.php";
@@ -183,8 +230,10 @@ class ControladorProductos {
     /** Método para registrar una categoría, recibe una cadena con el nombre */
     static public function ctrlRegistrarCategoria($categoria) {
         if(strlen($categoria) > 3) {
+            $listaDatos = [];
+            array_push($listaDatos, $categoria);
             $modelo = new ModeloProductos();
-            $respuesta = $modelo -> mdlRegistrarCategoria($categoria);
+            $respuesta = $modelo -> mdlRegistrarCategoria($listaDatos);
             return ($respuesta === true)
                     ? 'Registro correcto'
                     : 'Categoria duplicada';
@@ -243,11 +292,11 @@ if(isset($_GET['funcion'])) {
         die();
     }
     else if($_GET['funcion'] === 'editar-categoria') {
-        if(!isset($_POST['categoriaProducto-txt'])) {echo 'Debe ingresar un id de categoria'; die();}
-        if(!isset($_POST['categoria-txt'])) {echo 'Debe ingresar un nombre para la categoria'; die();}
+        if(!isset($_POST['categoriaProductoEditar-txt'])) {echo 'Debe ingresar un id de categoria'; die();}
+        if(!isset($_POST['categoria_editar-txt'])) {echo 'Debe ingresar un nombre para la categoria'; die();}
         if(!isset($_POST['estadoCategoria-txt'])) {echo 'Debe ingresar un estado valido: Activo / Dar de baja'; die();}
-        $categoria_id = $_POST['categoriaProducto-txt'];
-        $categoria = $_POST['categoria-txt'];
+        $categoria_id = $_POST['categoriaProductoEditar-txt'];
+        $categoria = $_POST['categoria_editar-txt'];
         $estado = $_POST['estadoCategoria-txt'];
 
         if(strlen($categoria_id) > 0 && 

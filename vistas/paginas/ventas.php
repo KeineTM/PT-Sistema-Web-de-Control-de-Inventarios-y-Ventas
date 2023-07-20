@@ -4,15 +4,18 @@
     <!-- Submenú -->
     <ul class="main-menu destacado">
         <li class="main-menu__opcion"><a class="boton-main" href="index.php?pagina=ventas&opciones=alta">Formulario de Venta</a></li>
-        <li class="main-menu__opcion"><a class="boton-main" href="index.php?pagina=ventas&opciones=listar&tiempo=dia">Ventas del día</a></li>
-        <li class="main-menu__opcion"><a class="boton-main" href="index.php?pagina=ventas&opciones=listar&tiempo=semana">Ventas de la semana</a></li>
+        <li class="main-menu__opcion"><a class="boton-main" href="index.php?pagina=ventas&opciones=catalogo&pag=1">Catálogo de productos</a></li>
+        <!--<li class="main-menu__opcion"><a class="boton-main" href="index.php?pagina=ventas&opciones=listar&tiempo=semana">Ventas de la semana</a></li>-->
+
         <li class="main-menu__opcion">
-            <form class="boton-main" id="barra-busqueda">
-                <input type="number" step="any" class="campo" name="buscarOperacion-txt" autocomplete="off" id="buscarOperacion-txt" placeholder="Buscar..." maxlength="18" min='1' required>
-                <button class="boton enviar" id="btnBuscarOperacion"><img src="vistas/img/magnifying-glass.svg" alt=""></button>
+            <form method="post" action="index.php?pagina=ventas&opciones=buscar"  class="boton-main" id="barra-busqueda-producto">
+                <input type="text" class="campo" name="buscarProducto-txt" autocomplete="off" id="buscarProducto-txt" placeholder="Buscar producto" maxlength="80" min='3' required>
+                <button class="boton enviar" id="btnBuscarProducto"><img src="vistas/img/magnifying-glass.svg" alt="Buscar"></button>
             </form>
             <span class="alerta" id="alertaBuscar"></span>
         </li>
+
+        <li class="main-menu__opcion"><a class="boton-main" href="index.php?pagina=ventas&opciones=listar&tiempo=dia">Ventas del día</a></li>
     </ul>
 
     <article id="subcontenedor">
@@ -24,6 +27,10 @@
                 include 'vistas/paginas/ventas-listar.php';
             if ($_GET['opciones'] === 'detalles')
                 include 'vistas/paginas/ventas-detalles.php';
+            if ($_GET['opciones'] === 'catalogo')
+                include 'vistas/paginas/ventas-catalogo.php';
+            if ($_GET['opciones'] === 'buscar')
+                include 'vistas/paginas/ventas-busqueda.php';
             if($_GET['opciones'] === 'exito')
                 echo '<p class="alerta-verde">Eliminación exitosa</p>';
             if($_GET['opciones'] === 'error')

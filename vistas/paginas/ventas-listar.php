@@ -1,7 +1,5 @@
 <?php
 # Definición de fechas:
-date_default_timezone_set('America/Mazatlan');
-
 if(!isset($_GET['tiempo'])) return; # Si no existe un parámetro de tiempo, no carga el código
 
 if($_GET['tiempo'] === 'dia') { # Dependiendo del valor del parámetro se cargan las opciones

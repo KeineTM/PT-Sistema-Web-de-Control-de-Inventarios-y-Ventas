@@ -6,7 +6,7 @@
 class ControladorSeguridad
 {
     // Tipo de encriptación:
-    private const HASH = "PASSWORD_DEFAULT";
+    private const HASH = PASSWORD_DEFAULT;
     // Veces que se usa el HASH de encriptación (costo):
     private const COST = 10;
     // Clave secreta reCAPTCHA

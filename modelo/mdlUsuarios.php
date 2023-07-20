@@ -11,24 +11,25 @@ class ModeloUsuarios extends ModeloConexion {
     }
 
     # Implementación de los métodos abstractos
-    public function create() {
+    public function mdlRegistrar($listaDatos) {
+        $this->registros = $listaDatos;
+        $this->sentenciaSQL = 'INSERT INTO usuarios VALUES (?,?,?,?,?,?,?,?,?,?,?)';
+        return $this->consultasCUD();
     }
 
     /** Método que recupera toda la información de la tabla de usuarios. 
      * Si se especifica un ID, entonces extraerá sólo la información correspondiente a este, de no encontrarlo retorna null.
      */
     public function read($usuario_id='') {
-        if($usuario_id !== '') array_push($this->registros, $usuario_id);
-
         $this->sentenciaSQL = ($usuario_id === '')  # Asigna el valor de consulta
-            ? "SELECT * FROM usuarios"
+            ? "SELECT * FROM usuarios ORDER BY estado"
             : "SELECT usuarios.usuario_id, usuarios.nombre, usuarios.apellido_paterno, usuarios.apellido_materno, usuarios.telefono,
                 usuarios.rfc, usuarios.email, usuarios.password, usuarios.notas, usuarios.estado, tipos_usuario.tipo_usuario 
                 FROM usuarios 
                 INNER JOIN tipos_usuario ON usuarios.tipo_usuario = tipos_usuario.tipo_id
                 WHERE usuarios.usuario_id = ? LIMIT 1";
         
-        return $this->consultaRead();
+        return $this->consultaRead($usuario_id);
     }
 
     /** Método que busca un usuario por su ID en la tabla para recuperar la información necesaria para el inicio de sesión, de no encontrarlo retorna null */
@@ -43,8 +44,14 @@ class ModeloUsuarios extends ModeloConexion {
         
     }
 
-    public function update() {
-
+    public function update($listaDatos) {
+        $this->registros = $listaDatos;
+        $this->sentenciaSQL = 
+            'UPDATE usuarios SET usuario_id = ?, nombre = ?, apellido_paterno = ?, apellido_materno = ?,
+            telefono = ?, rfc = ?, email = ?, password = ?, notas = ?, estado = ?, tipo_usuario = ?
+            WHERE usuario_id = ? LIMIT 1';
+    
+    return $this->consultasCUD();
     }
 
     public function delete() {

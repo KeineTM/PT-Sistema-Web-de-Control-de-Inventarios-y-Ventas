@@ -22,7 +22,8 @@ class ModeloProductos extends ModeloConexion{
             inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta,
             inventario.estado, inventario.foto_url, inventario.caducidad
             FROM inventario
-            INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id'
+            INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id
+            ORDER BY CAST(inventario.producto_id AS UNSIGNED)'
         : 'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
             inventario.unidades, inventario.unidades_minimas, inventario.precio_compra, inventario.precio_venta,
             inventario.estado, inventario.foto_url, inventario.caducidad
@@ -41,7 +42,8 @@ class ModeloProductos extends ModeloConexion{
             inventario.estado, inventario.foto_url, inventario.caducidad
             FROM inventario
             INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id 
-            WHERE inventario.nombre LIKE ?';
+            WHERE inventario.nombre LIKE ?
+            ORDER BY CAST(inventario.producto_id AS UNSIGNED)';
 
         return  $this->consultaRead("%" . $palabraClave . "%");
     }
@@ -68,9 +70,9 @@ class ModeloProductos extends ModeloConexion{
     }
 
     /** Método que registra una categoría nueva */
-    public function mdlRegistrarCategoria($categoria) {
+    public function mdlRegistrarCategoria($listaDatos) {
+        $this->registros = $listaDatos;
         $this->sentenciaSQL = "INSERT INTO categorias_inventario (categoria) VALUES (?)";
-        array_push($this->registros, $categoria);
         return $this->consultasCUD();
     }
 
@@ -95,4 +97,57 @@ class ModeloProductos extends ModeloConexion{
         return $this-> consultasCUD();
     }
 
+    //--------------------------------------------------------------------------------------------------
+    // Métodos de paginación
+    //--------------------------------------------------------------------------------------------------
+
+    /**
+     * Método que cuenta los productos en la tabla. 
+     * $estado = true = activos / false = todos.
+     */
+    public function mdlConteoProductos($estado=false) {
+        $this->sentenciaSQL = ($estado) 
+            ? 'SELECT count(*) AS conteo FROM inventario WHERE estado = true'
+            : 'SELECT count(*) AS conteo FROM inventario';
+        return $this->consultaRead();
+    }
+
+    /** Método que recupera sólo los productos activos para una vista de catálogo */
+    public function mdlLeerParaPaginacion($limit, $offset, $estado=false) {
+        $this->sentenciaSQL = ($estado)
+        ? 'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
+            inventario.unidades, inventario.precio_venta,
+            inventario.estado, inventario.foto_url, inventario.caducidad
+            FROM inventario
+            INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id
+            WHERE inventario.estado = true
+            ORDER BY CAST(inventario.producto_id AS UNSIGNED)
+            LIMIT ? OFFSET ?'
+        : 'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
+            inventario.unidades, inventario.precio_venta,
+            inventario.estado, inventario.foto_url, inventario.caducidad
+            FROM inventario
+            INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id
+            ORDER BY CAST(inventario.producto_id AS UNSIGNED)
+            LIMIT ? OFFSET ?';
+
+        try {
+            $this->abrirConexion(); # Conecta
+            $pdo = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
+            
+            $pdo -> bindParam(1, $limit, PDO::PARAM_INT);
+            $pdo -> bindParam(2, $offset, PDO::PARAM_INT);
+    
+            $pdo -> execute(); # Ejecuta
+            $this->registros = $pdo -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos
+    
+            return $this->registros;
+
+        } catch(PDOException $e) {
+            return 'Error: ' . $e->getMessage(); # Si hubo un error lo Retorna
+        } finally {
+            $pdo = null; # Limpia
+            $this->cerrarConexion(); # Cierra
+        }
+    }
 }

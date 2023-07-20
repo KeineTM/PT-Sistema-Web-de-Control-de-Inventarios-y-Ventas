@@ -54,82 +54,86 @@ class ControladorOperaciones
 
     /** Método que recibe un código o id de producto para agregarlo al carrito con el uso de variables de sesión */
     static public function agregarAlCarrito($nombre_carrito, $tipo_operacion_url) {
-        if (!isset($_POST['idProducto-txt'])) return;
+        if (isset($_POST['idProducto-txt']) || isset($_GET['idProducto-txt'])) {
 
-        $producto_id = $_POST['idProducto-txt'];
-        $busqueda = ControladorProductos::ctrlLeerUno($producto_id);
+            if (isset($_POST['idProducto-txt'])) $producto_id = $_POST['idProducto-txt'];
+            else if (isset($_GET['idProducto-txt'])) $producto_id = $_GET['idProducto-txt'];
+            
+            $busqueda = ControladorProductos::ctrlLeerUno($producto_id);
 
-        # Evalúa si el resultado de la búsqueda devolvió un producto con atributos:
-        if ($busqueda == null) {
-            echo '<script type="text/javascript">
-                    window.location.href = "index.php?pagina=' . $tipo_operacion_url .'&opciones=alta&estado=no-existe";
-                    </script>';
-            exit;
-        }
-
-        # Instancia un objeto de la clase
-        $productoPorAgregar = new ControladorProductos(
-            $busqueda[0]['producto_id'],
-            $busqueda[0]['nombre'],
-            $busqueda[0]['categoria'],
-            $busqueda[0]['descripcion'],
-            $busqueda[0]['unidades'],
-            $busqueda[0]['unidades_minimas'],
-            $busqueda[0]['precio_compra'],
-            $busqueda[0]['precio_venta'],
-            $busqueda[0]['estado'],
-            $busqueda[0]['foto_url'],
-            $busqueda[0]['caducidad']
-        );
-
-        # Evalúa unidades existentes
-        # Si la operación es una devolución, no se evalúa
-        if ($tipo_operacion_url !== 'devoluciones' && $productoPorAgregar->unidades === 0) { # Se acabó el producto
-            echo '<script type="text/javascript">
-                    window.location.href = "index.php?pagina=' . $tipo_operacion_url . '&opciones=alta&estado=agotado";
-                    </script>';
-            exit;
-        }
-
-        # Evalúa si el producto ya está en el carrito
-        $productoEnCarrito = false;
-        foreach ($_SESSION[$nombre_carrito] as $indice => $productoExistente) {
-            if ($productoExistente->producto_id === $productoPorAgregar->producto_id) {
-                # Si lo está, recupera el valor del índice
-                $productoEnCarrito = $indice;
-                break;
+            # Evalúa si el resultado de la búsqueda devolvió un producto con atributos:
+            if ($busqueda == null) {
+                echo '<script type="text/javascript">
+                        window.location.href = "index.php?pagina=' . $tipo_operacion_url .'&opciones=alta&estado=no-existe";
+                        </script>';
+                exit;
             }
-        }
 
-        # Si no hay coincidencias en el carrito se agregan los atributos: cantidad (1) y el total(acumulado por producto)
-        if ($productoEnCarrito === false) {
-            $productoPorAgregar->cantidad = 1;
-            $productoPorAgregar->total = $productoPorAgregar->precioVenta;
-            array_push($_SESSION[$nombre_carrito], $productoPorAgregar);
-        }
-        # Si hay coincidencias aumenta la cantidad en carrito más 1 y actualiza el total acumulado por producto
-        else { # siempre y cuando no sobrepase las unidades existentes
-            if($tipo_operacion_url !== 'devoluciones' &&
-                $_SESSION[$nombre_carrito][$productoEnCarrito]->cantidad < $_SESSION[$nombre_carrito][$productoEnCarrito]->unidades) {
-                $_SESSION[$nombre_carrito][$productoEnCarrito]->cantidad++;
-                $_SESSION[$nombre_carrito][$productoEnCarrito]->total = ($_SESSION[$nombre_carrito][$productoEnCarrito]->cantidad) * ($_SESSION[$nombre_carrito][$productoEnCarrito]->precioVenta);
-            } else if($tipo_operacion_url === 'devoluciones') {
-                $_SESSION[$nombre_carrito][$productoEnCarrito]->cantidad++;
-                $_SESSION[$nombre_carrito][$productoEnCarrito]->total = ($_SESSION[$nombre_carrito][$productoEnCarrito]->cantidad) * ($_SESSION[$nombre_carrito][$productoEnCarrito]->precioVenta);
-            } else {
-                echo 
-                    '<script type="text/javascript">
-                    window.location.href = "index.php?pagina=' . $tipo_operacion_url .'&opciones=alta&estado=maximo";
-                    </script>';
-                die();
+            # Instancia un objeto de la clase
+            $productoPorAgregar = new ControladorProductos(
+                $busqueda[0]['producto_id'],
+                $busqueda[0]['nombre'],
+                $busqueda[0]['categoria'],
+                $busqueda[0]['descripcion'],
+                $busqueda[0]['unidades'],
+                $busqueda[0]['unidades_minimas'],
+                $busqueda[0]['precio_compra'],
+                $busqueda[0]['precio_venta'],
+                $busqueda[0]['estado'],
+                $busqueda[0]['foto_url'],
+                $busqueda[0]['caducidad']
+            );
+
+            # Evalúa unidades existentes
+            # Si la operación es una devolución, no se evalúa
+            if ($tipo_operacion_url !== 'devoluciones' && $productoPorAgregar->unidades === 0) { # Se acabó el producto
+                echo '<script type="text/javascript">
+                        window.location.href = "index.php?pagina=' . $tipo_operacion_url . '&opciones=alta&estado=agotado";
+                        </script>';
+                exit;
             }
-        }
-        # Regresa
-        echo 
-            '<script type="text/javascript">
-            window.location.href = "index.php?pagina=' . $tipo_operacion_url . '&opciones=alta";
-            </script>';
-        die();
+
+            # Evalúa si el producto ya está en el carrito
+            $productoEnCarrito = false;
+            foreach ($_SESSION[$nombre_carrito] as $indice => $productoExistente) {
+                if ($productoExistente->producto_id === $productoPorAgregar->producto_id) {
+                    # Si lo está, recupera el valor del índice
+                    $productoEnCarrito = $indice;
+                    break;
+                }
+            }
+
+            # Si no hay coincidencias en el carrito se agregan los atributos: cantidad (1) y el total(acumulado por producto)
+            if ($productoEnCarrito === false) {
+                $productoPorAgregar->cantidad = 1;
+                $productoPorAgregar->total = $productoPorAgregar->precioVenta;
+                array_push($_SESSION[$nombre_carrito], $productoPorAgregar);
+            }
+            # Si hay coincidencias aumenta la cantidad en carrito más 1 y actualiza el total acumulado por producto
+            else { # siempre y cuando no sobrepase las unidades existentes
+                if($tipo_operacion_url !== 'devoluciones' &&
+                    $_SESSION[$nombre_carrito][$productoEnCarrito]->cantidad < $_SESSION[$nombre_carrito][$productoEnCarrito]->unidades) {
+                    $_SESSION[$nombre_carrito][$productoEnCarrito]->cantidad++;
+                    $_SESSION[$nombre_carrito][$productoEnCarrito]->total = ($_SESSION[$nombre_carrito][$productoEnCarrito]->cantidad) * ($_SESSION[$nombre_carrito][$productoEnCarrito]->precioVenta);
+                } else if($tipo_operacion_url === 'devoluciones') {
+                    $_SESSION[$nombre_carrito][$productoEnCarrito]->cantidad++;
+                    $_SESSION[$nombre_carrito][$productoEnCarrito]->total = ($_SESSION[$nombre_carrito][$productoEnCarrito]->cantidad) * ($_SESSION[$nombre_carrito][$productoEnCarrito]->precioVenta);
+                } else {
+                    echo 
+                        '<script type="text/javascript">
+                        window.location.href = "index.php?pagina=' . $tipo_operacion_url .'&opciones=alta&estado=maximo";
+                        </script>';
+                    die();
+                }
+            }
+            # Regresa
+            echo 
+                '<script type="text/javascript">
+                window.location.href = "index.php?pagina=' . $tipo_operacion_url . '&opciones=alta";
+                </script>';
+            die();
+
+        } else return;
     }
 
     /** Método que aumenta en 1 la cantidad de un producto en el carrito, mientras este exista. Y no se pueden agregar más de los que se tienen en existencia */
@@ -448,20 +452,45 @@ class ControladorOperaciones
     }
 
     /** Método que recupera un apartado abierto (estado = 0) y agrega un abono */
-    static public function ctrolAbonarAlApartado() {
+    static public function ctrlAbonarAlApartado() {
+        if(!isset($_POST['folio-txt'])) return;
+        if(!isset($_POST['abono_nuevo-txt'])) return;
 
+        $folio = $_POST['folio-txt'];
+        $abono = $_POST['abono_nuevo-txt'];
+
+        if($abono <= 0 ||
+            $abono > 9999 ||
+            preg_match('/^[0-9]+(\\.[0-9]{1,2})?$/', $abono)) {
+            $error = 'Sólo se aceptan números entre 1 y 9999 con máximo 2 decimáles.';
+            echo $error;
+            exit;
+        }
+
+        // Obtención de la suma de abonos
+        $consulta_abonos = self::ctrlLeerAbonos($folio);
+        $total_abonado = 0;
+        for($i = 0; $i < count($consulta_abonos); $i++) { 
+            $total_abonado += $consulta_abonos[$i]['abono']; #SUMA DE ABONOS
+        }
+
+        // Obtención del total de la operación
+        $consulta_apartado = self::ctrlLeer($folio);
+        $total = $consulta_apartado[0]['total'];
+
+        
     }
 
     static public function ctrlCrearDevolucion($nombre_carrito, $tipo_operacion_url) {
         if(!isset($_POST['total-txt'])) return;
-        if (count($_SESSION[$nombre_carrito]) < 1) {
+        if(count($_SESSION[$nombre_carrito]) < 1) {
             echo # Indica que el carrito está vacío
             '<script type="text/javascript">
                     window.location.href = "index.php?pagina='  . $tipo_operacion_url . '&opciones=alta&estado=error-carrito";
                 </script>';
             exit;
         }
-        if (($_POST['total-txt']) <= 0) {
+        if(($_POST['total-txt']) <= 0) {
             echo
             '<script type="text/javascript">
                     window.location.href = "index.php?pagina='  . $tipo_operacion_url . '&opciones=alta&estado=error-total";
