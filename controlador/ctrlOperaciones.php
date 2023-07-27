@@ -235,7 +235,7 @@ class ControladorOperaciones
         $subtotal = 0;
         $resultado = null;
         $regex = '/^[0-9]+(\\.[0-9]{1,2})?$/';
-        $referencia = 'numeros con hasta 2 decimales';
+        $referencia = 'números con hasta 2 decimales';
         if (strlen($descuento) !== 0 && $descuento !== null) { # Evalúa si hay un dato para validar el formato
             $resultado = ControladorSeguridad::validarFormato('Descuento', $descuento, $regex, $referencia);
 
@@ -456,30 +456,90 @@ class ControladorOperaciones
         if(!isset($_POST['folio-txt'])) return;
         if(!isset($_POST['abono_nuevo-txt'])) return;
 
-        $folio = $_POST['folio-txt'];
+        $operacion_id = $_POST['folio-txt'];
+        $empleado_id = $_SESSION['idUsuarioSesion'];
+        $fecha_abono = date('Y-m-d H:i:s'); # Fecha actual
         $abono = $_POST['abono_nuevo-txt'];
+        $metodo_pago = (isset($_POST['metodo-pago-txt']))
+                        ? $_POST['metodo-pago-txt']
+                        : 1; # Efectivo
+
+        $regex = '/^[0-9]+(\\.[0-9]{1,2})?$/';
+        $total_abonado = 0;
+        $total = 0;
+        $total_restante = 0;
 
         if($abono <= 0 ||
             $abono > 9999 ||
-            preg_match('/^[0-9]+(\\.[0-9]{1,2})?$/', $abono)) {
-            $error = 'Sólo se aceptan números entre 1 y 9999 con máximo 2 decimáles.';
+            !preg_match($regex, $abono)) {
+            $error = 'Servidor: Sólo se aceptan números entre 1 y 9999 con máximo 2 decimales.';
             echo $error;
             exit;
         }
 
-        // Obtención de la suma de abonos
-        $consulta_abonos = self::ctrlLeerAbonos($folio);
-        $total_abonado = 0;
+        // Consulta SQL: Obtención de la suma de abonos
+        $consulta_abonos = self::ctrlLeerAbonos($operacion_id);
+
+        // Evalúa que el folio exista
+        if(count($consulta_abonos) < 1) {
+            echo 'No existen datos para este folio.';
+            die();
+        }
+
         for($i = 0; $i < count($consulta_abonos); $i++) { 
             $total_abonado += $consulta_abonos[$i]['abono']; #SUMA DE ABONOS
         }
 
-        // Obtención del total de la operación
-        $consulta_apartado = self::ctrlLeer($folio);
+        // Consulta SQL: Obtención del total de la operación
+        $consulta_apartado = self::ctrlLeer($operacion_id);
         $total = $consulta_apartado[0]['total'];
 
-        
+        // Calcula el total restante del apartado
+        $total_restante = $total - $total_abonado;
+
+        if($total_restante <= 0) {
+            echo 'Servidor: Este apartado ya fue pagado.';
+            die();
+        }
+
+        if($total_restante < $abono) {
+            echo 'Servidor: El monto abonado excede a la deuda.';
+            die();
+        }
+
+        // REGISTRA EL ABONO
+        $listaDatos = [
+            $operacion_id,
+            $empleado_id,
+            $fecha_abono,
+            $abono,
+            $metodo_pago
+        ];
+
+        $modelo = new ModeloOperaciones;
+        $resultado = $modelo->mdlRegistrarAbono($listaDatos);
+
+        if ($resultado === true) {
+            echo # Indica que el registro del abono fue exitoso
+                '<div id="alerta-formulario" class="alerta-verde">
+                Abono exitoso.
+                </div>';
+
+            // EVALÚA SI SE COMPLETÓ EL PAGO PARA REGISTRARLO SI ES ASÍ
+            if($abono == $total_restante) {
+                $lista = [1];
+                $modelo->mdlCompletarAbono($lista);
+            }
+
+            die();
+        } else { # Indica que hubo un error
+            echo '<div id="alerta-formulario" class="alerta-roja">
+                Servidor: Ocurrió un error en el registro del abono, inténtelo nuevamente.
+                </div>';
+            die();;
+        }
     }
+
 
     static public function ctrlCrearDevolucion($nombre_carrito, $tipo_operacion_url) {
         if(!isset($_POST['total-txt'])) return;

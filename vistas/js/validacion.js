@@ -352,6 +352,8 @@ const validarCampoPersonal = (campo) => {
             if(campo.value.length < 8 || campo.value.length > 20) return 'La contraseña debe tener de 8 a 20 caracteres.';
             if(!regex.test(campo.value)) return 'La contraseña debe tener por lo menos: 1 mayúscula, 1 número y 1 caracter especial  (@, ¡, !, ¿, ?, -, _ o %)';
             return null;
+        default:
+            return null;
     }
 }
 

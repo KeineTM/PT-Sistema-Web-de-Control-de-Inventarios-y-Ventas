@@ -22,7 +22,7 @@ class ModeloUsuarios extends ModeloConexion {
      */
     public function read($usuario_id='') {
         $this->sentenciaSQL = ($usuario_id === '')  # Asigna el valor de consulta
-            ? "SELECT * FROM usuarios ORDER BY estado"
+            ? "SELECT * FROM usuarios ORDER BY estado DESC"
             : "SELECT usuarios.usuario_id, usuarios.nombre, usuarios.apellido_paterno, usuarios.apellido_materno, usuarios.telefono,
                 usuarios.rfc, usuarios.email, usuarios.password, usuarios.notas, usuarios.estado, tipos_usuario.tipo_usuario 
                 FROM usuarios 
@@ -51,7 +51,7 @@ class ModeloUsuarios extends ModeloConexion {
             telefono = ?, rfc = ?, email = ?, password = ?, notas = ?, estado = ?, tipo_usuario = ?
             WHERE usuario_id = ? LIMIT 1';
     
-    return $this->consultasCUD();
+        return $this->consultasCUD();
     }
 
     public function delete() {

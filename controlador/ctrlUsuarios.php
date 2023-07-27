@@ -83,7 +83,7 @@
             return $modelo_consulta -> mdlRegistrar($listaDatos);
         }
 
-        /** Método que recibe el formulario y procesa los datos para registrar un usuario o rechazarlo.
+        /** Método que recibe el formulario y procesa los datos para registrar un usuario en caso de ser válido.
          * Puede recibir un parámetro numérico tipo_usuario que puede ser 1 = Administrador o 2 = Empleado
          */
         static public function ctrlCrearUsuario($tipo_usuario = 2) {
@@ -122,6 +122,8 @@
         }
 
         private function ctrlEditar($id_original) {
+            // Encriptación de contraseña
+            $this->password = ControladorSeguridad::ctrlEncriptarPassword($this->password);
             $listaDatos = [
                 $this->usuario_id,
                 $this->nombre,
@@ -136,8 +138,8 @@
                 $this->tipo_usuario,
                 $id_original # Corresponde al id o llave primaria original
             ];
-            $modelo_consulta = new ModeloContactos();
-            return $modelo_consulta -> mdlEditar($listaDatos);
+            $modelo_consulta = new ModeloUsuarios();
+            return $modelo_consulta -> update($listaDatos);
         }
 
         static public function ctrlEditarUsuario() {
@@ -156,12 +158,25 @@
                 $_POST['password-txt'],
                 $_POST['notas-txt'],
                 $_POST['estado-txt'],
-                $_POST['tipo_usuario-txt'],
-                $usuario_id
+                $_POST['tipo_usuario-txt']
             );
 
-            
+            # Validación
+            $resultado_validacion = $usuario -> validarDatos();
 
+            if($resultado_validacion !== null) {
+                foreach($resultado_validacion as $error)
+                echo ('<p class="texto-rosa">Servidor: ' . $error . '</p>');
+            } else {
+                $resultado_registro = $usuario -> ctrlEditar($usuario_id);
+
+                if($resultado_registro === true) { # Registro exitoso
+                    echo '<div id="alerta-formulario" class=alerta-verde>Edición de usuario ' . $_POST['nombre-txt'] . ' ' . $_POST['apellido_paterno-txt'] . ' con folio: "' . substr($_POST['rfc-txt'], 0, 6) . '" exitosa</div>';
+                } else {
+                    echo '<div id="alerta-formulario" class=alerta-roja>Servidor: Error - Intente nuevamente</div>';
+                    exit;
+                }
+            }
         }
         
         /** Método que recupera toda la información de la tabla usuario. */

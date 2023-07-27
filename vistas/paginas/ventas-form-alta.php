@@ -77,7 +77,7 @@ ControladorOperaciones::ctrlCrearVenta($nombre_carrito, $tipo_operacion);
                     <img src="<?= $producto->foto_url ?>" alt="Imagen <?= $producto->nombre ?>">
                     <ul>
                         <li>Folio: <span> <?= $producto->producto_id ?></span></li>
-                        <li>Categoría: <span> <?= $producto->categoria_id ?></span></li>
+                        <li>Categoría: <span class="mayusculas"> <?= $producto->categoria_id ?></span></li>
                         <li>Existencias: <span> <?= $producto->unidades ?></span></li>
                         <li>Caducidad: <span> <?= $producto->caducidad ?></span></li>
                         <li>Precio unitario: <span> $<?= number_format($producto->precioVenta, 2) ?></span></li>

@@ -172,7 +172,7 @@ CREATE TABLE `abonos` (
     fecha DATETIME NOT NULL,
     abono DECIMAL(8,2) NOT NULL,
     metodo_pago SMALLINT(2) DEFAULT 1,
-    PRIMARY KEY (operacion_id, empleado_id),
+    PRIMARY KEY (operacion_id, empleado_id, fecha),
     FOREIGN KEY (operacion_id) REFERENCES operaciones(operacion_id),
     FOREIGN KEY (empleado_id) REFERENCES usuarios(usuario_id),
     FOREIGN KEY (metodo_pago) REFERENCES metodos_pago(metodo_id)

@@ -81,7 +81,7 @@ if(formularioAltaPersonal !== null) {
 if(formularioEditarPersonal !== null) {
     const campos = document.querySelectorAll('[data-form]');
     const alertaHTML = document.querySelector('#alerta-formulario');
-    const btnEnviar = document.querySelector('#btnRegistrar');
+    const btnEnviar = document.querySelector('#btnEditar');
     const campoTelefono = document.querySelector('[data-form=telefono]');
     const campoUsuarioID = document.querySelector('[name=usuario_id-txt]');
     const campoRFC = document.querySelector('[data-form=rfc]');
@@ -125,6 +125,7 @@ if(formularioEditarPersonal !== null) {
         
         validar(campos, alertaHTML, listaErrores);
 
+        console.log(listaErrores);
         (listaErrores.length === 0)
             ? formularioEditarPersonal.submit()
             : console.log('No pasó la validación');

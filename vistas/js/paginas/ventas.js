@@ -113,6 +113,7 @@ const bucarOperacionAJAX = (formulario, contenedorHTML) => {
     })
 }
 
+// Busqueda de una operación
 if(btnBuscar !== null) {
     btnBuscar.addEventListener('click', (event) => {
         event.preventDefault();
@@ -189,8 +190,10 @@ if(campoDescuento !== null) {
 const campoMontoAbonado = document.querySelector('[data-form=abono]');
 const campoTotalRestante = document.querySelector('[data-form=restante]');
 const porcentajeDeAbonoSugerido = 0.3; // Regla del negocio para realizar apartados: 30%
-
+const formularioAbonoNuevo = document.querySelector('#formulario-abonar');
 const campoMontoAbonadoNuevo = document.querySelector('[data-form=abono_nuevo]');
+const btnAbonar = document.querySelector('#btnAbonar');
+const errorAbono = document.querySelector('#error-abono');
 
 // Evalúa que exista un campo de abonos: Apartados
 // Para calcular e imprimir en pantalla el total restante después del abono
@@ -217,7 +220,7 @@ if(campoMontoAbonado !== null) {
     });
 }
 
-// Validación del campo de abono
+/** Validación del campo de abono: */ 
 const validarAbono = (campo) => {
     let regex = new RegExp('^[0-9]+(\\.[0-9]{1,2})?$');
     if(campo.value <= 0 ||
@@ -236,7 +239,6 @@ const validarAbono = (campo) => {
 if(campoMontoAbonadoNuevo !== null) {
     const saldo_pendiente = document.querySelector('#saldo_pendiente');
     const campoRestante = document.querySelector('#restante');
-    const errorAbono = document.querySelector('#error-abono');
 
     campoRestante.value = saldo_pendiente.value;
 
@@ -255,6 +257,17 @@ if(campoMontoAbonadoNuevo !== null) {
     })
 }
 
+if(formularioAbonoNuevo !== null) {
+    btnAbonar.addEventListener('click', () => {
+        event.preventDefault();
+        if(validarAbono(campoMontoAbonadoNuevo) !== false) {
+            errorAbono.innerText = validarAbono(campoMontoAbonadoNuevo);
+        } else {
+            errorAbono.innerText = '';
+            formularioAbonoNuevo.submit();
+        }
+    });
+}
 
 //----------------- Comprobación de que el número de teléfono del cliente existe ------------------
 const campoTelefono = document.querySelector('[name=cliente_id-txt]');

@@ -20,6 +20,7 @@ if (!is_array($consulta) || sizeof($consulta) === 0) {
     die();
 }
 
+ControladorOperaciones::ctrlAbonarAlApartado();
 ControladorOperaciones::ctrlEliminar($tipo_operacion);
 ?>
 <span class="formulario__encabezado">
@@ -63,12 +64,6 @@ ControladorOperaciones::ctrlEliminar($tipo_operacion);
     <fieldset class="fieldset__envoltura formulario__fieldset-2-columnas">
         <legend>Datos de facturación</legend>
 
-        <span>Subtotal</span>
-        <span>$<?= $consulta[0]['subtotal'] ?></span>
-
-        <span>Descuento</span>
-        <span>$<?= ($consulta[0]['descuento']) ? $consulta[0]['descuento'] : number_format(0, 2) ?></span>
-
         <span>Total</span>
         <span>$<?= $consulta[0]['total'] ?></span>
 
@@ -99,25 +94,38 @@ ControladorOperaciones::ctrlEliminar($tipo_operacion);
     </fieldset>
 </section>
 
-<h2>Abonar al apartado:</h2>
-<span class="texto-rosa" id="error-abono"></span>
 
 <?php if(!$consulta[0]['estado']) { ?>
+    <h2>Abonar al apartado:</h2>
+    <span class="texto-rosa" id="error-abono"></span>
+
     <form method="post" class="formulario" id="formulario-abonar">
-        <input name="folio-txt" type="hidden" value="<?=$folio?>" required readonly>
-        <input name="saldo_pendiente" type="hidden" id="saldo_pendiente" value='<?= $consulta[0]['total'] - $total_abonado ?>'>
-        
-        <label for="abono_nuevo-txt">Monto a abonar $:</label>
-        <input type="text" class="campo destacado requerido" autocomplete="off" type="number" placeholder="0.00" name="abono_nuevo-txt" step="any" min="1" max="9999" required  data-form="abono_nuevo">
+        <fieldset class="formulario__fieldset-2-columnas">
+            <input name="folio-txt" type="hidden" value="<?=$folio?>" required readonly>
+            <input name="saldo_pendiente" type="hidden" id="saldo_pendiente" value='<?= $consulta[0]['total'] - $total_abonado ?>'>
+            
+            <label for="abono_nuevo-txt">Monto a abonar $:</label>
+            <input type="text" class="campo destacado requerido" autocomplete="off" type="number" placeholder="0.00" name="abono_nuevo-txt" step="any" min="1" max="9999" required  data-form="abono_nuevo">
 
-        <label for="restante">Restante $:</label>
-        <input type="text" class="sin-borde" name="restante" id="restante" disabled>
+            <label for="restante">Restante $:</label>
+            <input type="text" class="sin-borde" name="restante" id="restante" disabled>
 
-        <button type="submit" class="boton-form enviar" id="btnAbonar">Abonar al Apartado</button>
+            <label for="metodo-pago-txt">Método de pago:</label>
+            <select class="campo" name="metodo-pago-txt" required  data-form="metodo-pago">
+                <option value="1" selected>Efectivo</option>
+                <option value="2">Transferencia</option>
+            </select>
+            
+            <button type="submit" class="boton-form enviar" id="btnAbonar">Abonar al Apartado</button>
+        </fieldset>
     </form>
-<?php } ?>
 
-<form method="post" id="formulario-eliminar-operacion">
-    <input name="folio-txt" type="hidden" value="<?=$folio?>" required readonly>
-    <button type="submit" class="boton-form otro" id="btnEliminar">Cancelar Apartado</button>
+
+<form method="post" id="formulario-eliminar-operacion" class="formulario">
+    <fieldset class="formulario__fieldset-2-columnas">
+        <input name="folio-txt" type="hidden" value="<?=$folio?>" required readonly>
+        <button type="submit" class="boton-form otro" id="btnEliminar">Cancelar Apartado</button>
+    </fieldset>
 </form>
+
+<?php } ?>

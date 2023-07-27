@@ -67,10 +67,10 @@ ControladorUsuarios::ctrlEditarUsuario($id);
 
     <fieldset class="formulario__fieldset">
         <label for="password-txt">Nueva contraseña:</label>
-        <input type="password" name="password-txt" autocomplete="off" class="campo requerido" data-form="password" placeholder="Contraseña" minlength="8" maxlength="20" required>
+        <input type="password" name="password-txt" autocomplete="off" class="campo" data-form="password" placeholder="Contraseña" minlength="8" maxlength="20">
 
         <label for="password_2-txt">Repita la contraseña:</label>
-        <input type="password" name="password_2-txt" autocomplete="off" class="campo requerido" placeholder="Repita su contraseña" minlength="8" maxlength="20" required>
+        <input type="password" name="password_2-txt" autocomplete="off" class="campo" placeholder="Repita su contraseña" minlength="8" maxlength="20">
         <span class="alerta" id="alerta-password"></span>
 
         <label for="notas-txt">Notas:</label>
@@ -93,6 +93,6 @@ ControladorUsuarios::ctrlEditarUsuario($id);
             <input type="radio" name="estado-txt" value="0" required data-form="estado" <?php if (!$consulta[0]['estado']) echo 'checked' ?>>
             <label for="estado-txt">Inactivo</label>
         </fieldset>
-        <button type="submit" class="boton-form enviar" id="btnRegistrar">Editar</button>
+        <button type="submit" class="boton-form enviar" id="btnEditar">Editar</button>
     </fieldset>
 </form>

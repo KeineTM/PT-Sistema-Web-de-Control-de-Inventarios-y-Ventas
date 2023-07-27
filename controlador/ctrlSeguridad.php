@@ -53,7 +53,7 @@ class ControladorSeguridad
      */
     static public function validarFormato($campo, $campo_valor, $regex, $referencia) {
         return (!preg_match($regex, $campo_valor))
-                ? 'El campo ' . $campo . ' solo admite ' . $referencia
+                ? 'El campo ' . $campo . ' sólo admite ' . $referencia
                 : null;
     }
 
@@ -66,9 +66,9 @@ class ControladorSeguridad
 
         // Si el campo NO debe quedar vacío
         if ($limiteMin > 0 && strlen($campo_valor) === 0) 
-            return $mensaje = 'El campo ' . $campo . ' no puede quedar vacio';
+            return $mensaje = 'El campo ' . $campo . ' no puede quedar vacío';
         if(strlen($campo_valor) < $limiteMin) 
-            $mensaje = 'El campo ' . $campo . ' debe tener mas de ' . $limiteMin . ' letras';
+            $mensaje = 'El campo ' . $campo . ' debe tener más de ' . $limiteMin . ' letras';
         if(strlen($campo_valor) > $limiteMax) 
             $mensaje = 'El campo ' . $campo . ' debe tener menos de ' . $limiteMax . ' letras';
 

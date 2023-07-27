@@ -140,6 +140,24 @@ class ModeloOperaciones extends ModeloConexion {
         return $this -> consultaRead($id); 
     }
 
+    /** Método para el registro de abonos en un apartado */
+    public function mdlRegistrarAbono($listaDatos) {
+        $this->registros = $listaDatos;
+        $this->sentenciaSQL = 'INSERT INTO abonos VALUES (?,?,?,?,?)';
+        return $this->consultasCUD($listaDatos);
+    }
+
+    /** Método que edita el estado de una operación de apartado para completarla */
+    public function mdlCompletarAbono($listaDatos) {
+        $this->registros = $listaDatos;
+        $this->sentenciaSQL = 
+            'UPDATE operaciones
+            SET estado = ?;
+            LIMIT 1';
+    
+        return $this->consultasCUD();
+    }
+
     /** Método que devuelve los registros de operaciones tipo venta dentro de un rango de tiempo */
     public function mdlLeerOperacionesPorRangoDeFecha($fecha_inicio, $fecha_fin, $tipo_operacion_id) {
         $this->sentenciaSQL = ($tipo_operacion_id !== 'AP')
@@ -150,6 +168,7 @@ class ModeloOperaciones extends ModeloConexion {
             operaciones.subtotal, operaciones.descuento, operaciones.total, operaciones.notas, operaciones.tipo_operacion, operaciones.estado,
             metodos_pago.metodo,
             abonos.fecha, abonos.empleado_id, abonos.abono,
+            CONCAT(contactos.nombre," ", contactos.apellido_paterno) AS nombre_cliente,
             CONCAT(usuarios.nombre," ", usuarios.apellido_paterno," ", usuarios.apellido_materno) AS nombre_completo
             FROM operaciones
             INNER JOIN productos_incluidos ON operaciones.operacion_id = productos_incluidos.operacion_id
@@ -157,6 +176,7 @@ class ModeloOperaciones extends ModeloConexion {
             INNER JOIN abonos ON operaciones.operacion_id = abonos.operacion_id
             INNER JOIN metodos_pago ON abonos.metodo_pago = metodos_pago.metodo_id
             INNER JOIN usuarios ON usuarios.usuario_id = abonos.empleado_id
+            INNER JOIN contactos ON operaciones.contacto_id = contactos.contacto_id
             WHERE operaciones.tipo_operacion = ? AND abonos.fecha >= ? AND abonos.fecha < ?'
             : 'SELECT operaciones.operacion_id,
             productos_incluidos.producto_id, productos_incluidos.unidades, 
@@ -165,6 +185,7 @@ class ModeloOperaciones extends ModeloConexion {
             operaciones.subtotal, operaciones.descuento, operaciones.total, operaciones.notas, operaciones.tipo_operacion, operaciones.estado,
             metodos_pago.metodo,
             abonos.fecha, abonos.empleado_id, abonos.abono,
+            CONCAT(contactos.nombre," ", contactos.apellido_paterno) AS nombre_cliente,
             CONCAT(usuarios.nombre," ", usuarios.apellido_paterno," ", usuarios.apellido_materno) AS nombre_completo
             FROM operaciones
             INNER JOIN productos_incluidos ON operaciones.operacion_id = productos_incluidos.operacion_id
@@ -172,6 +193,7 @@ class ModeloOperaciones extends ModeloConexion {
             INNER JOIN abonos ON operaciones.operacion_id = abonos.operacion_id
             INNER JOIN metodos_pago ON abonos.metodo_pago = metodos_pago.metodo_id
             INNER JOIN usuarios ON usuarios.usuario_id = abonos.empleado_id
+            INNER JOIN contactos ON operaciones.contacto_id = contactos.contacto_id
             WHERE operaciones.tipo_operacion = ? AND abonos.fecha >= ? AND abonos.fecha < ?
             GROUP BY operaciones.operacion_id';
         
@@ -196,6 +218,7 @@ class ModeloOperaciones extends ModeloConexion {
         } 
     }
 
+    /** Método que reintegra el número de productos indicados a la tabla de inventario */
     public function mdlRestaurarProductoAlInventario($listaDatos) {
         $this->sentenciaSQL = 'UPDATE inventario SET unidades = unidades + ? WHERE producto_id = ?';
         return $this->consultasCUD($listaDatos);

@@ -29,6 +29,7 @@ foreach($consulta as $fila) {
         'fecha' => $fila['fecha'],
         'empleado_id' => $fila['empleado_id'],
         'nombre_completo' => $fila['nombre_completo'],
+        'nombre_cliente' => $fila['nombre_cliente'],
         'estado' => $fila['estado']
     ];
     array_push($lista_operaciones, $operacion);
@@ -45,7 +46,7 @@ $lista_operaciones = array_unique($lista_operaciones, SORT_REGULAR);
         <thead>
             <tr>
                 <th>Folio</th>
-                <th>Productos<br>incluidos</th>
+                <th>Cliente</th>
                 <th>Total</th>
                 <th>Notas</th>
                 <th>Método<br>de<br>pago</th>
@@ -59,17 +60,7 @@ $lista_operaciones = array_unique($lista_operaciones, SORT_REGULAR);
             <?php foreach($lista_operaciones as $operacion) {  ?>
             <tr>
                 <td><a class="texto-rosa" href="index.php?pagina=apartados&opciones=detalles&folio=<?=$operacion['operacion_id']?>"><?= preg_replace('/^0+/', '',$operacion['operacion_id'])?><br>Detalles</a></td>
-                <td>
-                    <ol class="celda__lista">
-                    <?php 
-                    # Enlista los productos correspondientes al id
-                    for($i = 0; $i < sizeof($consulta); $i++) {
-                        if($consulta[$i]['operacion_id'] == $operacion['operacion_id'])
-                            echo '<li>' . $consulta[$i]['unidades'] . " x " . $consulta[$i]['nombre'] . '</li>';
-                    }
-                    ?>
-                    </ol>
-                </td>
+                <td><?= $operacion['nombre_cliente'] ?></td>
                 <td>$<?= $operacion['total'] ?></td>
                 <td><?= $operacion['notas'] ?></td>
                 <td><?= $operacion['metodo'] ?></td>
