@@ -24,9 +24,11 @@ class ControladorContactos {
     private function validarDatos() {
         $listaDeErrores = [];
 
-        if(strlen($this->contacto_id) !== 10) array_push($listaDeErrores, 'El numero de telefono debe tener 10 numeros');
-        if(!preg_match('/^([0-9]+){10}$/', $this->contacto_id)) array_push($listaDeErrores, 'El numero de telefono solo acepta numeros');
+        if(strlen($this->contacto_id) !== 10) array_push($listaDeErrores, 'El número de teléfono debe tener 10 numeros');
+        if(!preg_match('/^([0-9]+){10}$/', $this->contacto_id)) array_push($listaDeErrores, 'El número de teléfono solo acepta numeros');
+        
         if(strlen($this->nombre) < 3 && strlen($this->nombre) > 80) array_push($listaDeErrores, 'El nombre debe contener de 3 a 80 letras');
+        
         if(strlen($this->apellido_paterno) < 3 && strlen($this->apellido_paterno) > 80) array_push($listaDeErrores, 'El apellido paterno debe contener de 3 a 80 letras');
         
         if(strlen($this->apellido_materno) > 0) # Valida sólo en caso de que se haya recibido un dato

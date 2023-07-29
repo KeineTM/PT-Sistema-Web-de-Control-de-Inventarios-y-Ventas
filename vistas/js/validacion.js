@@ -296,7 +296,7 @@ const validarCampoDirectorio = (campo) => {
 }
 
 /** Método que contiene las validaciones para el formulario de contactos en el módulo de directorio */
-const validarCampoPersonal = (campo) => {
+const validarCampoPersonal = (campo, formulario) => {
     let dataform = campo.dataset.form;
     let regex;
 
@@ -348,9 +348,17 @@ const validarCampoPersonal = (campo) => {
             }
             return null;
         case 'password':
-            regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@¡!¿?\-_ñÑ%])[A-Za-z\d@¡!¿?\-_ñÑ%]{8,20}$/;
-            if(campo.value.length < 8 || campo.value.length > 20) return 'La contraseña debe tener de 8 a 20 caracteres.';
-            if(!regex.test(campo.value)) return 'La contraseña debe tener por lo menos: 1 mayúscula, 1 número y 1 caracter especial  (@, ¡, !, ¿, ?, -, _ o %)';
+            if(formulario !== 'alta') {
+                if(campo.value.length > 0) {
+                    regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@¡!¿?\-_ñÑ%])[A-Za-z\d@¡!¿?\-_ñÑ%]{8,20}$/;
+                    if(campo.value.length < 8 || campo.value.length > 20) return 'La contraseña debe tener de 8 a 20 caracteres.';
+                    if(!regex.test(campo.value)) return 'La contraseña debe tener por lo menos: 1 mayúscula, 1 número y 1 caracter especial  (@, ¡, !, ¿, ?, -, _ o %)';
+                }
+            } else {
+                regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@¡!¿?\-_ñÑ%])[A-Za-z\d@¡!¿?\-_ñÑ%]{8,20}$/;
+                if(campo.value.length < 8 || campo.value.length > 20) return 'La contraseña debe tener de 8 a 20 caracteres.';
+                if(!regex.test(campo.value)) return 'La contraseña debe tener por lo menos: 1 mayúscula, 1 número y 1 caracter especial  (@, ¡, !, ¿, ?, -, _ o %)';
+            }
             return null;
         default:
             return null;

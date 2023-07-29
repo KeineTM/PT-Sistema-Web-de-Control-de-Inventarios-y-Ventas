@@ -209,9 +209,9 @@ INSERT INTO estados VALUES
 -- Tabla catálogo para las direcciones con los códigos postales que referencian estados y ciudades
 CREATE TABLE `codigos_postales` (
     codigo_postal CHAR(5) PRIMARY KEY NOT NULL,
-    estado CHAR(2) NOT NULL,
+    estado_id CHAR(2) NOT NULL,
     ciudad VARCHAR(150) NOT NULL,
-    FOREIGN KEY (estado) REFERENCES estados(estado_id)
+    FOREIGN KEY (estado_id) REFERENCES estados(estado_id)
         ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -237,23 +237,13 @@ CREATE TABLE `negocio` (
 
 -- Tabla catálogo de redes sociales
 CREATE TABLE `redes_sociales` (
-    red_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    nombre VARCHAR(150) NOT NULL
+    red_id INT PRIMARY KEY AUTO_INCREMENT,
+    nombre_red VARCHAR(150) NOT NULL,
+    url VARCHAR(200) NOT NULL
 );
 
-INSERT INTO redes_sociales(nombre) VALUES
+INSERT INTO redes_sociales(nombre_red) VALUES
 ("Web");
-
--- Tabla pivote con las url de las redes con las que cuenta el negocio
-CREATE TABLE `redes_negocio` (
-    rfc VARCHAR(13) NOT NULL,
-    red_id INT AUTO_INCREMENT NOT NULL,
-    url VARCHAR(200) NOT NULL,
-    PRIMARY KEY (rfc, red_id),
-    FOREIGN KEY (rfc) REFERENCES negocio(rfc),
-    FOREIGN KEY (red_id) REFERENCES redes_sociales(red_id)
-        ON DELETE RESTRICT ON UPDATE CASCADE
-);
 
 -------------------------------------------------------------------------
 -- Creación de usuarios y privilegios con DCL

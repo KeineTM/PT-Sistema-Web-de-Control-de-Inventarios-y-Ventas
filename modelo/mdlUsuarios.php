@@ -10,7 +10,6 @@ class ModeloUsuarios extends ModeloConexion {
         $this->db_password = "";
     }
 
-    # Implementación de los métodos abstractos
     public function mdlRegistrar($listaDatos) {
         $this->registros = $listaDatos;
         $this->sentenciaSQL = 'INSERT INTO usuarios VALUES (?,?,?,?,?,?,?,?,?,?,?)';

@@ -4,11 +4,11 @@ const formularioAltaPersonal = document.querySelector('#formulario-personal');
 const formularioEditarPersonal = document.querySelector('#formulario-editar');
 
 /** Método que recorre todas las etiquetas input para validar su contenido */
-const validar = (campos, alertaHTML, listaErrores) => {
+const validar = (campos, alertaHTML, listaErrores, formulario) => {
     campos.forEach(campo => {
         campo.style.background = 'var(--color-blanco)'; // Reestablece el color del campo
         
-        const resultado_validacion = new Array(metodosValidacion.validarCampoPersonal(campo));
+        const resultado_validacion = new Array(metodosValidacion.validarCampoPersonal(campo, formulario));
         
         if(metodosValidacion.validarCampoPersonal(campo) !== null){ // Si detecta un error
             campo.style.background = 'var(--color-crema)'; // Resalta el campo
@@ -123,9 +123,8 @@ if(formularioEditarPersonal !== null) {
         event.preventDefault();
         const listaErrores = [];
         
-        validar(campos, alertaHTML, listaErrores);
+        validar(campos, alertaHTML, listaErrores, 'edicion');
 
-        console.log(listaErrores);
         (listaErrores.length === 0)
             ? formularioEditarPersonal.submit()
             : console.log('No pasó la validación');

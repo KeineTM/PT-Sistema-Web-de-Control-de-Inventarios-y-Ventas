@@ -31,7 +31,7 @@
         /** Método de validación que de encontrar un error lo retorna dentro de un array
          * En caso de no encontrar errores, retorna null;
          */
-        private function validarDatos() {
+        private function validarDatos($formulario) {
             $listaDeErrores = [];
 
             if(strlen($this->nombre) < 3 && strlen($this->nombre) > 80) array_push($listaDeErrores, 'El nombre debe contener de 3 a 80 letras');
@@ -53,8 +53,15 @@
                 if(!preg_match('/^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/', $this->email)) array_push($listaDeErrores, 'El email debe contener un @ y un dominio. Ej: tienda@gobokids.com');
             }
 
-            if(strlen($this->password) < 8) array_push($listaDeErrores, 'Debe indicar una contraseña de 8 a 20 caracteres');
-            if(!preg_match('/^(?=.*[A-Z])(?=.*\d)(?=.*[@¡!¿?\-_ñÑ%])[A-Za-z\d@¡!¿?\-_ñÑ%]{8,20}$/', $this->password)) array_push($listaDeErrores, 'La contraseña debe tener, por lo menos: 1 mayúscula, 1 número y 1 caracter especial');
+            if($formulario !== 'alta') {
+                if(strlen($this->password) > 0) {
+                    if(strlen($this->password) < 8) array_push($listaDeErrores, 'Debe indicar una contraseña de 8 a 20 caracteres');
+                if(!preg_match('/^(?=.*[A-Z])(?=.*\d)(?=.*[@¡!¿?\-_ñÑ%])[A-Za-z\d@¡!¿?\-_ñÑ%]{8,20}$/', $this->password)) array_push($listaDeErrores, 'La contraseña debe tener, por lo menos: 1 mayúscula, 1 número y 1 caracter especial');
+                }
+            } else {
+                if(strlen($this->password) < 8) array_push($listaDeErrores, 'Debe indicar una contraseña de 8 a 20 caracteres');
+                if(!preg_match('/^(?=.*[A-Z])(?=.*\d)(?=.*[@¡!¿?\-_ñÑ%])[A-Za-z\d@¡!¿?\-_ñÑ%]{8,20}$/', $this->password)) array_push($listaDeErrores, 'La contraseña debe tener, por lo menos: 1 mayúscula, 1 número y 1 caracter especial');
+            }
 
             return (count($listaDeErrores) > 0)
                 ? $listaDeErrores
@@ -104,7 +111,7 @@
             );
 
             # Validación
-            $resultado_validacion = $nuevo_usuario -> validarDatos();
+            $resultado_validacion = $nuevo_usuario -> validarDatos('alta');
 
             if($resultado_validacion !== null) {
                 foreach($resultado_validacion as $error)
@@ -162,7 +169,7 @@
             );
 
             # Validación
-            $resultado_validacion = $usuario -> validarDatos();
+            $resultado_validacion = $usuario -> validarDatos('edicion');
 
             if($resultado_validacion !== null) {
                 foreach($resultado_validacion as $error)
