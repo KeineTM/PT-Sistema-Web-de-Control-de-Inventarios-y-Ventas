@@ -14,9 +14,6 @@ class ControladorEmpresa {
     private $estado;
     private $ciudad;
 
-    private $red_nombre;
-    private $red_url;
-
     public function __construct($rfc, $razon_social, $nombre_tienda, $descripcion, $calle, $numero, $codigo_postal, $telefono, $email, $logo) {
         $this->rfc = $rfc;
         $this->razon_social = $razon_social;
@@ -128,5 +125,41 @@ class ControladorEmpresa {
                 exit;
             }
         }
+    }
+
+    // CRUD PARA REDES SOCIALES
+    public static function registrarRedSocial() {
+        if(!isset($_POST['red_nombre-txt']) || !isset($_POST['red_url-txt'])) {
+            return;
+        }
+        
+        $red_nombre = $_POST['red_nombre-txt'];
+        $red_url = $_POST['red_url-txt'];
+
+        $listaDeErrores = [];
+        if(strlen($red_nombre) < 1 || strlen($red_nombre) > 150) array_push($listaDeErrores, 'El nombre de la red social debe tener entre 1 y 150 caracteres.');
+        if(strlen($red_url) < 10 || strlen($red_url) > 200) array_push($listaDeErrores, 'La URL debe tener entre 10 y 200 caracteres.');
+
+        if(count($listaDeErrores) > 0) {
+            echo ($listaDeErrores);
+            die();
+        } else {
+            $listaDatos = [$red_nombre, $red_url];
+
+            $consulta_modelo = new ModeloEmpresa();
+            $resultado_registro = $consulta_modelo->mdlRegistrarRedSocial($listaDatos);
+
+            if($resultado_registro === true) { # Registro exitoso
+                echo '<div id="alerta-formulario" class=alerta-verde>Registro exitoso</div>';
+            } else {
+                echo '<div id="alerta-formulario" class=alerta-roja>' . $resultado_registro . '</div>';
+                exit;
+            }
+        }
+    }
+
+    public static function leerRedSocial($id = '') {
+        $modelo_consulta = new ModeloEmpresa;
+        return $modelo_consulta -> mdlLeerRedSocial($id);
     }
 }

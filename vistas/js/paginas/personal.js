@@ -103,6 +103,7 @@ if(formularioEditarPersonal !== null) {
     });
 
     // Asignación de nombre de usuario
+    campoUsuarioID.value = campoRFC.value.slice(0,6);
     campoRFC.addEventListener('input', () => {
         campoUsuarioID.value = campoRFC.value.slice(0,6);
     });

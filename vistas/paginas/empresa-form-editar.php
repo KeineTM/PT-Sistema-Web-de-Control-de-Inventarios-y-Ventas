@@ -1,6 +1,7 @@
 <?php
 $consulta = ControladorEmpresa::ctrlLeer();
-#$consulta_redes = ControladorEmpresa::ctrlLeerRedesSociales();
+$consulta_redes = ControladorEmpresa::leerRedSocial();
+ControladorEmpresa::registrarRedSocial();
 ?>
 
 <span class="formulario__encabezado">
@@ -56,13 +57,14 @@ $consulta = ControladorEmpresa::ctrlLeer();
 
         <fieldset class="fieldset__envoltura">
             <legend>Redes Sociales</legend>
-            <label for="">AQUI VA UN FOR PARA CADA RED REGISTRADA</label>
-            <br>
-            <label for="red_nombre_ID-txt">Nombre:</label>
-            <input type="text" class="campo" placeholder="FaceBook, Twitter, etc..." name="red_nombre_ID-txt" autocomplete="off" data-form="red_nombre_ID" minlength="2" maxlength="150" required>
-
-            <label for="red_url_ID-txt">URL:</label>
-            <input type="text" class="campo" placeholder="https://..." name="red_url_ID-txt" autocomplete="off" data-form="red_url_ID" minlength="10" maxlength="200" required>
+            <?php foreach ($consulta_redes as $red) { ?>
+                <label for="red_nombre_ID-txt">Nombre:</label>
+                <input type="text" class="campo" placeholder="FaceBook, Twitter, etc..." name="red_nombre_ID-txt" autocomplete="off" data-form="red_nombre_ID" minlength="2" maxlength="150" value="<?= $red['nombre_red'] ?>" required>
+    
+                <label for="red_url_ID-txt">URL:</label>
+                <input type="text" class="campo" placeholder="https://..." name="red_url_ID-txt" autocomplete="off" data-form="red_url_ID" minlength="10" maxlength="200" value="<?= $red['url'] ?>" required>
+                <br><br>
+            <?php } ?>
         </fieldset>
     </fieldset>
     <button class="boton-form enviar" id="btnEditar">Enviar cambios</button>
@@ -74,7 +76,7 @@ $consulta = ControladorEmpresa::ctrlLeer();
     <fieldset class="fieldset__envoltura">
         <legend>Agregar nueva red social</legend>
         <label for="red_nombre-txt">Nombre:</label>
-        <input type="text" class="campo" placeholder="FaceBook, Twitter, etc..." name="red_nombre-txt" autocomplete="off" data-form="red_nombre" minlength="2" maxlength="150" required>
+        <input type="text" class="campo" placeholder="FaceBook, Twitter, etc..." name="red_nombre-txt" autocomplete="off" data-form="red_nombre" minlength="1" maxlength="150" required>
 
         <label for="red_url-txt">URL:</label>
         <input type="text" class="campo" placeholder="https://..." name="red_url-txt" autocomplete="off" data-form="red_url" minlength="10" maxlength="200" required>

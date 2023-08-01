@@ -47,12 +47,15 @@ class ModeloEmpresa extends ModeloConexion {
     // CRUD para la tabla REDES_SOCIALES:
     public function mdlRegistrarRedSocial($listaDatos) {
         $this->registros = $listaDatos;
-        $this->sentenciaSQL = 'INSERT INTO redes_sociales VALUES (?,?)';
+        $this->sentenciaSQL = 'INSERT INTO redes_sociales(nombre_red, url) VALUES (?,?)';
         return $this -> consultasCUD();
     }
 
-    public function mdlLeerRedSocial() {
-
+    public function mdlLeerRedSocial($id = '') {
+        $this->sentenciaSQL = ($id === '') 
+            ? 'SELECT * FROM redes_sociales'
+            : 'SELECT * FROM redes_sociales WHERE red_id = ?';
+        return $this -> consultaRead($id);
     }
 
     public function mdlEditarRedSocial() {

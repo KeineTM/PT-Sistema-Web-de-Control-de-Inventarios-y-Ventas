@@ -44,6 +44,9 @@ ControladorUsuarios::ctrlEditarUsuario($id);
 
 <form class="formulario" method="post" id="formulario-editar">
     <fieldset class="formulario__fieldset">
+        <label for="usuario_id-txt">ID de Usuario:</label>
+        <input type="text" class="login-campo sin-borde" name="usuario_id-txt" autocomplete="off" minlength="3" maxlength="80" required disabled>
+
         <input type="hidden" name="usuario_id-txt" value="<?= $consulta[0]['usuario_id'] ?>" required>
 
         <label for="nombre-txt">Nombre:</label>
@@ -66,13 +69,6 @@ ControladorUsuarios::ctrlEditarUsuario($id);
     </fieldset>
 
     <fieldset class="formulario__fieldset">
-        <label for="password-txt">Nueva contraseña:</label>
-        <input type="password" name="password-txt" autocomplete="off" class="campo" data-form="password" placeholder="Contraseña" minlength="8" maxlength="20">
-
-        <label for="password_2-txt">Repita la contraseña:</label>
-        <input type="password" name="password_2-txt" autocomplete="off" class="campo" placeholder="Repita su contraseña" minlength="8" maxlength="20">
-        <span class="alerta" id="alerta-password"></span>
-
         <label for="notas-txt">Notas:</label>
         <textarea name="notas-txt" class="campo requerido" autocomplete="off" cols="30" rows="3" data-form="notas" placeholder="Notas..." maxlength="250" required><?= $consulta[0]['notas'] ?></textarea>
 
@@ -93,6 +89,17 @@ ControladorUsuarios::ctrlEditarUsuario($id);
             <input type="radio" name="estado-txt" value="0" required data-form="estado" <?php if (!$consulta[0]['estado']) echo 'checked' ?>>
             <label for="estado-txt">Inactivo</label>
         </fieldset>
+
+        <fieldset class="fieldset__envoltura">
+            <legend>Rellene sólo si requiere hacer un cambio de contraseña</legend>
+            <label for="password-txt">Nueva contraseña:</label>
+            <input type="password" name="password-txt" autocomplete="off" class="campo" data-form="password" placeholder="Contraseña" minlength="8" maxlength="20">
+
+            <label for="password_2-txt">Repita la contraseña:</label>
+            <input type="password" name="password_2-txt" autocomplete="off" class="campo" placeholder="Repita su contraseña" minlength="8" maxlength="20">
+            <span class="alerta" id="alerta-password"></span>
+        </fieldset>
+
         <button type="submit" class="boton-form enviar" id="btnEditar">Editar</button>
     </fieldset>
 </form>

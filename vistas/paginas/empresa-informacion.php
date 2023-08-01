@@ -1,6 +1,7 @@
 <?php
 $consulta = ControladorEmpresa::ctrlLeer();
-#$consulta_redes = ControladorEmpresa::ctrlLeerRedesSociales();
+$consulta_redes = ControladorEmpresa::leerRedSocial();
+
 ?>
 
 <table class="tabla">
@@ -56,10 +57,12 @@ $consulta = ControladorEmpresa::ctrlLeer();
             <td>Logo</td>
             <td><?= $consulta[0]['logo'] ?></td>
         </tr>
-        <tr>
-            <td>AQUI VA UN CICLO PARA MOSTRAR CADA RED SOCIAL QUE TENGA REGISTRADA</td>
-            <td></td>
-        </tr>
+        <?php foreach ($consulta_redes as $red) { ?>
+            <tr>
+                <td><?= $red['nombre_red'] ?></td>
+                <td><?= $red['url'] ?></td>
+            </tr>
+        <?php } ?>
     </tbody>
 </table>
 
