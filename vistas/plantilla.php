@@ -1,4 +1,4 @@
-<!-- Esta plantilla está modularizada, funcionando como una estructura que llama a los elementos que la componen.
+<!-- Esta plantilla está modularizada funcionando como una estructura que llama a los elementos que la componen.
     
     Debido a que es incluída desde el index.php, todas las url en HTML deben considerarse desde la ubicación de este último,
     pero las url de php se consideran desde la ubicación de plantilla.php.

@@ -58,11 +58,19 @@ class ModeloEmpresa extends ModeloConexion {
         return $this -> consultaRead($id);
     }
 
-    public function mdlEditarRedSocial() {
-
+    public function mdlEditarRedSocial($listaDatos) {
+        $this->registros = $listaDatos;
+        $this->sentenciaSQL = 'UPDATE redes_sociales SET nombre_red = ?, url = ? WHERE red_id = ?';
+        return $this -> consultasCUD();
     }
 
-    public function mdlBorrarRedSocial() {
-
+    public function mdlBorrarRedSocial($listaDatos) {
+        $this->registros = $listaDatos;
+        if(count($listaDatos) > 0) {
+            $this->sentenciaSQL = 'DELETE FROM redes_sociales WHERE red_id = ?';
+        } else {
+            return 'Servidor: No hay datos suficientes para realizar esta operación.';
+        }
+        return $this -> consultasCUD($listaDatos);
     }
 }

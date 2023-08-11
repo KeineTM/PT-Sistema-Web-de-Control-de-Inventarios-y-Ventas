@@ -212,12 +212,13 @@ const validarCampoProductos = (campo) => {
                 const FECHA_REGEX = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
                 if(campo.value.match(FECHA_REGEX)) {
                     // Establecimiento de fechas mínimas y máximas para el formulario:
-                    let fechaIngresada = new Date(campo.value)
+                    let fechaIngresada = new Date(campo.value);
                     let fechaMin = new Date();
                     let fechaMax = new Date();
                     fechaMax = fechaMax.setFullYear(fechaMin.getFullYear() + 5);
-                    if(fechaIngresada < fechaMin) return mostrarMensajeDeError(dataform, 'limiteMin');
-                    if(fechaIngresada > fechaMax) return mostrarMensajeDeError(dataform, 'limiteMax');
+                    fechaMin.setHours(0, 0, 0, 0);
+                    if(fechaIngresada.toLocaleString('en-US', { timeZone: 'America/Mexico_City' }) < fechaMin) return mostrarMensajeDeError(dataform, 'limiteMin');
+                    if(fechaIngresada.toLocaleString('en-US', { timeZone: 'America/Mexico_City' }) > fechaMax) return mostrarMensajeDeError(dataform, 'limiteMax');
                     return null;
                 } else 
                     return mostrarMensajeDeError(dataform, 'formato');

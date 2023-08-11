@@ -1,5 +1,5 @@
 <?php
-$fecha_min = date("Y-m-d");
+$fecha_min = date("Y-m-d 00:00:00");
 $fecha_max = date("Y-m-d", strtotime("+5 year", strtotime($fecha_min)));
 $lista_categorias = ControladorProductos::ctrlCategoriasActivas();
 ?>

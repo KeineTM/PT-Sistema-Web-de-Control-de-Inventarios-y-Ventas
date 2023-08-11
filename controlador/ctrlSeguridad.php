@@ -94,12 +94,16 @@ class ControladorSeguridad
     static public function validarFecha($campo, $fecha) {
         // Formato yyyy-mm-dd, además los meses no pueden superar 12 y los días 31
         $regex = '/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/';
-        $fecha_min = date("Y-m-d");
+        $fecha_min = date("Y-m-d 00:00:00");
         $fecha_max = date("Y-m-d", strtotime("+5 year", strtotime($fecha_min)));
         $mensaje = null;
 
+        $zona_horaria = new DateTimeZone('America/Mexico_City');
+        $fecha_ingresada = new DateTime($fecha);
+        $fecha_ingresada->setTimezone($zona_horaria);
+
         if (preg_match($regex, $fecha)) {
-            if ($fecha < $fecha_min) $mensaje = 'La fecha de ' . $campo . ' no puede ser anterior a ' . $fecha_min;
+            if ($fecha_ingresada < $fecha_min) $mensaje = 'La fecha de ' . $campo . ' no puede ser anterior a ' . $fecha_min;
             if ($fecha > $fecha_max) $mensaje = 'La fecha de ' . $campo . ' no puede ir mas alla de ' . $fecha_max;
         } else
             $mensaje = 'La fecha de ' . $campo . ' debe tener un formato aaaa-mm-dd. Ej: 2025-02-27';

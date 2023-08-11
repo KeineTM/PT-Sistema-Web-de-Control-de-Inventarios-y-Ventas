@@ -63,7 +63,7 @@ class ControladorEmpresa {
         if(!preg_match('/^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/', $this->email)) array_push($listaDeErrores, 'El email debe contener un @ y un dominio. Ej: tienda@gobokids.com');
 
         if(strlen($this->logo) > 250) array_push($listaDeErrores, 'El logo no puede tener mas de 250 caracteres');
-        if(!preg_match('/^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/', $this->logo)) array_push($listaDeErrores, 'El URL del logo sólo admite extensiones extensiones .jpg, .jpeg, .png, .gif, .webp o .svg');
+        if(!preg_match('/^[^\s]{0,250}\.(jpg|JPG|png|PNG|jpeg|JPEG|webp|WEBP|svg)$/', $this->logo)) array_push($listaDeErrores, 'El URL del logo sólo admite extensiones extensiones .jpg, .jpeg, .png, .gif, .webp o .svg');
 
         return (count($listaDeErrores) > 0)
             ? $listaDeErrores
@@ -95,9 +95,9 @@ class ControladorEmpresa {
      * de acuerdo con el resultado, ejecutar los cambios o rechazarlos informando al usuario.
      */
     public static function editarEmpresa() {
-        if(!isset($_POST['rfc-txt'])) return;
+        if(!isset($_POST['rfc_original-txt'])) return;
 
-        $rfc_original = $_POST['rfc-txt'];
+        $rfc_original = $_POST['rfc_original-txt'];
         $rfc = $_POST['rfc_nuevo-txt'];
         $razon_social = $_POST['razon_social-txt'];
         $nombre_tienda = $_POST['nombre_tienda-txt'];
@@ -114,12 +114,20 @@ class ControladorEmpresa {
         $resultado_validacion = $empresa -> validarDatos();
 
         if($resultado_validacion !== null) {
-            echo ($resultado_validacion);
+            echo 'Servidor: <br>';
+            foreach($resultado_validacion as $error) {
+                echo ($error . '<br>');
+            }
+            exit;
         } else {
             $resultado_registro = $empresa -> ctrlEditar($rfc_original);
 
             if($resultado_registro === true) { # Registro exitoso
                 echo '<div id="alerta-formulario" class=alerta-verde>Registro exitoso</div>';
+                echo '<script type="text/javascript">
+                window.location.href = "index.php?pagina=empresa&opciones=editar";
+                </script>';
+                exit;
             } else {
                 echo '<div id="alerta-formulario" class=alerta-roja>' . $resultado_registro . '</div>';
                 exit;
@@ -141,8 +149,11 @@ class ControladorEmpresa {
         if(strlen($red_url) < 10 || strlen($red_url) > 200) array_push($listaDeErrores, 'La URL debe tener entre 10 y 200 caracteres.');
 
         if(count($listaDeErrores) > 0) {
-            echo ($listaDeErrores);
-            die();
+            echo 'Servidor: <br>';
+            foreach($listaDeErrores as $error) {
+                echo ($error . '<br>');
+            }
+            exit;
         } else {
             $listaDatos = [$red_nombre, $red_url];
 
@@ -151,6 +162,10 @@ class ControladorEmpresa {
 
             if($resultado_registro === true) { # Registro exitoso
                 echo '<div id="alerta-formulario" class=alerta-verde>Registro exitoso</div>';
+                echo '<script type="text/javascript">
+                window.location.href = "index.php?pagina=empresa&opciones=editar";
+                </script>';
+                exit();
             } else {
                 echo '<div id="alerta-formulario" class=alerta-roja>' . $resultado_registro . '</div>';
                 exit;
@@ -161,5 +176,79 @@ class ControladorEmpresa {
     public static function leerRedSocial($id = '') {
         $modelo_consulta = new ModeloEmpresa;
         return $modelo_consulta -> mdlLeerRedSocial($id);
+    }
+
+    public static function editarRedSocial() {
+        if(!isset($_POST["red_id-txt"]) ||
+        !isset($_POST["red_nombre_editar-txt"]) ||
+        !isset($_POST["red_url_editar-txt"])) return;
+
+        $red_nombre = $_POST['red_nombre_editar-txt'];
+        $red_url = $_POST['red_url_editar-txt'];
+        $red_id = $_POST['red_id-txt'];
+
+        $listaDeErrores = [];
+        if(strlen($red_nombre) < 1 || strlen($red_nombre) > 150) array_push($listaDeErrores, 'El nombre de la red social debe tener entre 1 y 150 caracteres.');
+        if(strlen($red_url) < 10 || strlen($red_url) > 200) array_push($listaDeErrores, 'La URL debe tener entre 10 y 200 caracteres.');
+        if(strlen($red_id) < 1) array_push($listaDeErrores, 'Debe ingresar un ID.');
+        if($red_id < 1 || !preg_match('/^([0-9]+)$/', $red_id)) array_push($listaDeErrores, 'Debe ingresar un ID válido');
+
+        if(count($listaDeErrores) > 0) {
+            echo 'Servidor: <br>';
+            foreach($listaDeErrores as $error) {
+                echo ($error . '<br>');
+            }
+            exit;
+        } else {
+            $listaDatos = [$red_nombre, $red_url, $red_id];
+
+            $consulta_modelo = new ModeloEmpresa();
+            $resultado_registro = $consulta_modelo->mdlEditarRedSocial($listaDatos);
+
+            if($resultado_registro === true) { # Registro exitoso
+                echo '<div id="alerta-formulario" class=alerta-verde>Registro exitoso</div>';
+                echo '<script type="text/javascript">
+                window.location.href = "index.php?pagina=empresa&opciones=editar";
+                </script>';
+                exit;
+            } else {
+                echo '<div id="alerta-formulario" class=alerta-roja>' . $resultado_registro . '</div>';
+                exit;
+            }
+        }
+    }
+
+    public static function borrarRedSocial() {
+        if(!isset($_GET['borrar'])) return;
+
+        $red_id = $_GET['borrar'];
+
+        $listaDeErrores = [];
+        if(strlen($red_id) < 1) array_push($listaDeErrores, 'Debe ingresar un ID');
+        if($red_id < 1 || !preg_match('/^([0-9]+)$/', $red_id)) array_push($listaDeErrores, 'Debe ingresar un ID válido');
+        
+        if(count($listaDeErrores) > 0) {
+            echo 'Servidor: <br>';
+            foreach($listaDeErrores as $error) {
+                echo ($error . '<br>');
+            }
+            exit;
+        } else {
+            $listaDatos = [$red_id];
+            
+            $modelo_consulta = new ModeloEmpresa;
+            $resultado_registro = $modelo_consulta -> mdlBorrarRedSocial($listaDatos);
+
+            if($resultado_registro === true) { # Registro exitoso
+                echo '<div id="alerta-formulario" class=alerta-verde>Eliminación completa</div>';
+                echo '<script type="text/javascript">
+                window.location.href = "index.php?pagina=empresa&opciones=editar";
+                </script>';
+                exit;
+            } else {
+                echo '<div id="alerta-formulario" class=alerta-roja>' . $resultado_registro . '</div>';
+                exit;
+            }
+        }
     }
 }

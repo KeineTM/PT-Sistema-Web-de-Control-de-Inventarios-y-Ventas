@@ -1,7 +1,12 @@
 <?php
 $consulta = ControladorEmpresa::ctrlLeer();
 $consulta_redes = ControladorEmpresa::leerRedSocial();
+
+ControladorEmpresa::editarEmpresa();
+
 ControladorEmpresa::registrarRedSocial();
+ControladorEmpresa::editarRedSocial();
+ControladorEmpresa::borrarRedSocial();
 ?>
 
 <span class="formulario__encabezado">
@@ -12,7 +17,7 @@ ControladorEmpresa::registrarRedSocial();
 
 <form class="formulario" method="post" id="formulario-empresa">
     <fieldset class="formulario__fieldset">
-        <input type="hidden" name="rfc-txt" value="<?= $consulta[0]['rfc'] ?>">
+        <input type="hidden" name="rfc_original-txt" value="<?= $consulta[0]['rfc'] ?>">
 
         <label for="rfc_nuevo-txt">RFC:</label>
         <input type="text" class="campo mayusculas requerido" placeholder="ABCD123456EF0" name="rfc_nuevo-txt" autocomplete="off" data-form="rfc" minlength="13" maxlength="13" value="<?= $consulta[0]['rfc'] ?>" required>
@@ -25,7 +30,7 @@ ControladorEmpresa::registrarRedSocial();
 
         <label for="descripcion-txt">Descripción:</label>
         <textarea name="descripcion-txt" class="campo requerido" autocomplete="off" cols="30" rows="3" data-form="descripcion" placeholder="Descripción..." maxlength="250"><?= $consulta[0]['descripcion'] ?></textarea>
-        
+
         <label for="telefono-txt">Teléfono:</label>
         <input type="number" step="any" class="campo requerido" placeholder="1234567890" name="telefono-txt" autocomplete="off" data-form="telefono" minlength="10" maxlength="10" value="<?= $consulta[0]['telefono'] ?>" required>
 
@@ -33,55 +38,60 @@ ControladorEmpresa::registrarRedSocial();
         <input type="email" name="email-txt" autocomplete="off" class="campo" data-form="email" placeholder="direccion@email.com" maxlength="200" value="<?= $consulta[0]['email'] ?>" required>
 
         <label for="logo-txt">URL del logo:</label>
-        <input type="text" class="campo requerido" placeholder="url.jpg" name="logo-txt" autocomplete="off" data-form="logo" maxlength="250" pattern="^[^\s]{0,250}\.(jpg|JPG|png|PNG|jpeg|JPEG|webp|WEBP)$" value="<?= $consulta[0]['logo'] ?>" required>
+        <input type="text" class="campo requerido" placeholder="url.jpg" name="logo-txt" autocomplete="off" data-form="logo" maxlength="250" pattern="^[^\s]{0,250}\.(jpg|JPG|png|PNG|jpeg|JPEG|webp|WEBP|svg)$" value="<?= $consulta[0]['logo'] ?>" required>
     </fieldset>
 
-    <fieldset class="formulario__fieldset">
-        <fieldset class="fieldset__envoltura">
-            <legend>Dirección</legend>
-            <label for="calle-txt">Calle:</label>
-            <input type="text" class="campo requerido" placeholder="Calle..." name="calle-txt" autocomplete="off" data-form="calle" minlength="3" maxlength="150" value="<?= $consulta[0]['calle'] ?>" required>
+    <fieldset class="fieldset__envoltura">
+        <legend>Dirección</legend>
+        <label for="calle-txt">Calle:</label>
+        <input type="text" class="campo requerido" placeholder="Calle..." name="calle-txt" autocomplete="off" data-form="calle" minlength="3" maxlength="150" value="<?= $consulta[0]['calle'] ?>" required>
 
-            <label for="numero-txt">Número:</label>
-            <input type="number" class="campo  requerido" placeholder="101" name="numero-txt" autocomplete="off" data-form="numero" min="1" maxlength="6" value="<?= $consulta[0]['numero'] ?>" required>
-            
-            <label for="cp-txt">Código Postal:</label>
-            <input type="number" class="campo  requerido" placeholder="000001" name="cp-txt" autocomplete="off" data-form="cp" min="5" maxlength="5" value="<?= $consulta[0]['codigo_postal'] ?>" required>
+        <label for="numero-txt">Número:</label>
+        <input type="number" class="campo  requerido" placeholder="101" name="numero-txt" autocomplete="off" data-form="numero" min="1" maxlength="6" value="<?= $consulta[0]['numero'] ?>" required>
 
-            <label for="ciudad-txt">Ciudad:</label>
-            <input type="text" class="campo" value="<?= $consulta[0]['ciudad'] ?>" disabled>
+        <label for="codigo_postal-txt">Código Postal:</label>
+        <input type="number" class="campo  requerido" placeholder="000001" name="codigo_postal-txt" autocomplete="off" data-form="cp" min="5" maxlength="5" value="<?= $consulta[0]['codigo_postal'] ?>" required>
 
-            <label for="estado-txt">Estado:</label>
-            <input type="text" class="campo" value="<?= $consulta[0]['estado'] ?>" disabled>
-        </fieldset>
+        <label for="ciudad-txt">Ciudad:</label>
+        <input type="text" class="campo" value="<?= $consulta[0]['ciudad'] ?>" disabled>
 
-        <fieldset class="fieldset__envoltura">
-            <legend>Redes Sociales</legend>
-            <?php foreach ($consulta_redes as $red) { ?>
-                <label for="red_nombre_ID-txt">Nombre:</label>
-                <input type="text" class="campo" placeholder="FaceBook, Twitter, etc..." name="red_nombre_ID-txt" autocomplete="off" data-form="red_nombre_ID" minlength="2" maxlength="150" value="<?= $red['nombre_red'] ?>" required>
-    
-                <label for="red_url_ID-txt">URL:</label>
-                <input type="text" class="campo" placeholder="https://..." name="red_url_ID-txt" autocomplete="off" data-form="red_url_ID" minlength="10" maxlength="200" value="<?= $red['url'] ?>" required>
-                <br><br>
-            <?php } ?>
-        </fieldset>
+        <label for="estado-txt">Estado:</label>
+        <input type="text" class="campo" value="<?= $consulta[0]['estado'] ?>" disabled>
     </fieldset>
     <button class="boton-form enviar" id="btnEditar">Enviar cambios</button>
 </form>
-<br>
-<br>
+<br><br>
 
-<form method="post" id="formulario-redes" class="formulario">
+<h2>Editar Redes Sociales Registradas</h2>
+<?php foreach ($consulta_redes as $red) { ?>
+    <form method="post" id="formulario-redes-editar" class="formulario">
+        <fieldset class="fieldset__envoltura">
+            <input type="hidden" name="red_id-txt" value="<?= $red['red_id'] ?>" required>
+            <label for="red_nombre_editar-txt">Nombre:</label>
+            <input type="text" class="campo" placeholder="FaceBook, Twitter, etc..." name="red_nombre_editar-txt" autocomplete="off" data-form="red_nombre" minlength="2" maxlength="150" value="<?= $red['nombre_red'] ?>" required>
+
+            <label for="red_url_editar-txt">URL:</label>
+            <input type="text" class="campo" placeholder="https://..." name="red_url_editar-txt" autocomplete="off" data-form="red_url" minlength="10" maxlength="200" value="<?= $red['url'] ?>" required>
+            <br><br>
+
+            <fieldset class="formulario__fieldset-2-columnas">
+                <a class="boton-form otro" id="btnBorrarRed" href="index.php?pagina=empresa&opciones=editar&borrar=<?= $red['red_id'] ?>">Borrar</a>
+                <button class="boton-form enviar" id="btnEditarRed">Editar</button>
+            </fieldset>
+        </fieldset>
+    </form>
+<?php } ?>
+<br><br>
+
+<h2>Agregar Nueva Red Social</h2>
+<form method="post" id="formulario-red-nueva" class="formulario">
     <fieldset class="fieldset__envoltura">
-        <legend>Agregar nueva red social</legend>
         <label for="red_nombre-txt">Nombre:</label>
         <input type="text" class="campo" placeholder="FaceBook, Twitter, etc..." name="red_nombre-txt" autocomplete="off" data-form="red_nombre" minlength="1" maxlength="150" required>
 
         <label for="red_url-txt">URL:</label>
         <input type="text" class="campo" placeholder="https://..." name="red_url-txt" autocomplete="off" data-form="red_url" minlength="10" maxlength="200" required>
-        <br>
-        <br>
+        <br> <br>
         <button class="boton-form enviar" id="btnAgregarRed">Agregar</button>
     </fieldset>
 </form>

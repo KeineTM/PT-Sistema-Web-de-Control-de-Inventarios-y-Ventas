@@ -7,7 +7,7 @@ if(!isset($_GET['id'])) {
 $folio = $_GET['id'];
 $consulta = ControladorProductos::ctrlLeerUno($folio);
 
-$fecha_min = date("Y-m-d");
+$fecha_min = date("Y-m-d 00:00:00");
 $fecha_max = date("Y-m-d", strtotime("+5 year", strtotime($fecha_min)));
 
 $caducidad = ($consulta[0]['caducidad'] !== null) 
@@ -67,7 +67,7 @@ $lista_categorias = ControladorProductos::ctrlCategoriasActivas();
             <input type="number" step="any" class="campo  requerido" placeholder="0.00" name="precioVentaProducto-txt" autocomplete="off" data-form="precioVenta" min="0" max="9999" required value="<?= $consulta[0]['precio_venta'] ?>">
 
             <label for="fechaCaducidad-txt">Fecha de caducidad</label>
-            <input type="date" class="campo" placeholder="Fecha de caducidad" name="caducidadProducto-txt" autocomplete="off" data-form="caducidad" min="<?=$fecha_min?>" max="<?=$fecha_max?>" maxlength="8" value="<?= $caducidad ?>">
+            <input type="date" class="campo" placeholder="Fecha de caducidad" name="caducidadProducto-txt" autocomplete="off" data-form="caducidad" min="<?=$fecha_min = date("Y-m-d") ?>" max="<?=$fecha_max?>" maxlength="8" value="<?= $caducidad ?>">
         </fieldset>
 
         <p>Imagen actual:</p>
