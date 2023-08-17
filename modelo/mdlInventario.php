@@ -96,11 +96,7 @@ class ModeloProductos extends ModeloConexion{
         $this->sentenciaSQL = 'UPDATE categorias_inventario SET categoria = ?, estado = ? WHERE categoria_id = ?';
         return $this-> consultasCUD();
     }
-
-    //--------------------------------------------------------------------------------------------------
-    // Métodos de paginación
-    //--------------------------------------------------------------------------------------------------
-
+    
     /**
      * Método que cuenta los productos en la tabla. 
      * $estado = true = activos / false = todos.

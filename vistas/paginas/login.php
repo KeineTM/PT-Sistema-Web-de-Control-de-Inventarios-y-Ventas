@@ -8,8 +8,11 @@
             else if($_GET["error"] === "1")
                 echo '<center style="color:#ff7899;">Los datos escritos son incorrectos.</br></br>
                     Intente nuevamente.</center></br></br>';
+            else if($_GET["error"] === "2")
+                echo '<center style="color:#ff7899;">La sesión ha expirado.</center></br></br>';
             else if($_GET["error"] === "recaptcha")
                 echo '<center style="color:#ff7899;">No se ha aprobado el reCAPTCHA.</center></br></br>';
+                
         }
 
         # Con este código se envían los datos del formulario a ser procesados por el método de Login

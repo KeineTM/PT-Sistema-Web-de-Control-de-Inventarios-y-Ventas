@@ -6,3 +6,15 @@ const desplegarMenu = () => {
 }
 
 btnAbrirMenu.addEventListener('click', desplegarMenu);
+
+// ------------------------------------------------------
+/* Efectos del submenú desplegable
+const opcionesDelMenu = document.querySelectorAll('.menu__opciones');
+
+if(opcionesDelMenu !== null) {
+    for (const opcion of opcionesDelMenu) {
+        opcion.addEventListener('click', () => {
+            opcion.classList.toggle('fondo-oscuro');
+        });
+    }
+}*/

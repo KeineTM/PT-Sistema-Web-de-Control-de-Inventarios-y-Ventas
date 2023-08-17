@@ -1,17 +1,7 @@
 <section class="main-contenedor">
-    <ul class="main-menu destacado">
-        <li class="main-menu__opcion"><a class="boton-main" href="index.php?pagina=personal&opciones=alta">Registrar Empleado</a></li>
-        <li class="main-menu__opcion"><a class="boton-main" href="index.php?pagina=personal&opciones=listar">Lista de Empleados</a></li>
-        
-        <li class="main-menu__opcion">
-            <form class="boton-main" id="barra-busqueda">
-                <input type="text" class="campo" name="buscarEmpleado-txt" autocomplete="off" placeholder="Buscar..." minlength="3" maxlength="240" required>
-                <button class="boton enviar" id="btnBuscar"><img src="vistas/img/magnifying-glass.svg" alt=""></button>
-            </form>
-            <span class="alerta" id="alertaBuscar"></span>
-        </li>
-    </ul>
 
+    <h2>Personal</h2>
+    <br>
     <article id="subcontenedor">
     <?php
         if (isset($_GET['opciones'])) {

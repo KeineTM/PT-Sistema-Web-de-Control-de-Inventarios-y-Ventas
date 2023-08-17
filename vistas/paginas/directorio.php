@@ -1,17 +1,7 @@
 <section class="main-contenedor">
-    <ul class="main-menu destacado">
-        <li class="main-menu__opcion"><a class="boton-main" href="index.php?pagina=directorio&opciones=alta">Registrar Contacto</a></li>
-        <li class="main-menu__opcion"><a class="boton-main" href="index.php?pagina=directorio&opciones=listar">Lista de Contactos</a></li>
-        
-        <li class="main-menu__opcion">
-            <form class="boton-main" id="barra-busqueda">
-                <input type="text" class="campo" name="buscarContacto-txt" autocomplete="off" placeholder="Teléfono o Nombre" minlength="3" maxlength="240" required>
-                <button class="boton enviar" id="btnBuscar"><img src="vistas/img/magnifying-glass.svg" alt=""></button>
-            </form>
-            <span class="alerta" id="alertaBuscar"></span>
-        </li>
-    </ul>
-
+    <h2>Directorio</h2>
+    <br>
+    
     <article id="subcontenedor">
     <?php
         if (isset($_GET['opciones'])) {

@@ -168,7 +168,6 @@ class ModeloOperaciones extends ModeloConexion {
             operaciones.subtotal, operaciones.descuento, operaciones.total, operaciones.notas, operaciones.tipo_operacion, operaciones.estado,
             metodos_pago.metodo,
             abonos.fecha, abonos.empleado_id, abonos.abono,
-            CONCAT(contactos.nombre," ", contactos.apellido_paterno) AS nombre_cliente,
             CONCAT(usuarios.nombre," ", usuarios.apellido_paterno," ", usuarios.apellido_materno) AS nombre_completo
             FROM operaciones
             INNER JOIN productos_incluidos ON operaciones.operacion_id = productos_incluidos.operacion_id
@@ -176,8 +175,8 @@ class ModeloOperaciones extends ModeloConexion {
             INNER JOIN abonos ON operaciones.operacion_id = abonos.operacion_id
             INNER JOIN metodos_pago ON abonos.metodo_pago = metodos_pago.metodo_id
             INNER JOIN usuarios ON usuarios.usuario_id = abonos.empleado_id
-            INNER JOIN contactos ON operaciones.contacto_id = contactos.contacto_id
-            WHERE operaciones.tipo_operacion = ? AND abonos.fecha >= ? AND abonos.fecha < ?'
+            WHERE operaciones.tipo_operacion = ? AND abonos.fecha >= ? AND abonos.fecha < ?
+            GROUP BY operaciones.operacion_id'
             : 'SELECT operaciones.operacion_id,
             productos_incluidos.producto_id, productos_incluidos.unidades, 
             inventario.nombre, inventario.precio_venta,

@@ -1,3 +1,10 @@
+<!-- <form class="boton-main" id="barra-busqueda">
+    <input type="text" class="campo" name="buscarEmpleado-txt" autocomplete="off" placeholder="Buscar..." minlength="3" maxlength="240" required>
+    <button class="boton enviar" id="btnBuscar"><img src="vistas/img/magnifying-glass.svg" alt=""></button>
+</form>
+<span class="alerta" id="alertaBuscar"></span> -->
+
+
 <?php
 $consulta = ControladorUsuarios::ctrlConsultarUsuarios();
 $titulo = 'Directorio de empleados';
@@ -8,7 +15,9 @@ if (!is_array($consulta) || sizeof($consulta) === 0) {
     echo '<p class="alerta-roja">Ocurrió un error: No hay registros o hay un problema con la base de datos</p>';
     die();
 }
-?> 
+?>
+
+
 <section class="contenedor__tabla">
     <h3 class="tabla__titulo"><?= $titulo ?></h3>
     <p>Puede acceder la información completa del empleado y editarla haciendo clic en los <span class="texto-rosa">Detalles</span> del ID de usuario.</p><br>
@@ -25,14 +34,14 @@ if (!is_array($consulta) || sizeof($consulta) === 0) {
         </thead>
         <tbody>
             <!-- Contenido -->
-            <?php foreach($consulta as $usuario) {  ?>
-            <tr>
-                <td><a class="texto-rosa" href="index.php?pagina=personal&opciones=detalles&id=<?=$usuario['usuario_id']?>"><?=$usuario['usuario_id']?><br>Detalles</a></td>
-                <td><?= $usuario['nombre'] . ' ' . $usuario['apellido_paterno'] . ' ' . $usuario['apellido_materno'] ?></td>
-                <td><?= $usuario['telefono']?></td>
-                <td><?= $usuario['rfc'] ?></td>
-                <td><?= ($usuario['estado'] === 1) ?'Sí' :'No' ?></td>
-            </tr>
+            <?php foreach ($consulta as $usuario) {  ?>
+                <tr>
+                    <td><a class="texto-rosa" href="index.php?pagina=personal&opciones=detalles&id=<?= $usuario['usuario_id'] ?>"><?= $usuario['usuario_id'] ?><br>Detalles</a></td>
+                    <td><?= $usuario['nombre'] . ' ' . $usuario['apellido_paterno'] . ' ' . $usuario['apellido_materno'] ?></td>
+                    <td><?= $usuario['telefono'] ?></td>
+                    <td><?= $usuario['rfc'] ?></td>
+                    <td><?= ($usuario['estado'] === 1) ? 'Sí' : 'No' ?></td>
+                </tr>
             <?php } ?>
         </tbody>
     </table>

@@ -202,6 +202,9 @@
             }
         }
 
+
+
+
         /**
          * Método que verifica y valida las credenciales de un usuario que solicita ingreso al sistema.
          * Si hay coincidencia en el usuario procede a verificar la contraseña con el hash. 
@@ -226,7 +229,8 @@
                             $_SESSION['idUsuarioSesion'] = $consultaUsuario[0]['usuario_id'];
                             $_SESSION['nombreUsuarioSesion'] = $consultaUsuario[0]['nombre_completo'];
                             $_SESSION['tipoUsuarioSesion'] = $consultaUsuario[0]['tipo_usuario'];
-    
+                            $_SESSION['fechaLogin'] = date("Y-n-j H:i:s");
+
                             header("Location: index.php?pagina=inicio-usuario");
                             die();
                         
@@ -245,11 +249,28 @@
             }
         }
 
-        /**
-         * Cerrar sesión
-         */
+        /** Desctrucción de la sesión */
         static public function ctrlLogoutUsuarios() {
             session_destroy();
+        }
+
+        /** Expiración de la sesión después de X minutos */
+        static public function ctrlExpirarSesion(){
+            $fechaGuardada = $_SESSION["fechaLogin"];
+            $ahora = date("Y-n-j H:i:s");
+            $tiempo_transcurrido = (strtotime($ahora) - strtotime($fechaGuardada));
+
+            if ($tiempo_transcurrido >= 3600) { # tiempo en segundos = 1hr
+                # Si pasó 1hr o más de inactividad
+                session_destroy(); // cierra la sesión
+                echo "<script>
+                    location.href ='index.php?pagina=login&error=2';
+                </script>";
+                die();
+            } else {
+                # Sino, reinicia la hora de actividad
+                $_SESSION["fechaLogin"] = $ahora;
+            }
         }
     }
 ?>

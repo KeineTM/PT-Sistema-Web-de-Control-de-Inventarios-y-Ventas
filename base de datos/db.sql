@@ -29,7 +29,7 @@ CREATE TABLE `usuarios` (
     tipo_usuario INT NOT NULL,
     --Un campo FULLTEXT permite incluir las columnas donde se realizarán ciertas consultas
     FULLTEXT KEY busqueda(usuario_id, nombre, apellido_paterno, apellido_materno),
-    FOREIGN KEY (tipo_usuario) REFERENCES tipos_usuario(tipo_id)
+    FOREIGN KEY (tipo_usuario) REFERENCES tipos_usuarios(tipo_id)
         --Evita eliminar registros ligados a otra tabla cuando se intenta eliminar un registro de esta otra
         --Mientras que actualiza en cascada los cambios de la tabla catágolo a la primera
         ON DELETE RESTRICT ON UPDATE CASCADE

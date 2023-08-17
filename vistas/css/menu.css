@@ -18,6 +18,14 @@
     padding: 1rem 0;
 }
 
+.menu__opciones {
+    transition: .3s;
+}
+
+.menu__opciones:hover {
+    background-color: var(--color-rosa-oscuro);
+}
+
 .menu__opciones-url {
     height: 3.5rem;
     width: 100vw;
@@ -28,13 +36,12 @@
 
     font-family: var(--fuente-contenido);
     font-size: large;
-    font-weight: bold;
+    color: var(--color-blanco);
     text-transform: uppercase;
+    transition: 1s;
+}
 
-    background-image: url(../img/angle-right.svg);
-    background-repeat: no-repeat;
-    background-size: 0.5rem;
-    background-position: 98%;
+.menu__opciones-url img {
     filter: var(--filter-blanco);
 }
 
@@ -53,10 +60,45 @@
     z-index: 7; /* Este atributo pone el botón de abrir del menú por encima de la cabecera */
 }
 
+/****************************************/
+/* Estilos para el submenú desplegable */
+ul.menu-secundario {
+    display: none;
+    background-color: var(--color-rosa);
+    transition: .3s;
+}
+
+/* Despliegue del submenu con hover */
+ul.menu-principal li {
+    transition: .3s;
+}
+ul.menu-principal li:hover ul.menu-secundario {
+    display: block;
+    padding-left: 1rem;
+    background-color: var(--color-rosa-oscuro);
+}
+
+ul.menu-secundario li {
+    display: block;
+}
+
+ul.menu-secundario li a {
+    color: white;
+}
+
+.menu-secundario__opciones  {
+    height: 2rem;
+    width: 100%;
+    padding: .3rem;
+    font-family: var(--fuente-contenido);
+    font-size: large;
+}
+
+
 @media screen and (min-width: 720px) {
     .menu-contenedor {
         position: relative;
-        justify-content: center;
+        justify-content: end;
         top: 0;
         z-index: 7;
     
@@ -87,15 +129,6 @@
         height: 3rem;
         box-sizing: border-box;
         padding: 0 1rem 0 0;
-        
-        font-size: medium;
-
-        background-image: none;
-        background-position: 100%;
-    }
-
-    .menu__opciones-url:hover {
-        background-image: url(../img/angle-right.svg);
     }
     
     #btn-abrir-menu {
@@ -107,6 +140,5 @@
 @media screen and (min-width: 1024px) {
     .menu__opciones-url {
         padding: 0 2rem 0 0;
-        font-size: large;
     }
 }

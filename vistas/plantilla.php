@@ -63,8 +63,16 @@
             ##########################################################################################
             # Controlador de contenido de la página
             # Valida la sesión, determina el tiempo de usuario y muestra el contenido correspondiente
-            if(isset($_SESSION["validarSesion"])) ControladorPlantilla::ctrlContenido();
-            else include "vistas/paginas/login.php";
+            if(isset($_SESSION["validarSesion"])) {
+
+                ControladorUsuarios::ctrlExpirarSesion();
+
+                ControladorPlantilla::ctrlContenido();
+
+            }
+            else {
+                include "vistas/paginas/login.php";
+            }
         ?>
     </main>
     

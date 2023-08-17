@@ -10,7 +10,7 @@ $offset = ($pagina - 1) * $productosPorPagina; # Saltado de productos en página
 $modelo = new ModeloProductos();
 $conteo = $modelo->mdlConteoProductos(); # Recupera el no. de productos
 
-if($conteo[0]['conteo'] === 0) {
+if ($conteo[0]['conteo'] === 0) {
     echo 'No hay productos registrados.';
     die();
 }
@@ -21,8 +21,16 @@ $paginas = ceil($conteo[0]['conteo'] / $productosPorPagina);
 // Retorna los productos por página
 $productos = $modelo->mdlLeerParaPaginacion($limit, $offset);
 ?>
-
+<br>
 <h2>Total de productos: <?= $conteo[0]['conteo'] ?></h2>
+
+<!-- Barra de búsqueda -->
+<form class="boton-main" id="barra-busqueda">
+    <input type="text" class="campo" name="buscarProducto-txt" autocomplete="off" id="buscarProducto-txt" placeholder="Buscar..." maxlength="80" min='3' required>
+    <button class="boton enviar" id="btnBuscarProducto"><img src="vistas/img/magnifying-glass.svg" alt="Buscar"></button>
+</form>
+<span class="alerta" id="alertaBuscar"></span>
+<!-- ------------------------------------------- -->
 
 <p>Página <?= $pagina ?> de <?= $paginas ?></p>
 
@@ -54,21 +62,21 @@ $productos = $modelo->mdlLeerParaPaginacion($limit, $offset);
 </ul>
 
 <section class="contenedor-productos">
-<?php foreach ($productos as $producto) { ?>
-    <article class="tarjeta-producto">
-        <img src="<?= $producto['foto_url'] ?>" alt="Imagen <?= $producto['nombre'] ?>">
-        <span>
-            <h3><?= $producto['nombre'] ?></h3>
-            <ul>
-                <li>Código: <?= $producto['producto_id'] ?></li>
-                <li class="mayusculas"><?= $producto['categoria'] ?></li>
-                <li>Unidades: <?= ($producto['unidades'] !== 0) ? $producto['unidades'] : 'Agotado' ?></li>
-                <li>Precio de venta: $<?= $producto['precio_venta'] ?></li>
-                <li><a href="index.php?pagina=inventario&opciones=detalles&id=<?= $producto['producto_id'] ?>">Ver detalles y editar</a></li>
-            </ul>
-        </span>
-    </article>
-<?php } ?>
+    <?php foreach ($productos as $producto) { ?>
+        <article class="tarjeta-producto">
+            <img src="<?= $producto['foto_url'] ?>" alt="Imagen <?= $producto['nombre'] ?>">
+            <span>
+                <h3><?= $producto['nombre'] ?></h3>
+                <ul>
+                    <li>Código: <?= $producto['producto_id'] ?></li>
+                    <li class="mayusculas"><?= $producto['categoria'] ?></li>
+                    <li>Unidades: <?= ($producto['unidades'] !== 0) ? $producto['unidades'] : 'Agotado' ?></li>
+                    <li>Precio de venta: $<?= $producto['precio_venta'] ?></li>
+                    <li><a href="index.php?pagina=inventario&opciones=detalles&id=<?= $producto['producto_id'] ?>">Ver detalles y editar</a></li>
+                </ul>
+            </span>
+        </article>
+    <?php } ?>
 </section>
 
 <ul class="paginacion">

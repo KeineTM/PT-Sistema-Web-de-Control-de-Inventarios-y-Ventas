@@ -16,7 +16,7 @@
 
 .boton:hover {
     letter-spacing: .1rem;
-    background: var(--degradado-principal);
+    background: var(--color-rosa-oscuro);
 }
 
 .boton:active {
