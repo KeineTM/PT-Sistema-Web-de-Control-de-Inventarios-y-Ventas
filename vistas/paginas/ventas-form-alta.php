@@ -56,7 +56,7 @@ ControladorOperaciones::ctrlCrearVenta($nombre_carrito, $tipo_operacion);
 <!-- Formulario para agregar productos al carrito -->
 <form class="formulario destacado" method="post" id="form-agregar-producto">
     <label for="idProducto-txt">Código del producto:</label>
-    <input class="campo destacado" autocomplete="off" type="text" name="idProducto-txt" id="idProducto-txt" maxlength="20" pattern="^[a-zA-Z0-9]{1,20}$" required>
+    <input class="campo destacado" autocomplete="off" type="text" name="idProducto-txt" id="idProducto-txt" maxlength="20" pattern="^[a-zA-Z0-9]{1,20}$" autofocus required>
     <button type="submit" class="boton-form enviar" id="btnAgregarAlCarrito">Agregar</button>
 </form>
 <br>

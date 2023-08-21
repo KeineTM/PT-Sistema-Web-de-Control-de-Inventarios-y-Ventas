@@ -11,6 +11,20 @@ const selectCategorias = document.getElementById("categoriaProducto-txt");
 const formularioAltaCategoria = document.getElementById('formulario-alta-categoria');
 const formularioEdicionCategoria = document.getElementById('formulario-edicion-categoria');
 
+const campoCodigoDeBarras = document.querySelector('[data-form="productoID"]');
+
+/** Método para prevenir el 'Enter' del lector de código de barras */
+if(campoCodigoDeBarras !== null) {
+    campoCodigoDeBarras.addEventListener('keydown', (event) => {
+        if(event.key == "Enter") {
+            event.preventDefault();
+            const campoNombreProducto = document.querySelector('[data-form="nombreProducto"]');
+            campoNombreProducto.focus();
+            return false;
+        }
+    });
+}
+
 /** Método que recorre todas las etiquetas input para validar su contenido */
 const validar = (campos, etiquetaHTML, lista) => {
     campos.forEach(campo => {
@@ -30,6 +44,10 @@ if(formularioAlta !== null) {
     const btnAbrirFormularioCategoria = document.getElementById('btnAgregarCategoria');
     const btnCerrar = document.getElementById("btnCerrar");
     const btnRegistrarProducto = document.getElementById("btnRegistrarProducto");
+    const campos = document.querySelectorAll('[data-form]');
+    const alertaHTML = document.getElementById('alerta-formulario');
+    const campoPrecioCompra = document.querySelector('[data-form="precioCompra"]');
+    const campoPrecioVenta = document.querySelector('[data-form="precioVenta"]');
 
     // Control de cierre del formulario
     btnCerrar.addEventListener("click", () => {
@@ -42,8 +60,7 @@ if(formularioAlta !== null) {
         construirFormularioAltaCategoria(contenedorMiniFormularioCategoria);
     });
 
-    const campos = document.querySelectorAll('[data-form]');
-    const alertaHTML = document.getElementById('alerta-formulario');
+    
 
     // Registro de producto
     btnRegistrarProducto.addEventListener("click", (event) => {
@@ -52,9 +69,14 @@ if(formularioAlta !== null) {
 
         validar(campos, alertaHTML, listaErrores);
 
-        (listaErrores.length === 0) // Si no hay errores
-            ? metodosAJAX.registrarProducto(formularioAlta) //console.log('Los datos son válidos')
-            : console.log('Los datos no son válidos');
+        if(listaErrores.length === 0) {// Si no hay errores 
+            if(parseInt(campoPrecioVenta.value) < parseInt(campoPrecioCompra.value)) {
+                if(confirm("Alerta: El precio de venta es menor al precio de compra. ¿Desea continuar con estos datos?") === true)
+                    metodosAJAX.registrarProducto(formularioAlta)
+            } else
+                metodosAJAX.registrarProducto(formularioAlta)
+        } else
+            console.log('Los datos no son válidos');
     });
 }
 
@@ -289,20 +311,22 @@ const recuperarProductos = (contenedorHTML, palabraClave='') => {
     }
 }
 
-btnBuscarProductos.addEventListener('click', () => {
-    event.preventDefault();
-    alertaBuscar.innerText = ""
-    alertaBuscar.style.visibility = 'hidden';
-
-    if(campoBuscarProducto.value.length !== 0 && campoBuscarProducto.value.length < 80) {
-        contenedor.innerHTML = ""; // Limpia el contenedor antes de crear la tabla
-        let contenedorProductos = document.createElement('section');
-        contenedorProductos.classList.add('contenedor-productos');
-        contenedor.appendChild(contenedorProductos);
-        recuperarProductos(contenedorProductos, campoBuscarProducto.value); // AJAX
-    } else {
-        alertaBuscar.innerText = "Debe ingresar una palabra clave"
-        alertaBuscar.style.visibility = 'visible';
-    }
+if(btnBuscarProductos !== null) {
+    btnBuscarProductos.addEventListener('click', () => {
+        event.preventDefault();
+        alertaBuscar.innerText = ""
+        alertaBuscar.style.visibility = 'hidden';
     
-});
+        if(campoBuscarProducto.value.length !== 0 && campoBuscarProducto.value.length < 80) {
+            contenedor.innerHTML = ""; // Limpia el contenedor antes de crear la tabla
+            let contenedorProductos = document.createElement('section');
+            contenedorProductos.classList.add('contenedor-productos');
+            contenedor.appendChild(contenedorProductos);
+            recuperarProductos(contenedorProductos, campoBuscarProducto.value); // AJAX
+        } else {
+            alertaBuscar.innerText = "Debe ingresar una palabra clave"
+            alertaBuscar.style.visibility = 'visible';
+        }
+        
+    });
+}

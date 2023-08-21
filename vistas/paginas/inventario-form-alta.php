@@ -13,10 +13,10 @@ $lista_categorias = ControladorProductos::ctrlCategoriasActivas();
     <!-- 1/2 -->
     <fieldset class="formulario__fieldset">
         <label for="idProducto-txt">Código o Folio:</label>
-        <input type="text" class="campo requerido mayusculas" placeholder="ID del producto" name="idProducto-txt" autocomplete="off" data-form="productoID" maxlength="20" pattern="^[a-zA-Z0-9]{1,20}$" required>
+        <input type="text" class="campo requerido mayusculas" placeholder="ID del producto" name="idProducto-txt" id="idProducto-txt" autocomplete="off" data-form="productoID" maxlength="20" pattern="^[a-zA-Z0-9]{1,20}$" autofocus required>
 
         <label for="nombreProducto-txt">Nombre del producto:</label>
-        <input type="text" class="campo requerido" placeholder="Nombre" name="nombreProducto-txt" autocomplete="off" data-form='nombreProducto' maxlength="80" minlength="4" required>
+        <input type="text" class="campo requerido" placeholder="Nombre" name="nombreProducto-txt" id="nombreProducto-txt" autocomplete="off" data-form='nombreProducto' maxlength="80" minlength="4" required>
 
         <fieldset class="formulario__fieldset-categorias">
             <select class="campo mayusculas" id="categoriaProducto-txt" name="categoriaProducto-txt" autocomplete="off" data-form="categoriaID" required>
@@ -32,14 +32,14 @@ $lista_categorias = ControladorProductos::ctrlCategoriasActivas();
         </fieldset>
 
         <label for="descripcionProducto-txt">Descripción:</label>
-        <textarea class="campo" placeholder="Descripción" rows="3" cols="50" name="descripcionProducto-txt" autocomplete="off" data-form="descripcion" maxlength="400"></textarea>
+        <textarea class="campo" placeholder="Descripción" rows="3" cols="50" name="descripcionProducto-txt" id="descripcionProducto-txt" autocomplete="off" data-form="descripcion" maxlength="400"></textarea>
 
         <fieldset class="formulario__fieldset-2-columnas">
             <label for="unidadesProducto-txt">Unidades:</label>
-            <input type="number" class="campo  requerido" placeholder="001" name="unidadesProducto-txt" autocomplete="off" data-form="unidades" min="1" maxlength="4" required>
+            <input type="number" class="campo  requerido" placeholder="001" name="unidadesProducto-txt" id="unidadesProducto-txt" autocomplete="off" data-form="unidades" min="1" maxlength="4" required>
 
             <label for="unidadesMinimasProducto-txt">Unidades mínimas:</label>
-            <input type="number" class="campo" placeholder="0" name="unidadesMinimasProducto-txt" autocomplete="off" data-form="unidadesMinimas" min="0" max="9999">
+            <input type="number" class="campo" placeholder="0" name="unidadesMinimasProducto-txt" id="unidadesMinimasProducto-txt" autocomplete="off" data-form="unidadesMinimas" min="0" max="9999">
         </fieldset>
     </fieldset>
 
@@ -47,17 +47,17 @@ $lista_categorias = ControladorProductos::ctrlCategoriasActivas();
     <fieldset class="formulario__fieldset">
         <fieldset class="formulario__fieldset-2-columnas">
             <label for="precioCompraProducto-txt">Precio de compra:</label>
-            <input type="number" step="any" class="campo" placeholder="0.00" name="precioCompraProducto-txt" autocomplete="off" data-form="precioCompra" min="0" max="9999">
+            <input type="number" step="any" class="campo" placeholder="0.00" name="precioCompraProducto-txt" id="precioCompraProducto-txt" autocomplete="off" data-form="precioCompra" min="0" max="9999">
 
             <label for="precioVentaProducto-txt">Precio de venta:</label>
-            <input type="number" step="any" class="campo  requerido" placeholder="0.00" name="precioVentaProducto-txt" autocomplete="off" data-form="precioVenta" min="0" max="9999" required>
+            <input type="number" step="any" class="campo  requerido" placeholder="0.00" name="precioVentaProducto-txt" id="precioVentaProducto-txt" autocomplete="off" data-form="precioVenta" min="0" max="9999" required>
 
-            <label for="fechaCaducidad-txt">Fecha de caducidad</label>
-            <input type="date" class="campo" placeholder="Fecha de caducidad" name="caducidadProducto-txt" autocomplete="off" data-form="caducidad" min="<?=$fecha_min?>" max="<?=$fecha_max?>" maxlength="8">
+            <label for="caducidadProducto-txt">Fecha de caducidad</label>
+            <input type="date" class="campo" placeholder="Fecha de caducidad" name="caducidadProducto-txt" id="caducidadProducto-txt" autocomplete="off" data-form="caducidad" min="<?=$fecha_min?>" max="<?=$fecha_max?>" maxlength="8">
         </fieldset>
 
         <label for="imagenProducto-txt">URL de la foto:</label>
-        <input type="text" class="campo" placeholder="direccion.jpg" name="imagenProducto-txt" autocomplete="off" data-form="imagenURL" maxlength="250" pattern="^[^\s]{0,250}\.(jpg|JPG|png|PNG|jpeg|JPEG|webp|WEBP)$">
+        <input type="text" class="campo" placeholder="direccion.jpg" name="imagenProducto-txt" id="imagenProducto-txt" autocomplete="off" data-form="imagenURL" maxlength="250" pattern="^[^\s]{0,250}\.(jpg|JPG|png|PNG|jpeg|JPEG|webp|WEBP)$">
 
         <div class="formulario__botones-contenedor">
             <button class="boton-form enviar" id="btnRegistrarProducto">Registrar</button>
