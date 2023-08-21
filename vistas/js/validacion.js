@@ -107,7 +107,7 @@ const validarCampoProductos = (campo) => {
     // Evalua la validez de la entrada y genera el mensaje de error correspondiente si es oportuno.
     switch(dataform) {
         case 'productoID': // Requerido
-            regex = new RegExp('^[a-zA-Z0-9]{1,20}$');
+            regex = /^[a-zA-Z0-9]{1,20}$/;
             if(campo.value.length === 0 ||
                 campo.value.length > 20 ||
                 !regex.test(campo.value)) {
@@ -146,7 +146,7 @@ const validarCampoProductos = (campo) => {
                 return null;
         break;
         case 'unidades': // Requerido
-            regex = new RegExp('^([0-9])*$'); // Valida sólo números
+            regex = /^([0-9])*$/; // Valida sólo números
             if(campo.value.length === 0 ||
                 campo.value < 1 ||
                 campo.value > 9999 ||
@@ -160,7 +160,7 @@ const validarCampoProductos = (campo) => {
                 return null;
         break;
         case 'unidadesMinimas': // Sólo se evalúa si existe un dato
-            regex = new RegExp('^([0-9])*$');
+            regex = /^([0-9])*$/;
             if(campo.value.length !== 0) {
                 
                 if(campo.value < 0) return mostrarMensajeDeError(dataform, 'limiteMin');
@@ -172,7 +172,7 @@ const validarCampoProductos = (campo) => {
         break;
         case 'precioCompra': // Sólo se evalúa si existe un dato
             if(campo.value.length !== 0) {
-                regex = new RegExp('^[0-9]+(\\.[0-9]{1,2})?$'); // Valida sólo números con hasta 2 decimales
+                regex = /^[0-9]+(\\.[0-9]{1,2})?$/; // Valida sólo números con hasta 2 decimales
                 
                 if(campo.value < 0) return mostrarMensajeDeError(dataform, 'limiteMin');
                 if(campo.value > 9999) return mostrarMensajeDeError(dataform, 'limiteMax');
@@ -182,7 +182,7 @@ const validarCampoProductos = (campo) => {
                 return null;
         break;
         case 'precioVenta': // Requerido
-            regex = new RegExp('^[0-9]+(\\.[0-9]{1,2})?$');
+            regex = /^[0-9]+(\\.[0-9]{1,2})?$/;
             if(campo.value.length === 0 ||
                 campo.value < 1 ||
                 campo.value > 9999 ||
@@ -197,7 +197,7 @@ const validarCampoProductos = (campo) => {
         break;
         case 'precioMayoreo': // Sólo se evalúa si existe un dato
             if(campo.value.length !== 0) {
-                regex = new RegExp('^[0-9]+(\\.[0-9]{1,2})?$');
+                regex = /^[0-9]+(\\.[0-9]{1,2})?$/;
                 
                 if(campo.value < 0) return mostrarMensajeDeError(dataform, 'limiteMin');
                 if(campo.value > 9999) return mostrarMensajeDeError(dataform, 'limiteMax');
@@ -251,14 +251,14 @@ const validarCampoDirectorio = (campo) => {
 
     switch(dataform) {
         case 'nombre':
-            regex = new RegExp('[a-zA-Z ]{2,80}');
+            regex = /^[a-zA-Z ]{2,80}$/;
             if(campo.value.length < 0) return 'El nombre no debe quedar vacío';
             if(campo.value.length < 3) return 'El nombre no debe tener menos de 3 letras';
             if(campo.value.length > 80) return 'El nombre no debe tener más de 80 letras';
             if(!regex.test(campo.value)) return 'El nombre sólo acepta letras';
             return null;
         case 'apellido_paterno':
-            regex = new RegExp('[a-zA-Z ]{2,80}');
+            regex = /^[a-zA-Z ]{2,80}$/;
             if(campo.value.length < 0) return 'El apellido paterno no debe quedar vacío';
             if(campo.value.length < 3) return 'El apellido paterno no debe tener menos de 3 letras';
             if(campo.value.length > 80) return 'El apellido paterno no debe tener más de 80 letras';
@@ -266,14 +266,14 @@ const validarCampoDirectorio = (campo) => {
             return null;
         case 'apellido_materno':
             if(campo.value.length !== 0) {
-                regex = new RegExp('[a-zA-Z ]{2,80}');
+                regex = /^[a-zA-Z ]{2,80}$/;
                 if(campo.value.length < 3) return 'El apellido materno no debe tener menos de 3 letras';
                 if(campo.value.length > 80) return 'El apellido materno no debe tener más de 80 letras';
                 if(!regex.test(campo.value)) return 'El apellido materno sólo acepta letras';
             }
             return null;
         case 'contacto_id': // Número de teléfono
-            regex = new RegExp('^([0-9]+){10}$');
+            regex = /^([0-9]+){10}$/;
             if(campo.value.length < 0) return 'El número de teléfono no debe quedar vacío';
             if(campo.value.length != 10) return 'El número de teléfono debe tener 10 números';
             if(!regex.test(campo.value)) return 'El número de teléfono sólo acepta números';
@@ -303,62 +303,62 @@ const validarCampoPersonal = (campo, formulario) => {
 
     switch(dataform) {
         case 'nombre':
-            regex = new RegExp('[a-zA-Z ]{2,80}');
-            if(campo.value.length < 1) return 'El nombre no debe quedar vacío.';
-            if(campo.value.length < 3) return 'El nombre no debe tener menos de 3 letras.';
-            if(campo.value.length > 80) return 'El nombre no debe tener más de 80 letras.';
-            if(!regex.test(campo.value)) return 'El nombre sólo acepta letras.';
+            regex = /^[a-zA-Z ]{2,80}$/;
+            if(campo.value.length < 1) return '-El nombre no debe quedar vacío.';
+            if(campo.value.length < 3) return '-El nombre no debe tener menos de 3 letras.';
+            if(campo.value.length > 80) return '-El nombre no debe tener más de 80 letras.';
+            if(!regex.test(campo.value)) return '-El nombre sólo acepta letras.';
             return null;
         case 'apellido_paterno':
-            regex = new RegExp('[a-zA-Z ]{2,80}');
-            if(campo.value.length < 1) return 'El apellido paterno no debe quedar vacío.';
-            if(campo.value.length < 3) return 'El apellido paterno no debe tener menos de 3 letras.';
-            if(campo.value.length > 80) return 'El apellido paterno no debe tener más de 80 letras.';
-            if(!regex.test(campo.value)) return 'El apellido paterno sólo acepta letras.';
+            regex = /^[a-zA-Z ]{2,80}$/;
+            if(campo.value.length < 1) return '-El apellido paterno no debe quedar vacío.';
+            if(campo.value.length < 3) return '-El apellido paterno no debe tener menos de 3 letras.';
+            if(campo.value.length > 80) return '-El apellido paterno no debe tener más de 80 letras.';
+            if(!regex.test(campo.value)) return '-El apellido paterno sólo acepta letras.';
             return null;
         case 'apellido_materno':
-            regex = new RegExp('[a-zA-Z ]{2,80}');
-            if(campo.value.length < 1) return 'El apellido materno no debe quedar vacío.';
-            if(campo.value.length < 3) return 'El apellido materno no debe tener menos de 3 letras.';
-            if(campo.value.length > 80) return 'El apellido materno no debe tener más de 80 letras.';
-            if(!regex.test(campo.value)) return 'El apellido materno sólo acepta letras.';
+            regex = /^[a-zA-Z ]{2,80}$/;
+            if(campo.value.length < 1) return '-El apellido materno no debe quedar vacío.';
+            if(campo.value.length < 3) return '-El apellido materno no debe tener menos de 3 letras.';
+            if(campo.value.length > 80) return '-El apellido materno no debe tener más de 80 letras.';
+            if(!regex.test(campo.value)) return '-El apellido materno sólo acepta letras.';
             return null;
         case 'telefono':
-            regex = new RegExp('^([0-9]+){10}$');
-            if(campo.value.length < 1) return 'El número de teléfono no debe quedar vacío.';
-            if(campo.value.length != 10) return 'El número de teléfono debe tener 10 números.';
-            if(!regex.test(campo.value)) return 'El número de teléfono sólo acepta números.';
+            regex = /^([0-9]+){10}$/;
+            if(campo.value.length < 1) return '-El número de teléfono no debe quedar vacío.';
+            if(campo.value.length != 10) return '-El número de teléfono debe tener 10 números.';
+            if(!regex.test(campo.value)) return '-El número de teléfono sólo acepta números.';
             return null;
         case 'rfc':
             regex = /^([a-z]{3,4})(\d{2})(\d{2})(\d{2})([0-9a-z]{3})$/i;
-            if(campo.value.length < 1) return 'El RFC no debe quedar vacío.';
-            if(campo.value.length != 13) return 'El RFC debe tener 13 caracteres.';
-            if(!regex.test(campo.value)) return 'El formato ingresado no corresponde a un RFC válido.';
+            if(campo.value.length < 1) return '-El RFC no debe quedar vacío.';
+            if(campo.value.length != 13) return '-El RFC debe tener 13 caracteres.';
+            if(!regex.test(campo.value)) return '-El formato ingresado no corresponde a un RFC válido.';
             return null;
         case 'notas':
             if(campo.value.length !== 0) {
-                if(campo.value.length < 5) return 'Las notas no deben tener menos de 5 letras.';
-                if(campo.value.length > 240) return 'Las notas no deben tener más de 240 letras.';
+                if(campo.value.length < 5) return '-Las notas no deben tener menos de 5 letras.';
+                if(campo.value.length > 240) return '-Las notas no deben tener más de 240 letras.';
             }
             return null;
         case 'email':
             if(campo.value.length !== 0) {
                 regex =  /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/;
-                if(campo.value.length > 150) return 'El email no debe tener más de 150 letras';
-                if(!regex.test(campo.value)) return 'El email debe contener un @ y un dominio. Ej: tienda@gobokids.com';
+                if(campo.value.length > 150) return '-El email no debe tener más de 150 letras';
+                if(!regex.test(campo.value)) return '-El email debe contener un @ y un dominio. Ej: tienda@gobokids.com';
             }
             return null;
         case 'password':
             if(formulario !== 'alta') {
                 if(campo.value.length > 0) {
-                    regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@¡!¿?\-_ñÑ%])[A-Za-z\d@¡!¿?\-_ñÑ%]{8,20}$/;
-                    if(campo.value.length < 8 || campo.value.length > 20) return 'La contraseña debe tener de 8 a 20 caracteres.';
-                    if(!regex.test(campo.value)) return 'La contraseña debe tener por lo menos: 1 mayúscula, 1 número y 1 caracter especial  (@, ¡, !, ¿, ?, -, _ o %)';
+                    regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@¡!¿?\-_ñÑ%])[A-Za-z\d@¡!¿?\-_ñÑ%]{8,20}$/;
+                    if(campo.value.length < 8 || campo.value.length > 20) return '-La contraseña debe tener de 8 a 20 caracteres.';
+                    if(!regex.test(campo.value)) return '-La contraseña debe tener por lo menos: 1 mayúscula, 1 minúscula, 1 número y 1 caracter especial  (@, ¡, !, ¿, ?, -, _ o %)';
                 }
             } else {
-                regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@¡!¿?\-_ñÑ%])[A-Za-z\d@¡!¿?\-_ñÑ%]{8,20}$/;
-                if(campo.value.length < 8 || campo.value.length > 20) return 'La contraseña debe tener de 8 a 20 caracteres.';
-                if(!regex.test(campo.value)) return 'La contraseña debe tener por lo menos: 1 mayúscula, 1 número y 1 caracter especial  (@, ¡, !, ¿, ?, -, _ o %)';
+                regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@¡!¿?\-_ñÑ%])[A-Za-z\d@¡!¿?\-_ñÑ%]{8,20}$/;
+                if(campo.value.length < 8 || campo.value.length > 20) return '-La contraseña debe tener de 8 a 20 caracteres.';
+                if(!regex.test(campo.value)) return '-La contraseña debe tener por lo menos: 1 mayúscula, 1 minúscula, 1 número y 1 caracter especial  (@, ¡, !, ¿, ?, -, _ o %)';
             }
             return null;
         default:

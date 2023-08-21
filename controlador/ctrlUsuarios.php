@@ -56,11 +56,11 @@
             if($formulario !== 'alta') {
                 if(strlen($this->password) > 0) {
                     if(strlen($this->password) < 8) array_push($listaDeErrores, 'Debe indicar una contraseña de 8 a 20 caracteres');
-                if(!preg_match('/^(?=.*[A-Z])(?=.*\d)(?=.*[@¡!¿?\-_ñÑ%])[A-Za-z\d@¡!¿?\-_ñÑ%]{8,20}$/', $this->password)) array_push($listaDeErrores, 'La contraseña debe tener, por lo menos: 1 mayúscula, 1 número y 1 caracter especial');
+                if(!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@¡!¿?\-_ñÑ%])[A-Za-z\d@¡!¿?\-_ñÑ%]{8,20}$/', $this->password)) array_push($listaDeErrores, 'La contraseña debe tener, por lo menos: 1 mayúscula, 1 minúscula, 1 número y 1 caracter especial');
                 }
             } else {
                 if(strlen($this->password) < 8) array_push($listaDeErrores, 'Debe indicar una contraseña de 8 a 20 caracteres');
-                if(!preg_match('/^(?=.*[A-Z])(?=.*\d)(?=.*[@¡!¿?\-_ñÑ%])[A-Za-z\d@¡!¿?\-_ñÑ%]{8,20}$/', $this->password)) array_push($listaDeErrores, 'La contraseña debe tener, por lo menos: 1 mayúscula, 1 número y 1 caracter especial');
+                if(!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@¡!¿?\-_ñÑ%])[A-Za-z\d@¡!¿?\-_ñÑ%]{8,20}$/', $this->password)) array_push($listaDeErrores, 'La contraseña debe tener, por lo menos: 1 mayúscula, 1 minúscula, 1 número y 1 caracter especial');
             }
 
             return (count($listaDeErrores) > 0)

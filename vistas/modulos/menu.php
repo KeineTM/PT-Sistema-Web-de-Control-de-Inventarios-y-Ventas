@@ -56,8 +56,8 @@
             <li class="menu__opciones">
                 <a class="menu__opciones-url destacado" href="#" class="menu__opciones-url"><img src="vistas/img/users-line.svg" alt="Personal" class="icono-menu">Personal</a>
                 <ul class="menu-secundario">
-                    <li class="menu-secundario__opciones"><a class="" href="index.php?pagina=personal&opciones=alta">Registrar Empleado</a></li>
                     <li class="menu-secundario__opciones"><a class="" href="index.php?pagina=personal&opciones=listar">Lista de Empleados</a></li>
+                    <li class="menu-secundario__opciones"><a class="" href="index.php?pagina=personal&opciones=alta">Registrar Empleado</a></li>
                 </ul>
             </li>
             
