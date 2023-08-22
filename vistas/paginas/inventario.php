@@ -15,9 +15,6 @@
             include 'vistas/paginas/inventario-form-alta.php';
     ?>
     </article>
-    
-    <section class="modal" id="modal__mini-formulario"><!-- Modal alta de categoría --></section>
-
 </section>
 
 <!-- Scripts de JavaScript -->

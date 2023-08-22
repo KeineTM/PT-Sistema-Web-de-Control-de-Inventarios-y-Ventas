@@ -85,6 +85,11 @@ hr {
     place-content: center;
 }
 
+.lista-ordenada {
+    list-style: decimal;
+    padding-left: 1rem;
+}
+
 @media screen and (min-width: 720px) and (max-width: 1023px) {
     main {
         display: grid;

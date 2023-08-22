@@ -26,7 +26,7 @@ $productos = $modelo->mdlLeerParaPaginacion($limit, $offset);
 
 <!-- Barra de búsqueda -->
 <form class="boton-main" id="barra-busqueda">
-    <input type="text" class="campo" name="buscarProducto-txt" autocomplete="off" id="buscarProducto-txt" placeholder="Buscar..." maxlength="80" min='3' required>
+    <input type="text" class="campo" name="buscarProducto-txt" autocomplete="off" id="buscarProducto-txt" placeholder="Buscar por nombre..." maxlength="80" min='3' required>
     <button class="boton enviar" id="btnBuscarProducto"><img src="vistas/img/magnifying-glass.svg" alt="Buscar"></button>
 </form>
 <span class="alerta" id="alertaBuscar"></span>

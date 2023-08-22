@@ -1,3 +1,6 @@
+import { metodosModal } from "../modal.js";
+
+
 /** Método que recibe un JSON con el listado de la tabla categorías y la etiqueta SELECT */
 const cargarOptionsCategorias = (selectHTML, listaCategoriasJSON) => {
     selectHTML.innerHTML = "<option disabled selected>Categorías...</option>";
@@ -54,6 +57,9 @@ const registrarCategoria = (categoria, selectCategorias, aletaHTML) => {
         categoria.value = ''; // Limpia el campo
         if (selectCategorias != undefined)
         recuperarCategoriasActivas(selectCategorias); // RECARGA LA LISTA DE OPCIONES CON OTRO AJAX del archivo inventario-listar-categorias-asincrono.js
+
+        metodosModal.desplegarModal(document.getElementById('modal'));
+        metodosModal.construirModalMensajeResultado(document.getElementById('modal'), data);
     }).catch(error => {
         console.error('Error:', error);
     });
@@ -72,6 +78,9 @@ const editarCategoria = (formulario, selectCategorias, alertaHTML) => {
         alertaHTML.innerText = data;
         if (selectCategorias != undefined) // Mientras exista el select donde se cargan las categorías
         recuperarCategorias(selectCategorias);
+
+        metodosModal.desplegarModal(document.getElementById('modal'));
+        metodosModal.construirModalMensajeResultado(document.getElementById('modal'), data);
     }).catch(error => {
         console.error('Error:', error);
     });
@@ -89,10 +98,12 @@ const registrarProducto = (formulario) => {
         const alertaHTML = document.getElementById('alerta-formulario');
         alertaHTML.style.visibility = 'visible';
         alertaHTML.innerText = data;
-        console.log(data);
+        
+        metodosModal.desplegarModal(document.getElementById('modal'));
+        metodosModal.construirModalMensajeResultado(document.getElementById('modal'), data);
+
         if(data === 'Registro exitoso.') {
             document.getElementById('formulario-alta-producto').reset();
-            alert(data);
         }
     }).catch(error => {
         console.error('Error:', error);
@@ -111,6 +122,10 @@ const editarProducto = (formulario) => {
         const alertaHTML = document.getElementById('alerta-formulario');
         alertaHTML.style.visibility = 'visible';
         alertaHTML.innerText = data;
+
+        metodosModal.desplegarModal(document.getElementById('modal'));
+        metodosModal.construirModalMensajeResultado(document.getElementById('modal'), data);
+
     }).catch(error => {
         console.error('Error:', error);
     });

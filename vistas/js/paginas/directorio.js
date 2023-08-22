@@ -1,17 +1,21 @@
 import { metodosValidacion } from "../validacion.js";
+import { metodosModal } from "../modal.js";
 
 // Validaciones en formularios de alta y edición
 /** Método que recorre todas las etiquetas input para validar su contenido */
 const validar = (campos, alertaHTML, listaErrores) => {
     campos.forEach(campo => {
         campo.style.background = 'var(--color-blanco)'; // Reestablece el color del campo
-        if(metodosValidacion.validarCampoDirectorio(campo) !== null){ // Si detecta un error
+
+        const resultado_validacion = metodosValidacion.validarCampoDirectorio(campo);
+
+        if(resultado_validacion !== null){ // Si detecta un error
             campo.style.background = 'var(--color-crema)'; // Resalta el campo
-            listaErrores.push("<br>" + metodosValidacion.validarCampoDirectorio(campo)); // Almacena el mensaje asociado
+            listaErrores.push(resultado_validacion); // Almacena el mensaje asociado
         }
     });
     alertaHTML.style.visibility = 'visible';
-    alertaHTML.innerHTML = listaErrores;
+    alertaHTML.innerHTML = listaErrores.join('<br>');
 }
 
 // Aplica tanto para formulario de alta como de edición
@@ -35,9 +39,12 @@ if(formulario !== null) {
         
         validar(listaCampos, alertaHTML, listaErrores);
 
-        (listaErrores.length === 0)
-            ? formulario.submit()
-            : console.log('No pasó la validación');
+        if(listaErrores.length === 0) {
+            formulario.submit()
+        } else {
+            metodosModal.desplegarModal(document.getElementById('modal'));
+            metodosModal.construirModalAlerta(document.getElementById('modal'), listaErrores);
+        }
     });
 }
 
@@ -124,7 +131,8 @@ const buscarContactoAJAX = (formularioBusqueda, contenedorHTML) => {
     })
 }
 
-btnBuscar.addEventListener('click', (event) => {
+if(btnBuscar !== null) {
+    btnBuscar.addEventListener('click', (event) => {
     event.preventDefault();
     alertaHTML.innerHTML = '';
 
@@ -136,6 +144,8 @@ btnBuscar.addEventListener('click', (event) => {
         alertaHTML.innerText = validacionResultado;
     }
 });
+}
+
 
 //-------------------- Botón eliminar contacto ------------------
 const formularioEliminarContacto = document.querySelector('#formulario-eliminar-contacto');

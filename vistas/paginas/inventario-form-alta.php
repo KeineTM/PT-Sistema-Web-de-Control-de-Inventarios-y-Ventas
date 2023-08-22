@@ -6,7 +6,7 @@ $lista_categorias = ControladorProductos::ctrlCategoriasActivas();
 <span class="formulario__encabezado">
     <img class="formulario__icono" src="vistas/img/file-invoice.svg" alt="Formulario">
     <h2>Formulario de alta de producto</h2>
-    <span class="alerta" id="alerta-formulario"></span>
+    <span class="" id="alerta-formulario"></span>
 </span>
 
 <form class="formulario" action="post" id="formulario-alta-producto">
@@ -62,7 +62,6 @@ $lista_categorias = ControladorProductos::ctrlCategoriasActivas();
         <div class="formulario__botones-contenedor">
             <button class="boton-form enviar" id="btnRegistrarProducto">Registrar</button>
             <button class="boton-form otro" type="reset">Limpiar</button>
-            <button class="boton-form otro" id="btnCerrar">Cancelar</button>
         </div>
-        <fieldset>
+    <fieldset>
 </form>

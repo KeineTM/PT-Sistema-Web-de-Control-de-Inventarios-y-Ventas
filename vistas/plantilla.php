@@ -74,6 +74,9 @@
                 include "vistas/paginas/login.php";
             }
         ?>
+
+        <section class="modal" id="modal"><!-- Ventana modal --></section>
+
     </main>
     
     <footer>

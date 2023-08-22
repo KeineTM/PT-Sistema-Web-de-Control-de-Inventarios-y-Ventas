@@ -1,4 +1,5 @@
 import { metodosValidacion } from "../validacion.js";
+import { metodosModal } from "../modal.js";
 
 const formularioAltaPersonal = document.querySelector('#formulario-personal');
 const formularioEditarPersonal = document.querySelector('#formulario-editar');
@@ -8,15 +9,15 @@ const validar = (campos, alertaHTML, listaErrores, formulario) => {
     campos.forEach(campo => {
         campo.style.background = 'var(--color-blanco)'; // Reestablece el color del campo
         
-        const resultado_validacion = new Array(metodosValidacion.validarCampoPersonal(campo, formulario));
+        const resultado_validacion = metodosValidacion.validarCampoPersonal(campo, formulario);
         
-        if(metodosValidacion.validarCampoPersonal(campo) !== null){ // Si detecta un error
+        if(resultado_validacion !== null){ // Si detecta un error
             campo.style.background = 'var(--color-crema)'; // Resalta el campo
-            listaErrores.push('<br>' + resultado_validacion); // Almacena el mensaje asociado
+            listaErrores.push(resultado_validacion); // Almacena el mensaje asociado
         }
     });
     alertaHTML.style.visibility = 'visible';
-    alertaHTML.innerHTML = listaErrores.join('');
+    alertaHTML.innerHTML = listaErrores.join('<br>');
 }
 
 // ------------------------------------------------------------------------------------------
@@ -67,11 +68,14 @@ if(formularioAltaPersonal !== null) {
         event.preventDefault();
         const listaErrores = [];
         
-        validar(campos, alertaHTML, listaErrores);
+        validar(campos, alertaHTML, listaErrores, 'alta');
 
-        (listaErrores.length === 0)
-            ? formularioAltaPersonal.submit()
-            : console.log('No pasó la validación');
+        if(listaErrores.length === 0) {
+            formularioAltaPersonal.submit();
+        } else {
+            metodosModal.desplegarModal(document.getElementById('modal'));
+            metodosModal.construirModalAlerta(document.getElementById('modal'), listaErrores);
+        }
     });
 }
 
@@ -126,8 +130,12 @@ if(formularioEditarPersonal !== null) {
         
         validar(campos, alertaHTML, listaErrores, 'edicion');
 
-        (listaErrores.length === 0)
-            ? formularioEditarPersonal.submit()
-            : console.log('No pasó la validación');
+        if(listaErrores.length === 0) {
+            formularioEditarPersonal.submit();
+
+        } else {
+            metodosModal.desplegarModal(document.getElementById('modal'));
+            metodosModal.construirModalAlerta(document.getElementById('modal'), listaErrores);
+        }
     });
 }

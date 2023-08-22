@@ -26,59 +26,21 @@ if(campoCodigoDeBarras !== null) {
 }
 
 /** Método que recorre todas las etiquetas input para validar su contenido */
-const validar = (campos, etiquetaHTML, lista) => {
+const validar = (campos, alertaHTML, listaErrores) => {
     campos.forEach(campo => {
         campo.style.background = 'var(--color-blanco)'; // Reestablece el color del campo
-        if(metodosValidacion.validarCampoProductos(campo) !== null){ // Si detecta un error
+
+        const resultado_validacion = metodosValidacion.validarCampoProductos(campo);
+
+        if(resultado_validacion !== null){ // Si detecta un error
             campo.style.background = 'var(--color-crema)'; // Resalta el campo
-            lista.push("<br>" + metodosValidacion.validarCampoProductos(campo)); // Almacena el mensaje asociado
+            listaErrores.push(resultado_validacion); // Almacena el mensaje asociado
         }
     });
-    etiquetaHTML.style.visibility = 'visible';
-    etiquetaHTML.innerHTML = lista;
+    alertaHTML.style.visibility = 'visible';
+    alertaHTML.innerHTML = listaErrores.join('<br>');
 }
 
-// FORMULARIO DE ALTA: Validaciones y eventos
-if(formularioAlta !== null) {
-    const contenedorMiniFormularioCategoria = document.getElementById('modal__mini-formulario');
-    const btnAbrirFormularioCategoria = document.getElementById('btnAgregarCategoria');
-    const btnCerrar = document.getElementById("btnCerrar");
-    const btnRegistrarProducto = document.getElementById("btnRegistrarProducto");
-    const campos = document.querySelectorAll('[data-form]');
-    const alertaHTML = document.getElementById('alerta-formulario');
-    const campoPrecioCompra = document.querySelector('[data-form="precioCompra"]');
-    const campoPrecioVenta = document.querySelector('[data-form="precioVenta"]');
-
-    // Control de cierre del formulario
-    btnCerrar.addEventListener("click", () => {
-        contenedor.innerHTML = "";
-    });
-
-    // Control del mini formulario de categorías:
-    btnAbrirFormularioCategoria.addEventListener("click", () => {
-        metodosModal.desplegarModal(contenedorMiniFormularioCategoria);
-        construirFormularioAltaCategoria(contenedorMiniFormularioCategoria);
-    });
-
-    
-
-    // Registro de producto
-    btnRegistrarProducto.addEventListener("click", (event) => {
-        event.preventDefault();
-        let listaErrores = []; // Lista que almacenará los errores detectados
-
-        validar(campos, alertaHTML, listaErrores);
-
-        if(listaErrores.length === 0) {// Si no hay errores 
-            if(parseInt(campoPrecioVenta.value) < parseInt(campoPrecioCompra.value)) {
-                if(confirm("Alerta: El precio de venta es menor al precio de compra. ¿Desea continuar con estos datos?") === true)
-                    metodosAJAX.registrarProducto(formularioAlta)
-            } else
-                metodosAJAX.registrarProducto(formularioAlta)
-        } else
-            console.log('Los datos no son válidos');
-    });
-}
 
 // -------------------------------------------------------------------------------------------------------
 // FORMULARIO DE ALTA Y EDICIÓN DE CATEGORÍAS
@@ -205,15 +167,57 @@ if(formularioEdicionCategoria !== null) {
 
 
 // -------------------------------------------------------------------------------------------------------
+// FORMULARIO DE ALTA: Validaciones y eventos
+// -------------------------------------------------------------------------------------------------------
+if(formularioAlta !== null) {
+    const contenedorMiniFormularioCategoria = document.getElementById('modal');
+    const btnAbrirFormularioCategoria = document.getElementById('btnAgregarCategoria');
+    const btnRegistrarProducto = document.getElementById("btnRegistrarProducto");
+    const campos = document.querySelectorAll('[data-form]');
+    const alertaHTML = document.getElementById('alerta-formulario');
+    const campoPrecioCompra = document.querySelector('[data-form="precioCompra"]');
+    const campoPrecioVenta = document.querySelector('[data-form="precioVenta"]');
+
+    // Control del mini formulario de categorías:
+    btnAbrirFormularioCategoria.addEventListener("click", () => {
+        metodosModal.desplegarModal(contenedorMiniFormularioCategoria);
+        construirFormularioAltaCategoria(contenedorMiniFormularioCategoria);
+    });
+
+    
+
+    // Registro de producto
+    btnRegistrarProducto.addEventListener("click", (event) => {
+        event.preventDefault();
+        let listaErrores = []; // Lista que almacenará los errores detectados
+
+        validar(campos, alertaHTML, listaErrores);
+
+        if(listaErrores.length === 0) {// Si no hay errores 
+            if(parseInt(campoPrecioVenta.value) < parseInt(campoPrecioCompra.value)) {
+                if(confirm("Alerta: El precio de venta es menor al precio de compra. ¿Desea continuar con estos datos?") === true)
+                    metodosAJAX.registrarProducto(formularioAlta)
+            } else
+                metodosAJAX.registrarProducto(formularioAlta)
+        } else {
+            metodosModal.desplegarModal(contenedorMiniFormularioCategoria);
+            metodosModal.construirModalAlerta(contenedorMiniFormularioCategoria, listaErrores);
+        }
+    });
+}
+
+// -------------------------------------------------------------------------------------------------------
 // FORMULAIRO DE EDICIÓN: Validaciones y eventos
 // -------------------------------------------------------------------------------------------------------
 const formularioEdicion = document.getElementById('formulario-edicion-producto');
 
 if(formularioEdicion !== null) {
     // Variables del contenedor:
-    const contenedorMiniFormularioCategoria = document.getElementById('modal__mini-formulario');
+    const contenedorMiniFormularioCategoria = document.getElementById('modal');
     const btnAbrirFormularioCategoria = document.getElementById('btnAgregarCategoria');
     const btnEditarProducto = document.getElementById("btnEditarProducto");
+    const campoPrecioCompra = document.querySelector('[data-form="precioCompra"]');
+    const campoPrecioVenta = document.querySelector('[data-form="precioVenta"]');
 
     // Control del mini formulario de categorías:
     btnAbrirFormularioCategoria.addEventListener("click", () => {
@@ -231,9 +235,16 @@ if(formularioEdicion !== null) {
         
         validar(campos, alertaHTML, listaErrores); // Método que retorna los errores encontrados
 
-        (listaErrores.length === 0) // Si no hay errores
-            ? metodosAJAX.editarProducto(formularioEdicion)
-            : console.log('Los datos no son válidos');
+        if(listaErrores.length === 0) { // Si no hay errores
+            if(parseInt(campoPrecioVenta.value) < parseInt(campoPrecioCompra.value)) {
+                if(confirm("Alerta: El precio de venta es menor al precio de compra. ¿Desea continuar con estos datos?") === true)
+                    metodosAJAX.editarProducto(formularioEdicion);
+            } else
+                metodosAJAX.editarProducto(formularioEdicion);
+        }else {
+            metodosModal.desplegarModal(contenedorMiniFormularioCategoria);
+            metodosModal.construirModalAlerta(contenedorMiniFormularioCategoria, listaErrores);
+        }
     });
 }
 
