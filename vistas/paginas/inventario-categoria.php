@@ -29,7 +29,7 @@ $lista_categorias = ControladorProductos::ctrlCategorias();
             <span class="alerta" id="alerta-edicion-categoria"></span>
         </span>
         <form action="post" id="formulario-edicion-categoria">
-            <label for="categoriaProductoEditar-txt">Seleccione la categoría a editar:</label>
+            <label for="categoriaProducto-txt">Seleccione la categoría a editar:</label>
             <select class="campo mayusculas" id="categoriaProducto-txt" name="categoriaProductoEditar-txt" data-form="categoriaID" required>
                 <option disabled selected>SELECCIONE CATEGORÍA...</option>
                 <?php
@@ -40,15 +40,15 @@ $lista_categorias = ControladorProductos::ctrlCategorias();
                 <?php } ?>
             </select>
 
-            <label>Nombre de la categoría:</label>
+            <label for="categoria_editar-txt">Nombre de la categoría:</label>
             <input class="campo mayusculas" type="text" placeholder="Categoria" id="categoria_editar-txt" name="categoria_editar-txt" autocomplete="off" minlength="3" maxlength="50" required>
 
             Para retirar esta categoría de las opciones del Inventario seleccione la opción 'Dar de baja' y después haga clic en 'Editar'.<br><br>
             Para reintegrarla, seleccione la opción 'Activo' y después haga clic en 'Editar'.
             <fieldset class="formulario__fieldset-2-columnas">
-                <label for="estadoCategoria-txt">Activo</label>
+                <label for="estado-activo">Activo</label>
                 <input type="radio" id='estado-activo' name="estadoCategoria-txt" value=1 data-form="estado" required>
-                <label for="estadoCategoria-txt">Dar de baja</label>
+                <label for="estado-inactivo">Dar de baja</label>
                 <input type="radio" id='estado-inactivo' name="estadoCategoria-txt" value=0 data-form="estado" required>
             </fieldset>
 

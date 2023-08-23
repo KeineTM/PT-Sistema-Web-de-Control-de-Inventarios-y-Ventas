@@ -105,13 +105,13 @@ ControladorOperaciones::ctrlCrearDevolucion($nombre_carrito, $tipo_operacion);
         
         <fieldset class="contenedor-campos-operaciones">
             <label for="metodo-pago-txt">Método de pago:</label>
-            <select class="campo" name="metodo-pago-txt" required  data-form="metodo-pago">
+            <select class="campo" name="metodo-pago-txt" id="metodo-pago-txt" required  data-form="metodo-pago">
                 <option value="1" selected>Efectivo</option>
                 <option value="2">Transferencia</option>
             </select>
 
             <label for="notas-txt">Motivo:</label>
-            <textarea class="campo" autocomplete="off" name="notas-txt" cols="20" rows="2" maxlength="250"  data-form="notas" required placeholder="Razón de devolución..."></textarea>
+            <textarea class="campo" autocomplete="off" name="notas-txt" id="notas-txt" cols="20" rows="2" maxlength="250"  data-form="notas" required placeholder="Razón de devolución..."></textarea>
 
             <input name="total-txt" type="hidden" value="<?= $totalFinal; ?>"  data-form="total">
         </fieldset>

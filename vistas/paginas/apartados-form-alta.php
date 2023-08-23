@@ -111,21 +111,21 @@ ControladorOperaciones::ctrlCrearApartado($nombre_carrito, $tipo_operacion);
             <!-- ----------- -->
 
             <label for="abono-txt" class="destacado">Abono:</label>
-            <input class="campo destacado requerido" autocomplete="off" type="number" placeholder="0.00" name="abono-txt" step="any" min="1" max="9999" required  data-form="abono">
+            <input class="campo destacado requerido" autocomplete="off" type="number" placeholder="0.00" name="abono-txt" id="abono-txt" step="any" min="1" max="9999" required  data-form="abono">
 
             <label for="restante-txt" class="destacado">Restante:</label>
-            <input class="campo no-borde" autocomplete="off" type="number" name="restante-txt" step="any" min="1" max="9999" disabled  data-form="restante">
+            <input class="campo no-borde" autocomplete="off" type="number" name="restante-txt" id="restante-txt" step="any" min="1" max="9999" disabled  data-form="restante">
         </fieldset>
         
         <fieldset class="contenedor-campos-operaciones">
             <label for="cliente_id-txt">Teléfono del cliente:</label>
-            <input type="number" step="any" class="campo requerido" placeholder="1234567890" name="cliente_id-txt" autocomplete="off" data-form="contacto_id" minlength="10" maxlength="10" required>
+            <input type="number" step="any" class="campo requerido" placeholder="1234567890" name="cliente_id-txt" id="cliente_id-txt" autocomplete="off" data-form="contacto_id" minlength="10" maxlength="10" required>
 
             <label for="notas-txt">Notas:</label>
-            <textarea class="campo" autocomplete="off" name="notas-txt" cols="20" rows="2" maxlength="250"  data-form="notas"></textarea>
+            <textarea class="campo" autocomplete="off" name="notas-txt" id="notas-txt" cols="20" rows="2" maxlength="250"  data-form="notas"></textarea>
             
             <label for="metodo-pago-txt">Método de pago:</label>
-            <select class="campo" name="metodo-pago-txt" required  data-form="metodo-pago">
+            <select class="campo" name="metodo-pago-txt" id="metodo-pago-txt" required  data-form="metodo-pago">
                 <option value="1" selected>Efectivo</option>
                 <option value="2">Transferencia</option>
             </select>

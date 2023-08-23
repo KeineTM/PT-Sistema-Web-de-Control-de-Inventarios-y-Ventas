@@ -1,7 +1,7 @@
 import { metodosValidacion } from "../validacion.js";
 
-let campoUsuario = document.getElementById('login-usuario');
-let campoPassword = document.getElementById('login-pass');
+let campoUsuario = document.getElementById('usuario-txt');
+let campoPassword = document.getElementById('password');
 let alertaUsuario = document.getElementById('alerta-usuario');
 let alertaPassword = document.getElementById('alerta-password');
 let btnEnviar = document.getElementById('btn-enviar');

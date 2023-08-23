@@ -80,9 +80,9 @@ $lista_categorias = ControladorProductos::ctrlCategoriasActivas();
         Para retirar este producto del inventario de venta seleccione la opción 'Dar de baja' y después haga clic en 'Editar'.<br><br>
         Para reintegrarlo, seleccione la opción 'Activo' y después haga clic en 'Editar'.
         <fieldset class="formulario__fieldset-2-columnas">
-            <label>Activo</label>
+            <label for="estado-activo">Activo</label>
             <input type="radio" id='estado-activo' name="estadoProducto-txt" value="1" data-form="estado" required <?php if($consulta[0]['estado'] === 1) echo 'checked' ?>>
-            <label>Dar de baja</label>
+            <label for="estado-inactivo">Dar de baja</label>
             <input type="radio" id='estado-inactivo' name="estadoProducto-txt" value="0" data-form="estado" required <?php if($consulta[0]['estado'] !== 1) echo 'checked' ?>>
         </fieldset>
 

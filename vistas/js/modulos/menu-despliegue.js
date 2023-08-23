@@ -1,5 +1,6 @@
-let contenedorMenu = document.getElementById("menu-contenedor");
-let btnAbrirMenu = document.getElementById("btn-abrir-menu");
+const contenedorMenu = document.getElementById("menu-contenedor");
+const btnAbrirMenu = document.getElementById("btn-abrir-menu");
+const opcionesDelMenu = document.querySelectorAll('[data-option]');
 
 const desplegarMenu = () => {
     contenedorMenu.classList.toggle('abrir-menu');
@@ -7,14 +8,16 @@ const desplegarMenu = () => {
 
 btnAbrirMenu.addEventListener('click', desplegarMenu);
 
-// ------------------------------------------------------
-/* Efectos del submenú desplegable
-const opcionesDelMenu = document.querySelectorAll('.menu__opciones');
+const resaltarModuloActual = (opcionesDelMenu) => {
+    const urlActual = window.location.search;
+    
+    // Detectando el módulo en el que se encuentra el usuario
+    opcionesDelMenu.forEach(opcion => {
+        if(urlActual.includes('?pagina=' + opcion.dataset.option)) {
+            opcion.style.backgroundColor = 'var(--color-rosa-oscuro)';
+        }
+    });
+    
+}
 
-if(opcionesDelMenu !== null) {
-    for (const opcion of opcionesDelMenu) {
-        opcion.addEventListener('click', () => {
-            opcion.classList.toggle('fondo-oscuro');
-        });
-    }
-}*/
+resaltarModuloActual(opcionesDelMenu);

@@ -23,12 +23,12 @@
 
     <form class="login-form" method="post" id="form-login">
         <label for="usuario-txt">Nombre de usuario:</label>
-        <input class="login-campo" type="text" name="login-usuario" id="login-usuario">
+        <input class="login-campo" type="text" name="login-usuario" id="usuario-txt">
         <span class="alerta" id="alerta-usuario">Debe llenar este campo</span>
 
         <label for="password">Contraseña:</label>
         <div class="contenedor-password">
-            <input class="login-campo" type="password" name="login-pass" id="login-pass">
+            <input class="login-campo" type="password" name="login-pass" id="password">
             <img class="ojito-pass" src="vistas/img/eye.svg" alt="Icono ver" id="ojito-pass" title="Ver contraseña">
         </div>
         <span class="alerta" id="alerta-password">Debe llenar este campo</span>
