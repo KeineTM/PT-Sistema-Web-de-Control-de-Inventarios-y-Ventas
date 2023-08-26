@@ -53,9 +53,12 @@ ControladorOperaciones::ctrlCrearApartado($nombre_carrito, $tipo_operacion);
 
 <!-- Formulario para agregar productos al carrito -->
 <form class="formulario destacado" method="post" id="form-agregar-producto">
-    <label for="idProducto-txt">Código del producto:</label>
-    <input class="campo destacado" autocomplete="off" type="text" name="idProducto-txt" id="idProducto-txt" maxlength="20" pattern="^[a-zA-Z0-9]{1,20}$" required>
-    <button type="submit" class="boton-form enviar" id="btnAgregarAlCarrito">Agregar</button>
+    <label for="idProducto-txt">Código de barras:</label>
+    <div class="una-linea">
+        <img class="formulario__icono" src="/vistas/img/barcode.svg" alt="Código-ícono">
+        <input class="campo destacado" autocomplete="off" type="text" name="idProducto-txt" id="idProducto-txt" maxlength="20" pattern="^[a-zA-Z0-9]{1,20}$" autofocus required>    
+    </div>
+    <button type="submit" class="boton-form enviar" id="btnAgregarAlCarrito">+</button>
 </form>
 <br>
 <!-- -------------------------------------------- -->
@@ -95,7 +98,7 @@ ControladorOperaciones::ctrlCrearApartado($nombre_carrito, $tipo_operacion);
 <!-- -------------------------------------------- -->
 
 <!-- Formulario de registro de la operación -->
-<form method="post" id="form-alta">
+<form method="post" id="form-apartado">
     <fieldset class="fieldset__envoltura form__operaciones">
         <fieldset class="contenedor-campos-operaciones">
             <!-- TOTAL FINAL -->

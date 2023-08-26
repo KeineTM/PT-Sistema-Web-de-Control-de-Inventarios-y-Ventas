@@ -65,10 +65,6 @@ class ModeloProductos extends ModeloConexion{
         return $this->consultasCUD();
     }
 
-    public function delete() {
-        
-    }
-
     /** Método que registra una categoría nueva */
     public function mdlRegistrarCategoria($listaDatos) {
         $this->registros = $listaDatos;
@@ -108,7 +104,7 @@ class ModeloProductos extends ModeloConexion{
         return $this->consultaRead();
     }
 
-    /** Método que recupera sólo los productos activos para una vista de catálogo */
+    /** Método que recupera sólo los productos para una vista de catálogo */
     public function mdlLeerParaPaginacion($limit, $offset, $estado=false) {
         $this->sentenciaSQL = ($estado)
         ? 'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
@@ -133,6 +129,64 @@ class ModeloProductos extends ModeloConexion{
             
             $pdo -> bindParam(1, $limit, PDO::PARAM_INT);
             $pdo -> bindParam(2, $offset, PDO::PARAM_INT);
+    
+            $pdo -> execute(); # Ejecuta
+            $this->registros = $pdo -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos
+    
+            return $this->registros;
+
+        } catch(PDOException $e) {
+            return 'Error: ' . $e->getMessage(); # Si hubo un error lo Retorna
+        } finally {
+            $pdo = null; # Limpia
+            $this->cerrarConexion(); # Cierra
+        }
+    }
+
+    /**
+     * Método que cuenta los productos en la tabla. 
+     * $estado = true = activos / false = todos.
+     */
+    public function mdlConteoProductosBuscados($palabraClave, $estado=false) {
+        $this->sentenciaSQL = ($estado) 
+            ? 'SELECT count(*) AS conteo FROM inventario 
+                WHERE estado = true
+                AND inventario.nombre LIKE ?'
+            : 'SELECT count(*) AS conteo FROM inventario
+                WHERE inventario.nombre LIKE ?';
+        return $this->consultaRead("%" . $palabraClave . "%");
+    }
+
+    /** Método que recupera sólo los productos para una vista de catálogo por palabra clave*/
+    public function mdlLeerParaPaginacionDeBusqueda($limit, $offset, $palabraClave, $estado=false) {
+        $palabraClave = '%'.$palabraClave.'%';
+        
+        $this->sentenciaSQL = ($estado)
+        ? 'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
+            inventario.unidades, inventario.precio_venta,
+            inventario.estado, inventario.foto_url, inventario.caducidad
+            FROM inventario
+            INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id
+            WHERE inventario.estado = true
+            AND inventario.nombre LIKE ?
+            ORDER BY CAST(inventario.producto_id AS UNSIGNED)
+            LIMIT ? OFFSET ?'
+        : 'SELECT inventario.producto_id, inventario.nombre, inventario.categoria_id, categorias_inventario.categoria, inventario.descripcion,
+            inventario.unidades, inventario.precio_venta,
+            inventario.estado, inventario.foto_url, inventario.caducidad
+            FROM inventario
+            INNER JOIN categorias_inventario ON inventario.categoria_id = categorias_inventario.categoria_id
+            WHERE inventario.nombre LIKE ?
+            ORDER BY CAST(inventario.producto_id AS UNSIGNED)
+            LIMIT ? OFFSET ?';
+
+        try {
+            $this->abrirConexion(); # Conecta
+            $pdo = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
+            
+            $pdo -> bindParam(1, $palabraClave, PDO::PARAM_STR);
+            $pdo -> bindParam(2, $limit, PDO::PARAM_INT);
+            $pdo -> bindParam(3, $offset, PDO::PARAM_INT);
     
             $pdo -> execute(); # Ejecuta
             $this->registros = $pdo -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos

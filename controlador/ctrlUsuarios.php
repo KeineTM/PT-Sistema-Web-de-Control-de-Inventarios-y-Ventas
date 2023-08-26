@@ -178,9 +178,11 @@
                 $resultado_registro = $usuario -> ctrlEditar($usuario_id);
 
                 if($resultado_registro === true) { # Registro exitoso
-                    echo '<div id="alerta-formulario" class=alerta-verde>Edición de usuario ' . $_POST['nombre-txt'] . ' ' . $_POST['apellido_paterno-txt'] . ' con folio: "' . substr($_POST['rfc-txt'], 0, 6) . '" exitosa</div>';
+                    echo '<script type="text/javascript">
+                    window.location.href = "index.php?pagina=personal&opciones=detalles&id=' . $usuario_id .'&estado=exito";
+                    </script>';
                 } else {
-                    echo '<div id="alerta-formulario" class=alerta-roja>Servidor: Error - Intente nuevamente</div>';
+                    echo '<div id="alerta-formulario" class=alerta-roja>Servidor: ' . $resultado_registro . '</div>';
                     exit;
                 }
             }
@@ -201,9 +203,6 @@
                 return "Error. No se han recibido los datos.";
             }
         }
-
-
-
 
         /**
          * Método que verifica y valida las credenciales de un usuario que solicita ingreso al sistema.
@@ -271,6 +270,16 @@
                 # Sino, reinicia la hora de actividad
                 $_SESSION["fechaLogin"] = $ahora;
             }
+        }
+
+        static public function ctrlConteoRegistros($id='') {
+            $modelo = new ModeloUsuarios();
+            return $modelo -> mdlConteoRegistros($id);
+        }
+
+        static public function ctrlLeerParaPaginacion($limit, $offset) {
+            $modelo = new ModeloUsuarios();
+            return $modelo -> mdlLeerParaPaginacion($limit, $offset);
         }
     }
 ?>

@@ -252,76 +252,13 @@ if(formularioEdicion !== null) {
 // BARRA DE BÚSQUEDA: Validaciones y eventos
 // -------------------------------------------------------------------------------------------------------
 const btnBuscarProductos = document.getElementById('btnBuscarProducto');
+const formularioBusqueda = document.querySelector('#barra-busqueda');
 const campoBuscarProducto = document.getElementById('buscarProducto-txt');
 const alertaBuscar = document.getElementById('alertaBuscar');
 
 // -------------------------------------------------------------------------------------------------------
-// Recuperación por medio de AJAX y listado de productos de la BD en tarjetas por páginas
+// Recuperación y listado de productos de la BD en tarjetas por páginas
 // -------------------------------------------------------------------------------------------------------
-/** Método que recibe un contenedor HTML y una lista JSON, construye una lista de productos y los incluye en el contenedor */
-const crearListaProductos = (contenedor, listaProductosJSON) => {
-    listaProductosJSON.forEach(producto => {
-        const tarjeta = document.createElement('span');
-        tarjeta.classList.add('tarjeta-producto');
-
-        const contenido = 
-            `<img src="${producto['foto_url']}" alt="Imagen ${producto['nombre']}">
-            <span>
-                <h3>${producto['nombre']}</h3>
-                <ul>
-                    <li>Código: ${producto['producto_id']}</li>
-                    <li>Categoría: ${producto['categoria']}</li>
-                    <li id="unidades_producto"></li>
-                    <li>Precio de venta: $${producto['precio_venta']}</li>
-                    <li><a href="index.php?pagina=inventario&opciones=detalles&id=${producto['producto_id']}">Ver detalles y editar</a></li>
-                </ul>
-            </span>`;
-
-        tarjeta.innerHTML = contenido; // Agrega el contenido de la tj
-
-        // Lógica para incluir las unidades
-        tarjeta.querySelector("#unidades_producto").innerHTML = (producto['unidades'] < 1)
-            ? `Unidades: Agotado`
-            : `Unidades: ${producto['unidades']}`;
-    
-        contenedor.appendChild(tarjeta);
-    });
-}
-
-/** Método que recupera con AJAX los registros de los productos en BD */
-const recuperarProductos = (contenedorHTML, palabraClave='') => {
-    contenedorHTML.innerText = 'Buscando...';
-
-    if(palabraClave !== '') {
-        const formData = new FormData();
-        formData.append('buscarProducto-txt', palabraClave);
-
-        fetch('controlador/ctrlInventario.php?funcion=listar-productos', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            contenedorHTML.innerText = '';
-            if(data == '')
-                contenedorHTML.innerText = `No hay coincidencias para '${palabraClave}'`;
-            else 
-                crearListaProductos(contenedorHTML, data);
-        }).catch(error => {
-            console.error('Error:', error);
-        });
-    } else {
-        fetch('controlador/ctrlInventario.php?funcion=listar-productos')
-        .then(response => response.json())
-        .then(data => {
-            contenedorHTML.innerText = '';
-            crearListaProductos(contenedorHTML, data);
-        }).catch(error => {
-            console.error('Error:', error);
-        });
-    }
-}
-
 if(btnBuscarProductos !== null) {
     btnBuscarProductos.addEventListener('click', () => {
         event.preventDefault();
@@ -329,15 +266,10 @@ if(btnBuscarProductos !== null) {
         alertaBuscar.style.visibility = 'hidden';
     
         if(campoBuscarProducto.value.length !== 0 && campoBuscarProducto.value.length < 80) {
-            contenedor.innerHTML = ""; // Limpia el contenedor antes de crear la tabla
-            let contenedorProductos = document.createElement('section');
-            contenedorProductos.classList.add('contenedor-productos');
-            contenedor.appendChild(contenedorProductos);
-            recuperarProductos(contenedorProductos, campoBuscarProducto.value); // AJAX
+            formularioBusqueda.submit();
         } else {
             alertaBuscar.innerText = "Debe ingresar una palabra clave"
             alertaBuscar.style.visibility = 'visible';
         }
-        
     });
 }

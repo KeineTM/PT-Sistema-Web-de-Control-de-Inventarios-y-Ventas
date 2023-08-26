@@ -1,6 +1,7 @@
 <section class="main-contenedor">
     
     <h2>Apartados</h2>
+    <br>
 
     <article id="subcontenedor">
     <?php
@@ -15,6 +16,8 @@
                 echo '<p class="alerta-verde">Eliminación exitosa</p>';
             if($_GET['opciones'] === 'error')
                 echo '<p class="alerta-roja">Ocurrió un error</p>';
+            if ($_GET['opciones'] === 'buscar-folio')
+                include 'vistas/paginas/buscar-folio.php';
         } else
             include 'vistas/paginas/apartados-form-alta.php';
     ?>
@@ -22,4 +25,4 @@
 
 </section>
 
-<script src="vistas/js/paginas/ventas.js"></script>
+<script type="module" src="vistas/js/paginas/ventas.js"></script>

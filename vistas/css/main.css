@@ -50,6 +50,14 @@ hr {
     color: var(--color-rosa);
 }
 
+.texto-verde {
+    color: var(--color-verde);
+}
+
+.texto-centrado {
+    text-align: center;
+}
+
 .destacado {
     font-size: 20px;
 }
@@ -64,10 +72,6 @@ hr {
 
 .resaltado {
     font-weight: bold;
-}
-
-.texto-centrado {
-    text-align: center;
 }
 
 .banner {

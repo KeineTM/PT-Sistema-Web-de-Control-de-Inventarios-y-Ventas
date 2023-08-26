@@ -75,8 +75,9 @@ const construirModalMensajeResultado = (contenedor, mensaje) => {
         `<div class="modal__contenedor" id="contenedorModalAlerta">
             <span class="formulario__encabezado">
                 <img class="formulario__icono" src="vistas/img/circle-check.svg" alt="icono">
-                <h2 class="destacado" id="contenedorRespuesta">Resultado: ${mensaje}</h2>
+                <h2 class="destacado" id="contenedorRespuesta">Resultado: </h2>
             </span>
+            <p class="texto-centrado">${mensaje}</p>
             <button class="boton otro" id="btnCerrarMiniModal">Cerrar</button>
         </div>`;
 

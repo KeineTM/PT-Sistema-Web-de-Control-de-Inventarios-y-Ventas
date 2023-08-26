@@ -49,7 +49,6 @@
 .boton-form {
     display: grid;
     place-content: center;
-    padding: 3px;
     border-radius: 5px;
     border: none;
     font-size: larger;
@@ -69,6 +68,7 @@
     color: var(--color-blanco);
     background: var(--color-verde);
     height: 3rem;
+    width: 100%;
     font-size: x-large;
 }
 
@@ -79,6 +79,8 @@
 .otro {
     color: var(--color-blanco);
     background: var(--color-rojo);
+    height: 3rem;
+    width: 100%;
     font-size: x-large;
 }
 

@@ -7,6 +7,8 @@
                 include 'vistas/paginas/inventario-form-alta.php';
             if ($_GET['opciones'] === 'listar')
                 include 'vistas/paginas/inventario-listar.php';
+            if ($_GET['opciones'] === 'buscar')
+                include 'vistas/paginas/inventario-buscar.php';
             if ($_GET['opciones'] === 'detalles')
                 include 'vistas/paginas/inventario-detalles-editar.php';
             if ($_GET['opciones'] === 'categoria')

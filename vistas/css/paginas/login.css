@@ -56,6 +56,10 @@
     filter: var(--filter-rosa);
 }
 
+.icono-login:hover {
+    filter: var(--filter-rosa-oscuro);
+}
+
 .login-form .boton-interior-blanco {
     height: 3rem;
     width: 3rem;

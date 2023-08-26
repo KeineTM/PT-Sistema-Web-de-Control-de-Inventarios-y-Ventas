@@ -1,11 +1,20 @@
-<!-- <form class="boton-main" id="barra-busqueda">
-    <input type="text" class="campo" name="buscarEmpleado-txt" autocomplete="off" placeholder="Buscar..." minlength="3" maxlength="240" required>
+<?php ControladorContactos::ctrlBuscarTodos() ?>
+<!-- Barra de búsqueda -->
+<form class="boton-main" method="post" id="barra-busqueda">
+    <input type="text" class="campo" name="buscarContacto-txt" autocomplete="off" placeholder="Teléfono o Nombre" minlength="3" maxlength="240" required>
     <button class="boton enviar" id="btnBuscar"><img src="vistas/img/magnifying-glass.svg" alt=""></button>
 </form>
-<span class="alerta" id="alertaBuscar"></span> -->
-
+<span class="alerta" id="alertaBuscar"></span>
+<!-- ------------------------------------------- -->
 
 <?php
+if(!isset($_GET['clave'])) {
+    echo '<p class="alerta-roja">No se ingresaron datos para la búsqueda.</p>';
+    die();
+}
+
+$palabra_clave = $_GET['clave'];
+
 $registrosPorPagina = 20;
 $pagina = 1;
 
@@ -14,7 +23,8 @@ if (isset($_GET['pag'])) $pagina = intval($_GET['pag']);
 $limit = $registrosPorPagina; # No. registros en pantalla
 $offset = ($pagina - 1) * $registrosPorPagina; # Saltado de registros en páginas != 1
 
-$conteo = ControladorUsuarios::ctrlConteoRegistros(); # Recupera el no. de registros
+$modelo = new ModeloContactos();
+$conteo = $modelo->mdlConteoRegistros(); # Recupera el no. de registros
 
 if ($conteo[0]['conteo'] === 0) {
     echo '<p class="alerta-roja">No hay contactos registrados.</p>';
@@ -25,9 +35,7 @@ if ($conteo[0]['conteo'] === 0) {
 $paginas = ceil($conteo[0]['conteo'] / $registrosPorPagina);
 
 // Retorna los registros por página
-$consulta = ControladorUsuarios::ctrlLeerParaPaginacion($limit, $offset);
-
-$titulo = 'Directorio de empleados';
+$consulta = ControladorContactos::ctlBuscarEnFullText($palabra_clave, $limit, $offset);
 
 # Valida el resultado de la consulta
 # Si no es una lista es porque retornó un error
@@ -37,32 +45,30 @@ if (!is_array($consulta) || sizeof($consulta) === 0) {
     die();
 }
 ?>
+<h3 class="destacado"><?= $conteo[0]['conteo'] ?> resultados para "<?= $palabra_clave ?>":</h3>
 
 <p>Página <?= $pagina ?> de <?= $paginas ?></p>
 
 <section class="contenedor__tabla">
-    <h3 class="tabla__titulo"><?= $titulo ?></h3>
-    <p>Puede acceder la información completa del empleado y editarla haciendo clic en los <span class="texto-rosa">Detalles</span> del ID de usuario.</p><br>
-    <!-- -------------Tabla ---------- -->
+    <p>Puede acceder la información completa del contacto y editarlos haciendo clic en los <span class="texto-rosa">Detalles</span> del número de teléfono.</p><br>
+    <!-- -------------Tabla de ventas por tiempo ---------- -->
     <table class="tabla">
         <thead>
             <tr>
-                <th>ID Usuario</th>
                 <th>Nombre</th>
                 <th>Teléfono</th>
-                <th>RFC</th>
-                <th>Activo</th>
+                <th>Notas</th>
+                <th>Tipo</th>
             </tr>
         </thead>
         <tbody>
             <!-- Contenido -->
-            <?php foreach ($consulta as $usuario) {  ?>
+            <?php foreach ($consulta as $contacto) {  ?>
                 <tr>
-                    <td><a class="texto-rosa" href="index.php?pagina=personal&opciones=detalles&id=<?= $usuario['usuario_id'] ?>"><?= $usuario['usuario_id'] ?><br>Detalles</a></td>
-                    <td><?= $usuario['nombre'] . ' ' . $usuario['apellido_paterno'] . ' ' . $usuario['apellido_materno'] ?></td>
-                    <td><?= $usuario['telefono'] ?></td>
-                    <td><?= $usuario['rfc'] ?></td>
-                    <td><?= ($usuario['estado'] === 1) ? 'Sí' : 'No' ?></td>
+                    <td><?= $contacto['nombre'] . ' ' . $contacto['apellido_paterno'] . ' ' . $contacto['apellido_materno'] ?></td>
+                    <td><a class="texto-rosa" href="index.php?pagina=directorio&opciones=detalles&id=<?= $contacto['contacto_id'] ?>"><?= $contacto['contacto_id'] ?><br>Detalles</a></td>
+                    <td><?= $contacto['notas'] ?></td>
+                    <td><?= $contacto['tipo_contacto'] ?></td>
                 </tr>
             <?php } ?>
         </tbody>
@@ -73,7 +79,7 @@ if (!is_array($consulta) || sizeof($consulta) === 0) {
 <ul class="paginacion">
     <?php if ($pagina > 1) { ?>
         <li>
-            <a href="index.php?pagina=personal&opciones=listar&pag=<?php echo $pagina - 1 ?>">
+            <a href="index.php?pagina=directorio&opciones=listar&pag=<?php echo $pagina - 1 ?>">
                 <span aria-hidden="true">&laquo;</span>
             </a>
         </li>
@@ -81,14 +87,14 @@ if (!is_array($consulta) || sizeof($consulta) === 0) {
 
     <?php for ($x = 1; $x <= $paginas; $x++) { ?>
         <li class="<?php if ($x == $pagina) echo "activa" ?>">
-            <a href="index.php?pagina=personal&opciones=listar&pag=<?php echo $x ?>">
+            <a href="index.php?pagina=directorio&opciones=listar&pag=<?php echo $x ?>">
                 <?php echo $x ?></a>
         </li>
     <?php } ?>
 
     <?php if ($pagina < $paginas) { ?>
         <li>
-            <a href="index.php?pagina=personal&opciones=listar&pag=<?php echo $pagina + 1 ?>">
+            <a href="index.php?pagina=directorio&opciones=listar&pag=<?php echo $pagina + 1 ?>">
                 <span aria-hidden="true">&raquo;</span>
             </a>
         </li>

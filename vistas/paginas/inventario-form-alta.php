@@ -13,7 +13,7 @@ $lista_categorias = ControladorProductos::ctrlCategoriasActivas();
     <!-- 1/2 -->
     <fieldset class="formulario__fieldset">
         <label for="idProducto-txt">Código o Folio:</label>
-        <input type="text" class="campo requerido mayusculas" placeholder="ID del producto" name="idProducto-txt" id="idProducto-txt" autocomplete="off" data-form="productoID" maxlength="20" pattern="^[a-zA-Z0-9]{1,20}$" autofocus required>
+        <input type="text" class="campo requerido mayusculas" placeholder="ABC12345678910" name="idProducto-txt" id="idProducto-txt" autocomplete="off" data-form="productoID" maxlength="20" pattern="^[a-zA-Z0-9]{1,20}$" autofocus required>
 
         <label for="nombreProducto-txt">Nombre del producto:</label>
         <input type="text" class="campo requerido" placeholder="Nombre" name="nombreProducto-txt" id="nombreProducto-txt" autocomplete="off" data-form='nombreProducto' maxlength="80" minlength="4" required>

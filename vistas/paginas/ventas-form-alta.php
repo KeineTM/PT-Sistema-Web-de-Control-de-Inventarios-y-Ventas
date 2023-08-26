@@ -55,9 +55,12 @@ ControladorOperaciones::ctrlCrearVenta($nombre_carrito, $tipo_operacion);
 
 <!-- Formulario para agregar productos al carrito -->
 <form class="formulario destacado" method="post" id="form-agregar-producto">
-    <label for="idProducto-txt">Código del producto:</label>
-    <input class="campo destacado" autocomplete="off" type="text" name="idProducto-txt" id="idProducto-txt" maxlength="20" pattern="^[a-zA-Z0-9]{1,20}$" autofocus required>
-    <button type="submit" class="boton-form enviar" id="btnAgregarAlCarrito">Agregar</button>
+    <label for="idProducto-txt">Código de barras:</label>
+    <div class="una-linea">
+        <img class="formulario__icono" src="/vistas/img/barcode.svg" alt="Código-ícono">
+        <input class="campo destacado" autocomplete="off" type="text" name="idProducto-txt" id="idProducto-txt" maxlength="20" pattern="^[a-zA-Z0-9]{1,20}$" autofocus required>    
+    </div>
+    <button type="submit" class="boton-form enviar" id="btnAgregarAlCarrito">+</button>
 </form>
 <br>
 <!-- -------------------------------------------- -->
@@ -111,22 +114,22 @@ ControladorOperaciones::ctrlCrearVenta($nombre_carrito, $tipo_operacion);
                 ?>
             </h3>
             <label for="descuento-aplicado" class="destacado" id="lbl-descuento-aplicado"></label>
-            <input class="campo no-borde" autocomplete="off" type="number" name="descuento-aplicado" step="any" min="1" max="9999" disabled>
+            <input class="campo no-borde" autocomplete="off" type="number" name="descuento-aplicado" id="descuento-aplicado" step="any" min="1" max="9999" disabled>
             <!-- ----------- -->
         </fieldset>
         
         <fieldset class="contenedor-campos-operaciones">
             <label for="descuento-txt">Descuento:</label>
-            <input class="campo" autocomplete="off" type="number" placeholder="0.00" name="descuento-txt" step="any" min="0" max="9999" data-form="descuento">
+            <input class="campo" autocomplete="off" type="number" placeholder="0.00" name="descuento-txt" id="descuento-txt" step="any" min="0" max="9999" data-form="descuento">
             
             <label for="metodo-pago-txt">Método de pago:</label>
-            <select class="campo" name="metodo-pago-txt" required  data-form="metodo-pago">
+            <select class="campo" name="metodo-pago-txt" id="metodo-pago-txt" required  data-form="metodo-pago">
                 <option value="1" selected>Efectivo</option>
                 <option value="2">Transferencia</option>
             </select>
 
             <label for="notas-txt">Notas:</label>
-            <textarea class="campo" autocomplete="off" name="notas-txt" cols="20" rows="1" maxlength="250"  data-form="notas"></textarea>
+            <textarea class="campo" autocomplete="off" name="notas-txt" id="notas-txt" cols="20" rows="1" maxlength="250"  data-form="notas"></textarea>
 
             <input name="total-txt" type="hidden" value="<?= $totalFinal; ?>"  data-form="total">
         </fieldset>

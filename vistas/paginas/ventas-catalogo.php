@@ -1,8 +1,12 @@
-<form method="post" action="index.php?pagina=ventas&opciones=buscar" class="boton-main" id="barra-busqueda-producto">
-    <input type="text" class="campo" name="buscarProducto-txt" autocomplete="off" id="buscarProducto-txt" placeholder="Buscar producto" maxlength="80" min='3' required>
+<?php ControladorOperaciones::ctrlBuscarProductos() ?>
+<!-- Barra de búsqueda -->
+<br>
+<form class="boton-main" method="post" id="barra-busqueda">
+    <input type="text" class="campo" name="buscarProducto-txt" autocomplete="off" id="buscarProducto-txt" placeholder="Buscar por nombre..." maxlength="80" min='3' required>
     <button class="boton enviar" id="btnBuscarProducto"><img src="vistas/img/magnifying-glass.svg" alt="Buscar"></button>
 </form>
 <span class="alerta" id="alertaBuscar"></span>
+<!-- ------------------------------------------- -->
 
 <?php
 $productosPorPagina = 20;

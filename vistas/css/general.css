@@ -23,6 +23,7 @@
     --filter-rosa: invert(71%) sepia(24%) saturate(4560%) hue-rotate(302deg) brightness(102%) contrast(101%);
     --filter-crema: invert(94%) sepia(69%) saturate(721%) hue-rotate(304deg) brightness(99%) contrast(101%);
     --filter-blanco: invert(88%) sepia(73%) saturate(15%) hue-rotate(210deg) brightness(100%) contrast(105%);
+    --filter-rosa-oscuro: invert(29%) sepia(100%) saturate(1312%) hue-rotate(318deg) brightness(79%) contrast(91%);
 }
 
 html {

@@ -12,7 +12,10 @@ ControladorOperaciones::quitarDelCarrito($nombre_carrito, $tipo_operacion);
 ControladorOperaciones::btnVaciarCarrito($nombre_carrito, $tipo_operacion);
 ControladorOperaciones::ctrlCrearDevolucion($nombre_carrito, $tipo_operacion);
 ?>    
-<span class="destacado"><img class="formulario__icono" src="vistas/img/circle-exclamation.svg" alt="Alerta"> Sólo se aceptan devoluciones hasta 1 día después de la compra</span>
+<span class="destacado">
+    <img class="formulario__icono" src="vistas/img/circle-exclamation.svg" alt="Alerta">
+    Sólo se aceptan devoluciones hasta 1 día después de la compra
+</span>
 <span class="formulario__encabezado">
     <img class="formulario__icono" src="vistas/img/file-invoice.svg" alt="Formulario">
     <h2>Formulario de Devolución</h2>
@@ -46,9 +49,12 @@ ControladorOperaciones::ctrlCrearDevolucion($nombre_carrito, $tipo_operacion);
 
 <!-- Formulario para agregar productos al carrito -->
 <form class="formulario destacado" method="post" id="form-agregar-producto">
-    <label for="idProducto-txt">Código del producto:</label>
-    <input class="campo destacado" autocomplete="off" type="text" name="idProducto-txt" id="idProducto-txt" maxlength="20" pattern="^[a-zA-Z0-9]{1,20}$" required>
-    <button type="submit" class="boton-form enviar" id="btnAgregarAlCarrito">Agregar</button>
+    <label for="idProducto-txt">Código de barras:</label>
+    <div class="una-linea">
+        <img class="formulario__icono" src="/vistas/img/barcode.svg" alt="Código-ícono">
+        <input class="campo destacado" autocomplete="off" type="text" name="idProducto-txt" id="idProducto-txt" maxlength="20" pattern="^[a-zA-Z0-9]{1,20}$" autofocus required>    
+    </div>
+    <button type="submit" class="boton-form enviar" id="btnAgregarAlCarrito">+</button>
 </form>
 <br>
 <!-- -------------------------------------------- -->
@@ -87,7 +93,7 @@ ControladorOperaciones::ctrlCrearDevolucion($nombre_carrito, $tipo_operacion);
 <!-- -------------------------------------------- -->
 
 <!-- Formulario de registro de la operación -->
-<form method="post" id="form-alta">
+<form method="post" id="form-devolucion">
     <fieldset class="fieldset__envoltura form__operaciones">
         <fieldset class="contenedor-campos-operaciones">
             <!-- TOTAL FINAL -->

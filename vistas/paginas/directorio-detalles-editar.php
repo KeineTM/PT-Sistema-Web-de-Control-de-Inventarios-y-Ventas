@@ -80,14 +80,17 @@ ControladorContactos::eliminarContacto();
         </fieldset>
 
         <input name="contacto_id_original-txt" type="hidden" value=<?= $consulta[0]['contacto_id'] ?> required readonly>
+        
+        <fieldset class="formulario__botones-contenedor">
+            <button type="submit" class="boton-form enviar" id="btnRegistrar">Editar</button>
+            <button type="submit" class="boton-form otro" id="btnEliminar">Eliminar</button>
+        </fieldset>
 
-        <button type="submit" class="boton-form enviar" id="btnRegistrar">Editar</button>
     </fieldset>
 </form>
 <?php # --------- Control: Sólo el administrador puede borrar operaciones de la BD
 if ($_SESSION['tipoUsuarioSesion'] === 'Administrador') { ?>
     <form method="post" id="formulario-eliminar-contacto">
         <input name="contacto_id_eliminar-txt" type="hidden" value=<?= $consulta[0]['contacto_id'] ?> required>
-        <button type="submit" class="boton-form otro" id="btnEliminar">Eliminar Contacto</button>
     </form>
 <?php } ?>

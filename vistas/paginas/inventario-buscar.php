@@ -1,4 +1,20 @@
+<?php ControladorProductos::ctrlBuscarTodos() ?>
+<!-- Barra de búsqueda -->
+<br>
+<form class="boton-main" method="post" id="barra-busqueda">
+    <input type="text" class="campo" name="buscarProducto-txt" autocomplete="off" id="buscarProducto-txt" placeholder="Buscar por nombre..." maxlength="80" min='3' required>
+    <button class="boton enviar" id="btnBuscarProducto"><img src="vistas/img/magnifying-glass.svg" alt="Buscar"></button>
+</form>
+<span class="alerta" id="alertaBuscar"></span>
+<!-- ------------------------------------------- -->
+
 <?php
+if(!isset($_GET['clave'])) {
+    echo '<p class="alerta-roja">No se ingresaron datos para la búsqueda.</p>';
+    die();
+}
+
+$palabraClave = $_GET['clave'];
 $productosPorPagina = 20;
 $pagina = 1;
 
@@ -8,10 +24,10 @@ $limit = $productosPorPagina; # No. productos en pantalla
 $offset = ($pagina - 1) * $productosPorPagina; # Saltado de productos en páginas != 1
 
 $modelo = new ModeloProductos();
-$conteo = $modelo->mdlConteoProductos(); # Recupera el no. de productos
+$conteo = $modelo->mdlConteoProductosBuscados($palabraClave); # Recupera el no. de productos
 
 if ($conteo[0]['conteo'] === 0) {
-    echo 'No hay productos registrados.';
+    echo '<p class="alerta-roja">No hay coincidencias.</p>';
     die();
 }
 
@@ -19,21 +35,9 @@ if ($conteo[0]['conteo'] === 0) {
 $paginas = ceil($conteo[0]['conteo'] / $productosPorPagina);
 
 // Retorna los productos por página
-$productos = $modelo->mdlLeerParaPaginacion($limit, $offset);
-
-ControladorProductos::ctrlBuscarTodos();
+$productos = ControladorProductos::LeerParaPaginacion($limit, $offset, $palabraClave);
 ?>
-<br>
-
-<!-- Barra de búsqueda -->
-<form class="boton-main" method="post" id="barra-busqueda">
-    <input type="text" class="campo" name="buscarProducto-txt" autocomplete="off" id="buscarProducto-txt" placeholder="Buscar por nombre..." maxlength="80" min='3' required>
-    <button class="boton enviar" id="btnBuscarProducto"><img src="vistas/img/magnifying-glass.svg" alt="Buscar"></button>
-</form>
-<span class="alerta" id="alertaBuscar"></span>
-<!-- ------------------------------------------- -->
-
-<h2>Total de productos: <?= $conteo[0]['conteo'] ?></h2>
+<h3 class="destacado"><?= $conteo[0]['conteo'] ?> resultados para "<?= $palabraClave ?>":</h3>
 
 <p>Página <?= $pagina ?> de <?= $paginas ?></p>
 

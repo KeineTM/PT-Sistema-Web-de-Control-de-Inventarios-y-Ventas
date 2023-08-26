@@ -158,65 +158,6 @@ class ModeloOperaciones extends ModeloConexion {
         return $this->consultasCUD();
     }
 
-    /** Método que devuelve los registros de operaciones tipo venta dentro de un rango de tiempo */
-    public function mdlLeerOperacionesPorRangoDeFecha($fecha_inicio, $fecha_fin, $tipo_operacion_id) {
-        $this->sentenciaSQL = ($tipo_operacion_id !== 'AP')
-            ? 'SELECT operaciones.operacion_id,
-            productos_incluidos.producto_id, productos_incluidos.unidades, 
-            inventario.nombre, inventario.precio_venta,
-            productos_incluidos.total_acumulado,
-            operaciones.subtotal, operaciones.descuento, operaciones.total, operaciones.notas, operaciones.tipo_operacion, operaciones.estado,
-            metodos_pago.metodo,
-            abonos.fecha, abonos.empleado_id, abonos.abono,
-            CONCAT(usuarios.nombre," ", usuarios.apellido_paterno," ", usuarios.apellido_materno) AS nombre_completo
-            FROM operaciones
-            INNER JOIN productos_incluidos ON operaciones.operacion_id = productos_incluidos.operacion_id
-            INNER JOIN inventario ON productos_incluidos.producto_id = inventario.producto_id
-            INNER JOIN abonos ON operaciones.operacion_id = abonos.operacion_id
-            INNER JOIN metodos_pago ON abonos.metodo_pago = metodos_pago.metodo_id
-            INNER JOIN usuarios ON usuarios.usuario_id = abonos.empleado_id
-            WHERE operaciones.tipo_operacion = ? AND abonos.fecha >= ? AND abonos.fecha < ?
-            GROUP BY operaciones.operacion_id'
-            : 'SELECT operaciones.operacion_id,
-            productos_incluidos.producto_id, productos_incluidos.unidades, 
-            inventario.nombre, inventario.precio_venta,
-            productos_incluidos.total_acumulado,
-            operaciones.subtotal, operaciones.descuento, operaciones.total, operaciones.notas, operaciones.tipo_operacion, operaciones.estado,
-            metodos_pago.metodo,
-            abonos.fecha, abonos.empleado_id, abonos.abono,
-            CONCAT(contactos.nombre," ", contactos.apellido_paterno) AS nombre_cliente,
-            CONCAT(usuarios.nombre," ", usuarios.apellido_paterno," ", usuarios.apellido_materno) AS nombre_completo
-            FROM operaciones
-            INNER JOIN productos_incluidos ON operaciones.operacion_id = productos_incluidos.operacion_id
-            INNER JOIN inventario ON productos_incluidos.producto_id = inventario.producto_id
-            INNER JOIN abonos ON operaciones.operacion_id = abonos.operacion_id
-            INNER JOIN metodos_pago ON abonos.metodo_pago = metodos_pago.metodo_id
-            INNER JOIN usuarios ON usuarios.usuario_id = abonos.empleado_id
-            INNER JOIN contactos ON operaciones.contacto_id = contactos.contacto_id
-            WHERE operaciones.tipo_operacion = ? AND abonos.fecha >= ? AND abonos.fecha < ?
-            GROUP BY operaciones.operacion_id';
-        
-        try {
-            $this->abrirConexion(); # Conecta
-            $pdo = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
-            
-            $pdo -> bindParam(1, $tipo_operacion_id);
-            $pdo -> bindParam(2, $fecha_inicio);
-            $pdo -> bindParam(3, $fecha_fin);
-    
-            $pdo -> execute(); # Ejecuta
-            $this->registros = $pdo -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos
-    
-            return $this->registros;
-
-        } catch(PDOException $e) {
-            return 'Error: ' . $e->getMessage(); # Si hubo un error lo Retorna
-        } finally {
-            $pdo = null; # Limpia
-            $this->cerrarConexion(); # Cierra
-        } 
-    }
-
     /** Método que reintegra el número de productos indicados a la tabla de inventario */
     public function mdlRestaurarProductoAlInventario($listaDatos) {
         $this->sentenciaSQL = 'UPDATE inventario SET unidades = unidades + ? WHERE producto_id = ?';
@@ -291,5 +232,104 @@ class ModeloOperaciones extends ModeloConexion {
             $sentenciaEliminarOperacion = null;
             $this->cerrarConexion();
         }
+    }
+
+    //--------------------------------------------------------------------------------
+    // Métodos de paginación:
+    //--------------------------------------------------------------------------------
+    /**
+     * Método que cuenta los registros en la tabla. 
+     */
+    public function mdlConteoRegistros($fecha_inicio, $fecha_fin, $tipo_operacion_id) {
+        $this->sentenciaSQL =  'SELECT count(*) AS conteo
+            FROM operaciones
+            INNER JOIN abonos ON operaciones.operacion_id = abonos.operacion_id
+            WHERE operaciones.tipo_operacion = ? 
+            AND abonos.fecha >= ? AND abonos.fecha < ?';
+
+        try {
+            $this->abrirConexion(); # Conecta
+            $pdo = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
+            
+            $pdo -> bindParam(1, $tipo_operacion_id);
+            $pdo -> bindParam(2, $fecha_inicio);
+            $pdo -> bindParam(3, $fecha_fin);
+
+            $pdo -> execute(); # Ejecuta
+            $this->registros = $pdo -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos
+
+            return $this->registros;
+
+        } catch(PDOException $e) {
+            return 'Error: ' . $e->getMessage(); # Si hubo un error lo Retorna
+        } finally {
+            $pdo = null; # Limpia
+            $this->cerrarConexion(); # Cierra
+        } 
+    }
+
+    /** Método que recupera los registros para la paginación dentro de un rango de tiempo */
+    public function mdlLeerOperacionesPorRangoDeFecha($fecha_inicio, $fecha_fin, $tipo_operacion_id, $limit, $offset) {
+        $this->sentenciaSQL = ($tipo_operacion_id !== 'AP')
+            ? 'SELECT operaciones.operacion_id,
+            productos_incluidos.producto_id, productos_incluidos.unidades, 
+            inventario.nombre, inventario.precio_venta,
+            productos_incluidos.total_acumulado,
+            operaciones.subtotal, operaciones.descuento, operaciones.total, operaciones.notas, operaciones.tipo_operacion, operaciones.estado,
+            metodos_pago.metodo,
+            abonos.fecha, abonos.empleado_id, abonos.abono,
+            CONCAT(usuarios.nombre," ", usuarios.apellido_paterno," ", usuarios.apellido_materno) AS nombre_completo
+            FROM operaciones
+            INNER JOIN productos_incluidos ON operaciones.operacion_id = productos_incluidos.operacion_id
+            INNER JOIN inventario ON productos_incluidos.producto_id = inventario.producto_id
+            INNER JOIN abonos ON operaciones.operacion_id = abonos.operacion_id
+            INNER JOIN metodos_pago ON abonos.metodo_pago = metodos_pago.metodo_id
+            INNER JOIN usuarios ON usuarios.usuario_id = abonos.empleado_id
+            WHERE operaciones.tipo_operacion = ? 
+            AND abonos.fecha >= ? AND abonos.fecha < ?
+            GROUP BY operaciones.operacion_id
+            LIMIT ? OFFSET ?'
+            : 'SELECT operaciones.operacion_id,
+            productos_incluidos.producto_id, productos_incluidos.unidades, 
+            inventario.nombre, inventario.precio_venta,
+            productos_incluidos.total_acumulado,
+            operaciones.subtotal, operaciones.descuento, operaciones.total, operaciones.notas, operaciones.tipo_operacion, operaciones.estado,
+            metodos_pago.metodo,
+            abonos.fecha, abonos.empleado_id, abonos.abono,
+            CONCAT(contactos.nombre," ", contactos.apellido_paterno) AS nombre_cliente,
+            CONCAT(usuarios.nombre," ", usuarios.apellido_paterno," ", usuarios.apellido_materno) AS nombre_completo
+            FROM operaciones
+            INNER JOIN productos_incluidos ON operaciones.operacion_id = productos_incluidos.operacion_id
+            INNER JOIN inventario ON productos_incluidos.producto_id = inventario.producto_id
+            INNER JOIN abonos ON operaciones.operacion_id = abonos.operacion_id
+            INNER JOIN metodos_pago ON abonos.metodo_pago = metodos_pago.metodo_id
+            INNER JOIN usuarios ON usuarios.usuario_id = abonos.empleado_id
+            INNER JOIN contactos ON operaciones.contacto_id = contactos.contacto_id
+            WHERE operaciones.tipo_operacion = ? 
+            AND abonos.fecha >= ? AND abonos.fecha < ?
+            GROUP BY operaciones.operacion_id
+            LIMIT ? OFFSET ?';
+        
+        try {
+            $this->abrirConexion(); # Conecta
+            $pdo = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
+            
+            $pdo -> bindParam(1, $tipo_operacion_id);
+            $pdo -> bindParam(2, $fecha_inicio);
+            $pdo -> bindParam(3, $fecha_fin);
+            $pdo -> bindParam(4, $limit, PDO::PARAM_INT);
+            $pdo -> bindParam(5, $offset, PDO::PARAM_INT);
+    
+            $pdo -> execute(); # Ejecuta
+            $this->registros = $pdo -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos
+    
+            return $this->registros;
+
+        } catch(PDOException $e) {
+            return 'Error: ' . $e->getMessage(); # Si hubo un error lo Retorna
+        } finally {
+            $pdo = null; # Limpia
+            $this->cerrarConexion(); # Cierra
+        } 
     }
 }

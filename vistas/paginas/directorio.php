@@ -15,6 +15,8 @@
                 echo '<p class="alerta-verde">Eliminación exitosa</p>';
             if($_GET['opciones'] === 'error')
                 echo '<p class="alerta-roja">Ocurrió un error</p>';
+            if ($_GET['opciones'] === 'buscar')
+                include 'vistas/paginas/directorio-buscar.php';
         } else
             include 'vistas/paginas/directorio-form-alta.php';
     ?>

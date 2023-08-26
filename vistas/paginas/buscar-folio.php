@@ -1,60 +1,43 @@
 <?php 
 $modulo = $_GET['pagina'];
-ControladorOperaciones::ctrlBuscarTodos($modulo)  
+ControladorOperaciones::ctrlBuscarTodos($modulo) 
 ?>
 <!-- Barra de búsqueda -->
 <form class="boton-main" method="post" id="barra-busqueda">
-    <input type="number" step="any" class="campo" name="buscarOperacion-txt" autocomplete="off" id="buscarOperacion-txt" placeholder="Buscar..." maxlength="18" min='1' required>
+    <input type="number" step="any" class="campo" name="buscarOperacion-txt" autocomplete="off" id="buscarOperacion-txt" placeholder="Buscar folio..." maxlength="18" min='1' required>
     <button class="boton enviar" id="btnBuscarOperacion"><img src="vistas/img/magnifying-glass.svg" alt=""></button>
 </form>
 <span class="alerta" id="alertaBuscar"></span>
 <!-- ------------------------------------------- -->
 
 <?php
-# Definición de fechas:
-date_default_timezone_set('America/Mexico_City');
-
-$fecha_fin = date("Y-m-d") . " 23:59:00"; # HOY
-$fecha_inicio = date("Y-m-d", strtotime($fecha_fin . "- 1 month")) . " 00:00:00"; # HACE UN MES
-$titulo = 'Tabla de apartados el mes';
-
-$tipo_operacion_id = 'DE';
-$registrosPorPagina = 20;
-$pagina = 1;
-
-if (isset($_GET['pag'])) $pagina = intval($_GET['pag']);
-
-$limit = $registrosPorPagina; # No. registros en pantalla
-$offset = ($pagina - 1) * $registrosPorPagina; # Saltado de registros en páginas != 1
-
-$modelo = new ModeloOperaciones();
-$conteo = $modelo->mdlConteoRegistros($fecha_inicio, $fecha_fin, $tipo_operacion_id); # Recupera el no. de registros
-
-if ($conteo[0]['conteo'] === 0) {
-    echo '<p class="alerta-roja">No hay operaciones registradas.</p>';
+if(!isset($_GET['clave'])) {
+    echo '<p class="alerta-roja">No se ingresaron datos para la búsqueda.</p>';
     die();
 }
 
-// Calcula el no. de páginas totales
-$paginas = ceil($conteo[0]['conteo'] / $registrosPorPagina);
+$clave = $_GET['clave'];
+$tipo_operacion_id = 'VE';
 
-$consulta = ControladorOperaciones::ctrlLeerOperacionesPorRangoDeFecha($fecha_inicio, $fecha_fin, $tipo_operacion_id, $limit, $offset);
+$consulta = ControladorOperaciones::ctrlLeer($clave);
 
 # Valida el resultado de la consulta
 # Si no es una lista es porque retornó un error
 # Si es una lista vacía es porque no encontró coincidencias
 if (!is_array($consulta) || sizeof($consulta) === 0) {
-    echo '<p class="alerta-roja">No hay datos para estas fechas</p>';
+    echo '<p class="alerta-roja">No hay datos para este folio</p>';
     die();
 }
 
 #-------------- Organización de la información--------------
 # 1 Extrae datos asociados a la tabla operaciones y abonos, 
+# pues en una venta estos elementos son únicos y se pueden repetir por cada producto
 $lista_operaciones = [];
 foreach ($consulta as $fila) {
     $operacion = [
         'operacion_id' => $fila['operacion_id'],
         'subtotal' => $fila['subtotal'],
+        'descuento' => $fila['descuento'],
         'total' => $fila['total'],
         'notas' => $fila['notas'],
         'metodo' => $fila['metodo'],
@@ -68,18 +51,20 @@ foreach ($consulta as $fila) {
 # 2 Elimina operaciones duplicadas (cuando incluyen más de 1 producto)
 $lista_operaciones = array_unique($lista_operaciones, SORT_REGULAR);
 ?>
+
 <section class="contenedor__tabla">
-    <h3 class="tabla__titulo"><?= $titulo ?></h3>
-    <p>Puede acceder la información completa de la devolución y editarlos haciendo clic en los <span class="texto-rosa">Detalles</span> de la devolución.</p><br>
-    <!-- -------------Tabla de devoluciones por tiempo ---------- -->
+    <h3 class="tabla__titulo">Resultados para Folio: <?= $clave ?></h3>
+    <p>Puede acceder la información completa y edición haciendo clic en los <span class="texto-rosa">Detalles</span> de la venta.</p><br>
+    <!-- -------------Tabla de ventas por tiempo ---------- -->
     <table class="tabla">
         <thead>
             <tr>
                 <th>Folio</th>
                 <th>Productos<br>incluidos</th>
                 <th>Subtotal</th>
+                <th>Descuento</th>
                 <th>Total</th>
-                <th>Motivo</th>
+                <th>Notas</th>
                 <th>Método<br>de<br>pago</th>
                 <th>Fecha<br>y<br>hora</th>
                 <th>Empleado</th>
@@ -89,7 +74,7 @@ $lista_operaciones = array_unique($lista_operaciones, SORT_REGULAR);
             <!-- Contenido -->
             <?php foreach ($lista_operaciones as $operacion) {  ?>
                 <tr>
-                    <td><a class="texto-rosa" href="index.php?pagina=devoluciones&opciones=detalles&folio=<?= $operacion['operacion_id'] ?>"><?= preg_replace('/^0+/', '', $operacion['operacion_id']) ?><br>Detalles</a></td>
+                    <td><a class="texto-rosa" href="index.php?pagina=ventas&opciones=detalles&folio=<?= $operacion['operacion_id'] ?>"><?= preg_replace('/^0+/', '', $operacion['operacion_id']) ?><br>Detalles</a></td>
                     <td>
                         <ol class="celda__lista">
                             <?php
@@ -102,6 +87,7 @@ $lista_operaciones = array_unique($lista_operaciones, SORT_REGULAR);
                         </ol>
                     </td>
                     <td>$<?= $operacion['subtotal'] ?></td>
+                    <td>$<?= ($operacion['descuento']) ? $operacion['descuento'] : number_format(0, 2) ?></td>
                     <td>$<?= $operacion['total'] ?></td>
                     <td><?= $operacion['notas'] ?></td>
                     <td><?= $operacion['metodo'] ?></td>
@@ -121,28 +107,3 @@ $lista_operaciones = array_unique($lista_operaciones, SORT_REGULAR);
     </table>
     <!-- ------------- Fin tabla ---------- -->
 </section>
-
-<ul class="paginacion">
-    <?php if ($pagina > 1) { ?>
-        <li>
-            <a href="index.php?pagina=devoluciones&opciones=listar&pag=<?php echo $pagina - 1 ?>">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
-    <?php } ?>
-
-    <?php for ($x = 1; $x <= $paginas; $x++) { ?>
-        <li class="<?php if ($x == $pagina) echo "activa" ?>">
-            <a href="index.php?pagina=devoluciones&opciones=listar&pag=<?php echo $x ?>">
-                <?php echo $x ?></a>
-        </li>
-    <?php } ?>
-
-    <?php if ($pagina < $paginas) { ?>
-        <li>
-            <a href="index.php?pagina=devoluciones&opciones=listar&pag=<?php echo $pagina + 1 ?>">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-    <?php } ?>
-</ul>

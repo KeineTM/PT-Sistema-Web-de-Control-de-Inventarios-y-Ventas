@@ -31,53 +31,6 @@ class ControladorProductos {
         $this->caducidad = $caducidad;
     }
 
-    /** PAGINACIÓN */
-    public static function paginarLista($productosPorPagina=20) {
-        $pagina = 1;
-
-        if(isset($_GET['pag'])) $pagina = intval($_GET['pag']);
-
-        $limit = $productosPorPagina; # No. productos en pantalla
-        $offset = ($pagina - 1) * $productosPorPagina; # Saltado de productos en páginas != 1
-
-        $modelo = new ModeloProductos();
-        $conteo = $modelo -> mdlConteoProductos(true); # Recupera el no. de productos
-
-        // Calcula el no. de páginas totales
-        $paginas = ceil($conteo[0]['conteo'] / $productosPorPagina);
-        
-        // Retorna los productos por página
-        $productos = $modelo -> mdlLeerParaPaginacion($limit, $offset);
-
-        echo '<h2>Total de productos activos: ' . $conteo[0]['conteo'] . '</h2>';
-
-        echo 'Página: ' . $pagina;
-
-        for ($x = 1; $x <= $paginas; $x++) {
-        
-        }
-
-        echo '<section class="contenedor-productos">';
-        foreach($productos as $producto) {
-            echo '
-            <article class="tarjeta-producto">
-                <img src="' . $producto['foto_url'] . '" alt="Imagen ' . $producto['nombre'] . '">
-                <span>
-                    <h3>' . $producto['nombre'] . '</h3>
-                    <ul>
-                        <li>Código: ' . $producto['producto_id'] . '</li>
-                        <li>Categoría: ' . $producto['categoria'] . '</li>
-                        <li>Unidades: ' . $producto['unidades'] . '</li>
-                        <li>Precio de venta: $' . $producto['precio_venta'] . '</li>
-                        <li class="texto-rosa">Agregar a la venta</li>
-                    </ul>
-                </span>
-            </article>';
-        }
-        echo '</section>';
-        
-    }
-
     /** Sí es válido retorna la lista de datos a registrar */
     public function validarDato($campo) {
         require_once "ctrlSeguridad.php";
@@ -206,12 +159,22 @@ class ControladorProductos {
     }
 
     /** Método que devuelve las coincidencias encontradas en una búsqueda */
-    static public function ctrlBuscarTodos($palabraClave) {
+    static public function ctrlBuscarTodos() {
+        if(!isset($_POST['buscarProducto-txt'])) return;
+
+        $palabraClave = $_POST['buscarProducto-txt'];
+
         if(strlen($palabraClave) > 0) {
-            $listaProductos = new ModeloProductos();
-            return $listaProductos -> mdlBuscarPorPalabraClave($palabraClave);
+            echo '<script type="text/javascript">
+                    window.location.href = "index.php?pagina=inventario&opciones=buscar&clave=' . $palabraClave .'";
+                    </script>';
         } else
-            return "Debe ingresar un dato para buscar";
+            return "Servidor: Debe ingresar un dato para buscar";
+    }
+
+    static public function LeerParaPaginacion ($limit, $offset, $palabraClave, $estado=false) {
+        $modelo = new ModeloProductos();
+        return $modelo -> mdlLeerParaPaginacionDeBusqueda($limit, $offset, $palabraClave, $estado);
     }
 
     static public function ctrlLeerUno($producto_id) {
@@ -415,7 +378,7 @@ if(isset($_GET['funcion'])) {
             $palabraClave = $_POST['buscarProducto-txt'];
             #$limit = $_POST['limit-txt'];
             #$offset = $_POST['offset-txt'];
-            echo json_encode(ControladorProductos::ctrlBuscarTodos($palabraClave));
+            //echo json_encode(ControladorProductos::ctrlBuscarTodos($palabraClave));
             die();
         } else {
             #$limit = $_POST['limit-txt'];

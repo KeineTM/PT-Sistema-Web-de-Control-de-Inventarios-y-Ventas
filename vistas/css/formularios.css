@@ -3,6 +3,28 @@ form {
     gap: .5rem;
 }
 
+#formulario-redes-editar input[type=submit] {
+    cursor: pointer;
+    padding: 0;
+    border: thin solid var(--color-verde);
+    background: var(--color-blanco);
+    font: var(--fuente-contenido);
+}
+
+#formulario-redes-editar a {
+    border: thin solid red;
+}
+
+#formulario-redes-editar a:hover {
+    background-color: red;
+    color: var(--color-blanco);
+}
+
+#formulario-redes-editar input[type=submit]:hover {
+    background-color: var(--color-verde);
+    color: var(--color-blanco);
+}
+
 .formulario__encabezado {
     display: flex;
     flex-direction: column;
@@ -107,6 +129,12 @@ form {
     gap: .5rem;
 }
 
+.una-dos-tres-columnas {
+    display: grid;
+    align-items: center;
+    gap: .5rem;
+}
+
 .formulario__fieldset-categorias {
     display: grid;
     align-items: center;
@@ -169,6 +197,7 @@ input[type=number]::-webkit-outer-spin-button {
     transition: .4s;
     border-radius: 0px;
     height: 100%;
+    width: fit-content;
 }
 
 #barra-busqueda img, #barra-busqueda-producto img {
@@ -188,11 +217,20 @@ input[type=number]::-webkit-outer-spin-button {
 
     .formulario__botones-contenedor {
         flex-direction: row-reverse;
+        justify-content: space-between;
+    }
+
+    .una-dos-tres-columnas {
+        grid-template-columns: calc(50% - .25rem) calc(50% - .25rem);
     }
 }
 
 @media screen and (min-width: 1024px) {
     .dos-botones {
         grid-template-columns: calc(50% - .25rem) calc(50% - .25rem);
+    }
+
+    .una-dos-tres-columnas {
+        grid-template-columns: calc(33% - .16rem) calc(33% - .16rem) calc(33% - .16rem);
     }
 }

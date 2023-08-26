@@ -135,9 +135,10 @@ CREATE TABLE `operaciones` (
     tipo_operacion CHAR(2) NOT NULL,
     estado BOOLEAN DEFAULT 1 NOT NULL,
     contacto_id VARCHAR(10),
-    FOREIGN KEY (tipo_operacion) REFERENCES tipos_operacion(tipo_id),
+    FOREIGN KEY (tipo_operacion) REFERENCES tipos_operacion(tipo_id)
+        ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (contacto_id) REFERENCES contactos(contacto_id)
-        ON DELETE RESTRICT ON UPDATE CASCADE
+        ON DELETE SETNULL ON UPDATE CASCADE
 );
 
 -- Tabla pivote de productos incluídos en las operaciones
@@ -173,8 +174,10 @@ CREATE TABLE `abonos` (
     abono DECIMAL(8,2) NOT NULL,
     metodo_pago SMALLINT(2) DEFAULT 1,
     PRIMARY KEY (operacion_id, empleado_id, fecha),
-    FOREIGN KEY (operacion_id) REFERENCES operaciones(operacion_id),
-    FOREIGN KEY (empleado_id) REFERENCES usuarios(usuario_id),
+    FOREIGN KEY (operacion_id) REFERENCES operaciones(operacion_id)
+        ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY (empleado_id) REFERENCES usuarios(usuario_id)
+        ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (metodo_pago) REFERENCES metodos_pago(metodo_id)
         ON DELETE RESTRICT ON UPDATE CASCADE
 );

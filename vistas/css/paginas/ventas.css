@@ -7,10 +7,25 @@
 #form-agregar-producto {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    gap: .2rem;
+}
+
+.una-linea {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.una-linea img {
+    height: 3rem;
+    margin-right: .2rem;
 }
 
 #btnAgregarAlCarrito {
+    width: 10%;
     background: var(--color-naranja);
+    font-size: xx-large;
 }
 
 #icono-quitar {

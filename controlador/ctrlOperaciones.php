@@ -338,7 +338,7 @@ class ControladorOperaciones
         }
 
         $descuento = (strlen($_POST['descuento-txt']) > 0)
-            ? abs($_POST['descuento-txt'])
+            ? $_POST['descuento-txt']
             : 0;
         $subtotal = abs($_POST['total-txt']); # Requerido
         $notas = (strlen($_POST['notas-txt']) > 0)
@@ -611,9 +611,9 @@ class ControladorOperaciones
     }
 
     /** Método que devuelve una lista de ventas dentro de un rango de fecha. */
-    static public function ctrlLeerOperacionesPorRangoDeFecha($fecha_inicio='', $fecha_fin='', $tipo_operacion_id) {
+    static public function ctrlLeerOperacionesPorRangoDeFecha($fecha_inicio='', $fecha_fin='', $tipo_operacion_id, $limit, $offset) {
         $modelo_consulta = new ModeloOperaciones();
-        return $modelo_consulta -> mdlLeerOperacionesPorRangoDeFecha($fecha_inicio, $fecha_fin, $tipo_operacion_id);
+        return $modelo_consulta -> mdlLeerOperacionesPorRangoDeFecha($fecha_inicio, $fecha_fin, $tipo_operacion_id,$limit, $offset);
     }
 
     /** Método que elimina un ID de operación recibido */
@@ -638,6 +638,35 @@ class ControladorOperaciones
                 </script>';
             exit;
         }
+    }
+
+    /** Método que devuelve las coincidencias encontradas en una búsqueda */
+    static public function ctrlBuscarTodos($pagina) {
+        if(!isset($_POST['buscarOperacion-txt'])) return;
+
+        $palabraClave = $_POST['buscarOperacion-txt'];
+
+        if(strlen($palabraClave) > 0) {
+            echo '<script type="text/javascript">
+                    window.location.href = "index.php?pagina=' . $pagina . '&opciones=buscar-folio&clave=' . $palabraClave .'";
+                    </script>';
+        } else
+            return "Servidor: Debe ingresar un dato para buscar";
+    }
+
+    //--------------------------------------------------------------------------------
+    /** Método búsqueda de productos, sólo activos*/
+    static public function ctrlBuscarProductos() {
+        if(!isset($_POST['buscarProducto-txt'])) return;
+
+        $palabraClave = $_POST['buscarProducto-txt'];
+
+        if(strlen($palabraClave) > 0) {
+            echo '<script type="text/javascript">
+                    window.location.href = "index.php?pagina=ventas&opciones=buscar-productos&clave=' . $palabraClave .'";
+                    </script>';
+        } else
+            return "Servidor: Debe ingresar un dato para buscar";
     }
 }
 

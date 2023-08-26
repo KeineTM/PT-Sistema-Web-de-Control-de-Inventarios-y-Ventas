@@ -13,6 +13,10 @@
                 include 'vistas/paginas/ventas-detalles.php';
             if ($_GET['opciones'] === 'catalogo')
                 include 'vistas/paginas/ventas-catalogo.php';
+            if ($_GET['opciones'] === 'buscar-productos')
+                include 'vistas/paginas/ventas-buscar-productos.php';
+            if ($_GET['opciones'] === 'buscar-folio')
+                include 'vistas/paginas/buscar-folio.php';
             if ($_GET['opciones'] === 'buscar')
                 include 'vistas/paginas/ventas-busqueda.php';
             if($_GET['opciones'] === 'exito')
@@ -26,4 +30,4 @@
 
 </section>
 
-<script src="vistas/js/paginas/ventas.js"></script>
+<script type="module" src="vistas/js/paginas/ventas.js"></script>

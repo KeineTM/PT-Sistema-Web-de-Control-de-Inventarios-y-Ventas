@@ -1,12 +1,22 @@
-<form class="boton-main" id="barra-busqueda">
+<?php 
+$modulo = $_GET['pagina'];
+ControladorOperaciones::ctrlBuscarTodos($modulo)  
+?>
+<!-- Barra de búsqueda -->
+<form class="boton-main" method="post" id="barra-busqueda">
     <input type="number" step="any" class="campo" name="buscarOperacion-txt" autocomplete="off" id="buscarOperacion-txt" placeholder="Buscar..." maxlength="18" min='1' required>
     <button class="boton enviar" id="btnBuscarOperacion"><img src="vistas/img/magnifying-glass.svg" alt=""></button>
 </form>
 <span class="alerta" id="alertaBuscar"></span>
+<!-- ------------------------------------------- -->
 
 <?php
 # Definición de fechas:
-if (!isset($_GET['tiempo'])) return; # Si no existe un parámetro de tiempo, no carga el código
+date_default_timezone_set('America/Mexico_City');
+if (!isset($_GET['tiempo'])) {
+    echo '<p class="alerta-roja">No se ha definido un periodo de tiempo.</p>';
+    die();
+    }
 
 if ($_GET['tiempo'] === 'dia') { # Dependiendo del valor del parámetro se cargan las opciones
     $fecha_fin = date("Y-m-d") . " 23:59:00"; # Fin del día de hoy
@@ -18,7 +28,28 @@ if ($_GET['tiempo'] === 'dia') { # Dependiendo del valor del parámetro se carga
     $titulo = 'Tabla de ventas de la semana';
 }
 
-$consulta = ControladorOperaciones::ctrlLeerOperacionesPorRangoDeFecha($fecha_inicio, $fecha_fin, 'VE');
+$tiempo = $_GET['tiempo'];
+$tipo_operacion_id = 'VE';
+$registrosPorPagina = 20;
+$pagina = 1;
+
+if (isset($_GET['pag'])) $pagina = intval($_GET['pag']);
+
+$limit = $registrosPorPagina; # No. registros en pantalla
+$offset = ($pagina - 1) * $registrosPorPagina; # Saltado de registros en páginas != 1
+
+$modelo = new ModeloOperaciones();
+$conteo = $modelo->mdlConteoRegistros($fecha_inicio, $fecha_fin, $tipo_operacion_id); # Recupera el no. de registros
+
+if ($conteo[0]['conteo'] === 0) {
+    echo '<p class="alerta-roja">No hay operaciones registradas.</p>';
+    die();
+}
+
+// Calcula el no. de páginas totales
+$paginas = ceil($conteo[0]['conteo'] / $registrosPorPagina);
+
+$consulta = ControladorOperaciones::ctrlLeerOperacionesPorRangoDeFecha($fecha_inicio, $fecha_fin, $tipo_operacion_id, $limit, $offset);
 
 # Valida el resultado de la consulta
 # Si no es una lista es porque retornó un error
@@ -50,8 +81,6 @@ foreach ($consulta as $fila) {
 # 2 Elimina operaciones duplicadas (cuando incluyen más de 1 producto)
 $lista_operaciones = array_unique($lista_operaciones, SORT_REGULAR);
 ?>
-
-
 
 <section class="contenedor__tabla">
     <h3 class="tabla__titulo"><?= $titulo ?></h3>
@@ -108,3 +137,28 @@ $lista_operaciones = array_unique($lista_operaciones, SORT_REGULAR);
     </table>
     <!-- ------------- Fin tabla ---------- -->
 </section>
+
+<ul class="paginacion">
+    <?php if ($pagina > 1) { ?>
+        <li>
+            <a href="index.php?pagina=ventas&opciones=listar&tiempo=<?= $tiempo ?>&pag=<?php echo $pagina - 1 ?>">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+    <?php } ?>
+
+    <?php for ($x = 1; $x <= $paginas; $x++) { ?>
+        <li class="<?php if ($x == $pagina) echo "activa" ?>">
+            <a href="index.php?pagina=ventas&opciones=listar&tiempo=<?= $tiempo ?>&pag=<?php echo $x ?>">
+                <?php echo $x ?></a>
+        </li>
+    <?php } ?>
+
+    <?php if ($pagina < $paginas) { ?>
+        <li>
+            <a href="index.php?pagina=ventas&opciones=listar&tiempo=<?= $tiempo ?>&pag=<?php echo $pagina + 1 ?>">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    <?php } ?>
+</ul>

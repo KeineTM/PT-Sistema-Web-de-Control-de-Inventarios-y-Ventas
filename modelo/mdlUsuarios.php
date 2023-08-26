@@ -53,8 +53,43 @@ class ModeloUsuarios extends ModeloConexion {
         return $this->consultasCUD();
     }
 
-    public function delete() {
+    /**
+     * Método que cuenta los registros en la tabla. 
+     */
+    public function mdlConteoRegistros($id = '') {
+        $this->sentenciaSQL = ($id === '') 
+            ? 'SELECT count(*) AS conteo FROM usuarios'
+            : 'SELECT count(*) AS conteo FROM usuarios
+                WHERE usuario_id = ?';
+        return $this->consultaRead($id);
+    }
 
+    /** Método que recupera los registros para la paginación */
+    public function mdlLeerParaPaginacion($limit, $offset) {
+        $this->sentenciaSQL = 'SELECT usuarios.usuario_id, usuarios.nombre, usuarios.apellido_paterno, usuarios.apellido_materno, usuarios.telefono,
+            usuarios.rfc, usuarios.email, usuarios.password, usuarios.notas, usuarios.estado, tipos_usuario.tipo_usuario 
+            FROM usuarios 
+            INNER JOIN tipos_usuario ON usuarios.tipo_usuario = tipos_usuario.tipo_id
+            LIMIT ? OFFSET ?';
+
+        try {
+            $this->abrirConexion(); # Conecta
+            $pdo = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
+            
+            $pdo -> bindParam(1, $limit, PDO::PARAM_INT);
+            $pdo -> bindParam(2, $offset, PDO::PARAM_INT);
+    
+            $pdo -> execute(); # Ejecuta
+            $this->registros = $pdo -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos
+    
+            return $this->registros;
+
+        } catch(PDOException $e) {
+            return 'Error: ' . $e->getMessage(); # Si hubo un error lo Retorna
+        } finally {
+            $pdo = null; # Limpia
+            $this->cerrarConexion(); # Cierra
+        }
     }
 
 }

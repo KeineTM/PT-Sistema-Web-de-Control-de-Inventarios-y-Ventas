@@ -105,18 +105,19 @@ ControladorOperaciones::ctrlEliminar($tipo_operacion);
             <input name="saldo_pendiente" type="hidden" id="saldo_pendiente" value='<?= $consulta[0]['total'] - $total_abonado ?>'>
             
             <label for="abono_nuevo-txt">Monto a abonar $:</label>
-            <input type="text" class="campo destacado requerido" autocomplete="off" type="number" placeholder="0.00" name="abono_nuevo-txt" step="any" min="1" max="9999" required  data-form="abono_nuevo">
+            <input class="campo destacado requerido" autocomplete="off" type="number" placeholder="0.00" name="abono_nuevo-txt" id="abono_nuevo-txt" step="any" min="1" max="9999" required  data-form="abono_nuevo">
 
             <label for="restante">Restante $:</label>
             <input type="text" class="sin-borde" name="restante" id="restante" disabled>
 
             <label for="metodo-pago-txt">Método de pago:</label>
-            <select class="campo" name="metodo-pago-txt" required  data-form="metodo-pago">
+            <select class="campo" name="metodo-pago-txt" id="metodo-pago-txt" required  data-form="metodo-pago">
                 <option value="1" selected>Efectivo</option>
                 <option value="2">Transferencia</option>
             </select>
             
-            <button type="submit" class="boton-form enviar" id="btnAbonar">Abonar al Apartado</button>
+            <button type="submit" class="boton-form enviar" id="btnAbonar">Abonar</button>
+        
         </fieldset>
     </form>
 

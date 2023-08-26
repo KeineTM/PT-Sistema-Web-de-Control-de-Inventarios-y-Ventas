@@ -15,6 +15,8 @@
                 echo '<p class="alerta-verde">Eliminación exitosa</p>';
             if($_GET['opciones'] === 'error')
                 echo '<p class="alerta-roja">Ocurrió un error</p>';
+            if ($_GET['opciones'] === 'buscar-folio')
+                include 'vistas/paginas/buscar-folio.php';
         } else
             include 'vistas/paginas/devoluciones-form-alta.php';
     ?>
@@ -22,4 +24,4 @@
 
 </section>
 
-<script src="vistas/js/paginas/ventas.js"></script>
+<script type="module" src="vistas/js/paginas/ventas.js"></script>

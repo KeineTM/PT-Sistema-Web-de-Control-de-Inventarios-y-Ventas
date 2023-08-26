@@ -75,9 +75,9 @@ class ControladorContactos {
     }
 
     /** Método para buscar por palabra clave en los campos de nombre y apellidos */
-    public static function ctlBuscarEnFullText($palabra_clave) {
+    public static function ctlBuscarEnFullText($palabra_clave, $limit, $offset) {
         $modelo_consulta = new ModeloContactos();
-        return $modelo_consulta -> mdlBuscarEnFullText($palabra_clave);
+        return $modelo_consulta -> mdlBuscarEnFullText($palabra_clave, $limit, $offset);
     }
 
     public static function ctrlExiste($id) {
@@ -171,6 +171,7 @@ class ControladorContactos {
                 exit;
             } else { # Despliega el mensaje correspondiente
                 echo '<div id="alerta-formulario" class=alerta-roja>' . $resultado_edicion . '</div>';
+                exit;
             }
         }
     }
@@ -188,26 +189,18 @@ class ControladorContactos {
             echo '<div id="alerta-formulario" class=alerta-roja>' . $resultado . '</div>';
         }
     }
-}
 
-if(isset($_GET['funcion'])) {
-    require_once '../modelo/mdlContactos.php'; # Recordar llamar en estos casos al modelo
+    /** Método que devuelve las coincidencias encontradas en una búsqueda */
+    static public function ctrlBuscarTodos() {
+        if(!isset($_POST['buscarContacto-txt'])) return;
 
-    if($_GET['funcion'] === 'buscar') {
-        if(!isset($_POST['buscarContacto-txt'])) exit();
+        $palabraClave = $_POST['buscarContacto-txt'];
 
-        $palabra_clave = $_POST['buscarContacto-txt'];
-
-        if(strlen($palabra_clave) < 3 || strlen($palabra_clave) > 240) {
-            echo 'Servidor: La búsqueda debe contener de 3 a 240 letras';
-            die();
-        }
-
-        $consulta = ControladorContactos::ctlBuscarEnFullText($palabra_clave);
-
-        if(is_array($consulta))
-            echo json_encode($consulta);
-        else 
-            echo false;
+        if(strlen($palabraClave) > 0) {
+            echo '<script type="text/javascript">
+                    window.location.href = "index.php?pagina=directorio&opciones=buscar&clave=' . $palabraClave .'";
+                    </script>';
+        } else
+            return "Servidor: Debe ingresar un dato para buscar";
     }
 }

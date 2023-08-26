@@ -232,8 +232,7 @@ const validarCampoProductos = (campo) => {
         break;
         case 'imagenURL': // Sólo se evalúa si existe un dato
             if(campo.value.length !== 0) {
-                
-                regex = /\.(jpg|jpeg|png|gif|webp|svg)$/i; // Formato para extensiones de imágenes
+                regex = /\.(jpg|jpeg|png|gif|webp|svg|JPG|JPEG|PNG|GIF|WEBP|SVG)$/i; // Formato para extensiones de imágenes
                 if(!regex.test(campo.value)) return mostrarMensajeDeError(dataform, 'formato');
                 if(campo.value.length > 250) return mostrarMensajeDeError(dataform, 'limiteMax');
                 else {
@@ -373,9 +372,93 @@ const validarCampoPersonal = (campo, formulario) => {
     }
 }
 
+const validarCampoEmpresa = (campo) => {
+    let dataform = campo.dataset.form;
+    let regex;
+
+    switch(dataform) {
+        case 'rfc':
+            regex = /^([a-z]{3,4})(\d{2})(\d{2})(\d{2})([0-9a-z]{3})$/i;
+            if(campo.value.length < 1) return 'El RFC no debe quedar vacío.';
+            if(campo.value.length != 13) return 'El RFC debe tener 13 caracteres.';
+            if(!regex.test(campo.value)) return 'El formato ingresado no corresponde a un RFC válido.';
+            return null;
+        case 'razon_social':
+            regex = /^[a-zA-Z áéíóúÁÉÍÓÚñÑ]{2,200}$/;
+            if(campo.value.length < 1) return 'La razon social no debe quedar vacía.';
+            if(campo.value.length < 3) return 'La razon social no debe tener menos de 3 letras.';
+            if(campo.value.length > 200) return 'La razon social no debe tener más de 200 letras.';
+            if(!regex.test(campo.value)) return 'La razon social sólo acepta letras.';
+            return null;
+        case 'nombre_tienda':
+            if(campo.value.length < 1) return 'El nombre de la tienda no debe quedar vacío.';
+            if(campo.value.length < 3) return 'El nombre de la tienda no debe tener menos de 3 letras.';
+            if(campo.value.length > 200) return 'El nombre de la tienda no debe tener más de 200 letras.';
+            return null;
+        case 'descripcion':
+            if(campo.value.length < 1) return 'La descripción no debe quedar vacía.';
+            if(campo.value.length < 3) return 'La descripción no debe tener menos de 3 letras.';
+            if(campo.value.length > 250) return 'La descripción no debe tener más de 250 letras.';
+            return null;
+        case 'telefono':
+            regex = /^([0-9]+){10}$/;
+            if(campo.value.length < 1) return 'El número de teléfono no debe quedar vacío.';
+            if(campo.value.length != 10) return 'El número de teléfono debe tener 10 números.';
+            if(!regex.test(campo.value)) return 'El número de teléfono sólo acepta números.';
+            return null;
+        case 'email':
+            regex =  /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/;
+            if(campo.value.length < 1) return 'El email no debe quedar vacío.';
+            if(campo.value.length > 150) return 'El email no debe tener más de 150 letras';
+            if(!regex.test(campo.value)) return 'El email debe contener un @ y un dominio. Ej: tienda@gobokids.com';
+            return null;
+        case 'logo':
+            regex = /\.(jpg|jpeg|png|gif|webp|svg|JPG|JPEG|PNG|GIF|WEBP|SVG)$/i; // Formato para extensiones de imágenes
+            if(campo.value.length < 1) return 'El campo del logo no debe quedar vacío.';
+            if(!regex.test(campo.value)) return 'La URL ingresada no coincide con el formato esperado.';
+            if(campo.value.length > 250) return 'La URL no debe exceder 250 caracteres';
+            return null;
+        case 'calle':
+            if(campo.value.length < 1) return 'La calle no debe quedar vacía.';
+            if(campo.value.length < 3) return 'La calle no debe tener menos de 3 letras.';
+            if(campo.value.length > 150) return 'La calle no debe tener más de 150 letras.';
+            return null;
+        case 'numero':
+            regex = /^([0-9]+)$/;
+            if(campo.value.length === 0) return 'El número no debe quedar vacío.';
+            if(campo.value < 0) return 'El número no debe ser negativo.';
+            if(campo.value > 999999) return 'El número no debe superar las 6 cifras.';
+            if(!regex.test(campo.value)) return 'El número no coincide con el formato válido.';
+            return null;
+        default:
+            return null;
+    }
+}
+
+const validarCampoRedesSociales = (campo) => {
+    let dataform = campo.dataset.red;
+    let regex;
+
+    switch(dataform) {
+        case 'red_nombre':
+            if(campo.value.length < 1) return 'El nombre de la Red no debe quedar vacío.';
+            if(campo.value.length > 150) return 'El nombre de la Red no debe tener más de 150 letras.';
+            return null;
+        case 'red_url':
+            regex = /^(http|https):\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,}(?:\/[\w\-\.]*)*$/;
+            if(campo.value.length < 1) return 'La dirección de la Red no debe quedar vacía.';
+            if(campo.value.length < 10) return 'La dirección de la Red no debe tener menos de 10 letras.';
+            if(campo.value.length > 200) return 'La dirección de la Red no debe tener más de 150 letras.';
+            if(!regex.test(campo.value)) return 'La dirección de la Red no coincide con el formato esperado. Ej: https://www.nombre.com';
+            return null;
+    }
+}
+
 export const metodosValidacion = {
     validarCampoProductos,
     validarCampoDirectorio,
     validarCampoPersonal,
-    validarLlenadoFormulario
+    validarLlenadoFormulario,
+    validarCampoEmpresa,
+    validarCampoRedesSociales
 }

@@ -50,7 +50,7 @@ ControladorEmpresa::borrarRedSocial();
         <input type="number" class="campo  requerido" placeholder="101" name="numero-txt" id="numero-txt" autocomplete="off" data-form="numero" min="1" maxlength="6" value="<?= $consulta[0]['numero'] ?>" required>
 
         <label for="codigo_postal-txt">Código Postal:</label>
-        <input type="number" class="campo  requerido" placeholder="000001" name="codigo_postal-txt" id="codigo_postal-txt" autocomplete="off" data-form="cp" min="5" maxlength="5" value="<?= $consulta[0]['codigo_postal'] ?>" required>
+        <input type="number" class="campo  requerido" placeholder="000001" name="codigo_postal-txt" id="codigo_postal-txt" autocomplete="off" data-form="cp" min="5" maxlength="5" value="<?= $consulta[0]['codigo_postal'] ?>" disabled required>
 
         <label for="ciudad-txt">Ciudad:</label>
         <input type="text" class="campo" id="ciudad-txt" value="<?= $consulta[0]['ciudad'] ?>" disabled>
@@ -63,35 +63,45 @@ ControladorEmpresa::borrarRedSocial();
 <br><br>
 
 <h2>Editar Redes Sociales Registradas</h2>
-<?php foreach ($consulta_redes as $red) { ?>
-    <form method="post" id="formulario-redes-editar" class="formulario">
+<div class="una-dos-tres-columnas">
+<?php 
+$contador = 0;
+foreach ($consulta_redes as $red) {?>
+    <form method="post" id="formulario-redes-editar" data-idform="<?= $contador ?>">
         <fieldset class="fieldset__envoltura">
             <input type="hidden" name="red_id-txt" value="<?= $red['red_id'] ?>" required>
             <label for="red_nombre_editar-txt">Nombre:</label>
-            <input type="text" class="campo" placeholder="FaceBook, Twitter, etc..." name="red_nombre_editar-txt" id="red_nombre_editar-txt" autocomplete="off" data-form="red_nombre" minlength="2" maxlength="150" value="<?= $red['nombre_red'] ?>" required>
+            <input type="text" class="campo" placeholder="FaceBook, Twitter, etc..." name="red_nombre_editar-txt" id="red_nombre_editar-txt" autocomplete="off" data-red="red_nombre" minlength="2" maxlength="150" value="<?= $red['nombre_red'] ?>" required>
 
             <label for="red_url_editar-txt">URL:</label>
-            <input type="text" class="campo" placeholder="https://..." name="red_url_editar-txt" id="red_url_editar-txt" autocomplete="off" data-form="red_url" minlength="10" maxlength="200" value="<?= $red['url'] ?>" required>
+            <input type="text" class="campo" placeholder="https://..." name="red_url_editar-txt" id="red_url_editar-txt" autocomplete="off" data-red="red_url" minlength="10" maxlength="200" value="<?= $red['url'] ?>" required>
             <br><br>
 
             <fieldset class="formulario__fieldset-2-columnas">
-                <a class="boton-form otro" id="btnBorrarRed" href="index.php?pagina=empresa&opciones=editar&borrar=<?= $red['red_id'] ?>">Borrar</a>
-                <button class="boton-form enviar" id="btnEditarRed">Editar</button>
+                <a class="texto-rosa texto-centrado" id="btnBorrarRed" href="index.php?pagina=empresa&opciones=editar&borrar=<?= $red['red_id'] ?>">Borrar</a>
+                <input type="submit" class="texto-verde destacar" id="btnEditarRed" data-btn="<?= $contador ?>" value="Editar"/>
             </fieldset>
         </fieldset>
     </form>
-<?php } ?>
+<?php $contador ++; } ?>
+</div>
+
 <br><br>
 
 <h2>Agregar Nueva Red Social</h2>
 <form method="post" id="formulario-red-nueva" class="formulario">
     <fieldset class="fieldset__envoltura">
         <label for="red_nombre-txt">Nombre:</label>
-        <input type="text" class="campo" placeholder="FaceBook, Twitter, etc..." name="red_nombre-txt" id="red_nombre-txt" autocomplete="off" data-form="red_nombre" minlength="1" maxlength="150" required>
-
+        <input type="text" class="campo" placeholder="FaceBook, Twitter, etc..." name="red_nombre-txt" id="red_nombre-txt" autocomplete="off" data-red="red_nombre" minlength="1" maxlength="150" required>
         <label for="red_url-txt">URL:</label>
-        <input type="text" class="campo" placeholder="https://..." name="red_url-txt" id="red_url-txt" autocomplete="off" data-form="red_url" minlength="10" maxlength="200" required>
-        <br> <br>
-        <button class="boton-form enviar" id="btnAgregarRed">Agregar</button>
+        <input type="text" class="campo" placeholder="https://..." name="red_url-txt" id="red_url-txt" autocomplete="off" data-red="red_url" minlength="10" maxlength="200" required>
+        <br><br>
+
+        <fieldset class="formulario__fieldset-2-columnas">
+            <input type="reset" class="boton-form otro" value="Limpiar"/>
+            <button class="boton-form enviar" id="btnAgregarRed">Agregar</button>
+        </fieldset>
     </fieldset>
 </form>
+
+<script type="module" src="vistas/js/paginas/empresa.js"></script>
