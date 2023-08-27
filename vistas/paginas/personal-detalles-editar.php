@@ -100,6 +100,9 @@ ControladorUsuarios::ctrlEditarUsuario($id);
             <span class="alerta" id="alerta-password"></span>
         </fieldset>
 
-        <button type="submit" class="boton-form enviar" id="btnEditar">Editar</button>
+        <fieldset class="formulario__botones-contenedor">
+            <button type="submit" class="boton-form enviar" id="btnEditar">Editar</button>
+            <button type="reset" class="boton-form otro">Deshacer</button>
+        </fieldset>
     </fieldset>
 </form>

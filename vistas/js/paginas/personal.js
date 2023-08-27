@@ -139,3 +139,25 @@ if(formularioEditarPersonal !== null) {
         }
     });
 }
+
+// ------------------------------------------------------------------------------------------
+// Métoso de ordenamiento para la lista de usuarios
+// ------------------------------------------------------------------------------------------
+const selectFiltrar = document.querySelector('#lista-filtrar-txt');
+
+if(selectFiltrar !== null) {
+    selectFiltrar.addEventListener('change', (event) => {
+        event.preventDefault();
+        switch(selectFiltrar.value) {
+            case 'Activos':
+                window.location.href = "index.php?pagina=personal&opciones=personal&opciones=listar&ordenar=activos";
+                break;
+            case 'Inactivos':
+                window.location.href = "index.php?pagina=personal&opciones=personal&opciones=listar&ordenar=inactivos";
+                break;
+            default:
+                window.location.href = "index.php?pagina=personal&opciones=personal&opciones=listar";
+                break;
+        }
+    });
+}

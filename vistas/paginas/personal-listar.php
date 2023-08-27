@@ -8,13 +8,16 @@
 <?php
 $registrosPorPagina = 20;
 $pagina = 1;
+$estado = (isset($_GET['ordenar'])) 
+    ? (($_GET['ordenar'] === 'activos') ? '1' : '0')
+    : '';
 
 if (isset($_GET['pag'])) $pagina = intval($_GET['pag']);
 
 $limit = $registrosPorPagina; # No. registros en pantalla
 $offset = ($pagina - 1) * $registrosPorPagina; # Saltado de registros en páginas != 1
 
-$conteo = ControladorUsuarios::ctrlConteoRegistros(); # Recupera el no. de registros
+$conteo = ControladorUsuarios::ctrlConteoRegistros($estado); # Recupera el no. de registros
 
 if ($conteo[0]['conteo'] === 0) {
     echo '<p class="alerta-roja">No hay contactos registrados.</p>';
@@ -25,7 +28,7 @@ if ($conteo[0]['conteo'] === 0) {
 $paginas = ceil($conteo[0]['conteo'] / $registrosPorPagina);
 
 // Retorna los registros por página
-$consulta = ControladorUsuarios::ctrlLeerParaPaginacion($limit, $offset);
+$consulta = ControladorUsuarios::ctrlLeerParaPaginacion($limit, $offset, $estado);
 
 $titulo = 'Directorio de empleados';
 
@@ -43,6 +46,15 @@ if (!is_array($consulta) || sizeof($consulta) === 0) {
 <section class="contenedor__tabla">
     <h3 class="tabla__titulo"><?= $titulo ?></h3>
     <p>Puede acceder la información completa del empleado y editarla haciendo clic en los <span class="texto-rosa">Detalles</span> del ID de usuario.</p><br>
+
+    <label for="lista-filtrar-txt">Filtrar por:</label>
+    <select name="lista-filtrar-txt" id="lista-filtrar-txt" class="campo ancho-automatico">
+        <option disabled selected>Seleccionar...</option>
+        <option value="Activos">Activos</option>
+        <option value="Inactivos">Inactivos</option>
+    </select>
+    <br><br>
+
     <!-- -------------Tabla ---------- -->
     <table class="tabla">
         <thead>

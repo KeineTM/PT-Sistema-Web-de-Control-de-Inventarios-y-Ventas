@@ -8,12 +8,14 @@
     require 'controlador/ctrlOperaciones.php';
     require 'controlador/ctrlContactos.php';
     require 'controlador/ctrlEmpresa.php';
+    require 'controlador/ctrlReportes.php';
 
     require 'modelo/mdlUsuarios.php';
     require 'modelo/mdlInventario.php';
     require 'modelo/mdlOperaciones.php';
     require 'modelo/mdlContactos.php';
     require 'modelo/mdlEmpresa.php';
+    require 'modelo/mdlReportes.php';
 
     # Instancia la clase
     $plantilla = new ControladorPlantilla();

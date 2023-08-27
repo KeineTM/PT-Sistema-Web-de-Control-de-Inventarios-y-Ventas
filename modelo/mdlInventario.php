@@ -93,6 +93,12 @@ class ModeloProductos extends ModeloConexion{
         return $this-> consultasCUD();
     }
     
+    /** Método que cuenta los productos que coincidan con un id para validar su existencia.*/
+    public function mdlContarCoincidencias($producto_id) {
+        $this->sentenciaSQL ='SELECT count(*) AS conteo FROM inventario WHERE producto_id = ?';
+        return $this->consultaRead($producto_id);
+    }
+
     /**
      * Método que cuenta los productos en la tabla. 
      * $estado = true = activos / false = todos.

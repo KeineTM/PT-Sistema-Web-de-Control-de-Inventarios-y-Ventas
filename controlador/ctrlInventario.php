@@ -138,7 +138,7 @@ class ControladorProductos {
         $resultado = $productoNuevo -> registrar($listaDatos);
         return ($resultado === true)
                 ? 'Registro correcto'
-                : 'Ocurrio un error, el codigo del producto ya esta registrado.';
+                : 'Ocurrio un error durante el registro, verifique sus datos.';
     }
     
     /** Método que actualiza un producto existente en la base de datos */
@@ -187,6 +187,17 @@ class ControladorProductos {
         } else {
             return $validacion;
         }
+    }
+
+    /** 
+     * Método que cuenta los productos que coincidan con un id para validar su existencia.
+     * Si encuentra coincidencia, retorna true, de lo contrario retorna false.
+    */
+
+    static public function ctrlValidarExistencia($producto_id) {
+        $listaProductos = new ModeloProductos();
+        $resultado = $listaProductos -> mdlContarCoincidencias($producto_id);
+        return ($resultado > 0) ? true : false;
     }
 
     ## Otros métodos
@@ -253,8 +264,10 @@ if(isset($_GET['funcion'])) {
         $resultado = ControladorProductos::ctrlRegistrarCategoria($categoria);
         echo $resultado;
         die();
+    } else if($_GET['funcion'] === 'validar-existencia') {
+
     }
-    else if($_GET['funcion'] === 'editar-categoria') {
+    /*else if($_GET['funcion'] === 'editar-categoria') {
         if(!isset($_POST['categoriaProductoEditar-txt'])) {echo 'Debe ingresar un id de categoria'; die();}
         if(!isset($_POST['categoria_editar-txt'])) {echo 'Debe ingresar un nombre para la categoria'; die();}
         if(!isset($_POST['estadoCategoria-txt'])) {echo 'Debe ingresar un estado valido: Activo / Dar de baja'; die();}
@@ -387,5 +400,5 @@ if(isset($_GET['funcion'])) {
             die();
         }
         
-    }
+    }*/
 }

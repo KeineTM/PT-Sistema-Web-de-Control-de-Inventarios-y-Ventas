@@ -185,6 +185,10 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0; 
 }
 
+.ancho-automatico {
+    width: auto;
+}
+
 #barra-busqueda input, #barra-busqueda-producto input {
     border-color: var(--color-naranja);
     padding: 5px;

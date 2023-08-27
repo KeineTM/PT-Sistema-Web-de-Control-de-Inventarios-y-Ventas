@@ -272,14 +272,14 @@
             }
         }
 
-        static public function ctrlConteoRegistros($id='') {
+        static public function ctrlConteoRegistros($id='', $estado='') {
             $modelo = new ModeloUsuarios();
-            return $modelo -> mdlConteoRegistros($id);
+            return $modelo -> mdlConteoRegistros($id, $estado);
         }
 
-        static public function ctrlLeerParaPaginacion($limit, $offset) {
+        static public function ctrlLeerParaPaginacion($limit, $offset, $estado='') {
             $modelo = new ModeloUsuarios();
-            return $modelo -> mdlLeerParaPaginacion($limit, $offset);
+            return $modelo -> mdlLeerParaPaginacion($limit, $offset, $estado);
         }
     }
 ?>

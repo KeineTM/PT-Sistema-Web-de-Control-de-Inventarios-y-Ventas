@@ -56,28 +56,44 @@ class ModeloUsuarios extends ModeloConexion {
     /**
      * Método que cuenta los registros en la tabla. 
      */
-    public function mdlConteoRegistros($id = '') {
-        $this->sentenciaSQL = ($id === '') 
+    public function mdlConteoRegistros($estado='') {
+        $this->sentenciaSQL = ($estado === '') 
             ? 'SELECT count(*) AS conteo FROM usuarios'
             : 'SELECT count(*) AS conteo FROM usuarios
-                WHERE usuario_id = ?';
-        return $this->consultaRead($id);
+                WHERE estado = ?';
+        return $this->consultaRead($estado);
     }
 
     /** Método que recupera los registros para la paginación */
-    public function mdlLeerParaPaginacion($limit, $offset) {
+    public function mdlLeerParaPaginacion($limit, $offset, $estado='') {
         $this->sentenciaSQL = 'SELECT usuarios.usuario_id, usuarios.nombre, usuarios.apellido_paterno, usuarios.apellido_materno, usuarios.telefono,
             usuarios.rfc, usuarios.email, usuarios.password, usuarios.notas, usuarios.estado, tipos_usuario.tipo_usuario 
             FROM usuarios 
             INNER JOIN tipos_usuario ON usuarios.tipo_usuario = tipos_usuario.tipo_id
             LIMIT ? OFFSET ?';
 
+        if($estado !== '') {
+            $this->sentenciaSQL = 'SELECT usuarios.usuario_id, usuarios.nombre, usuarios.apellido_paterno, usuarios.apellido_materno, usuarios.telefono,
+            usuarios.rfc, usuarios.email, usuarios.password, usuarios.notas, usuarios.estado, tipos_usuario.tipo_usuario 
+            FROM usuarios 
+            INNER JOIN tipos_usuario ON usuarios.tipo_usuario = tipos_usuario.tipo_id
+            WHERE usuarios.estado = ?
+            LIMIT ? OFFSET ?';
+        }
+
         try {
             $this->abrirConexion(); # Conecta
             $pdo = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
             
-            $pdo -> bindParam(1, $limit, PDO::PARAM_INT);
-            $pdo -> bindParam(2, $offset, PDO::PARAM_INT);
+            if($estado === '') {
+                $pdo -> bindParam(1, $limit, PDO::PARAM_INT);
+                $pdo -> bindParam(2, $offset, PDO::PARAM_INT);
+            } else {
+                $pdo -> bindParam(1, $estado, PDO::PARAM_INT);
+                $pdo -> bindParam(2, $limit, PDO::PARAM_INT);
+                $pdo -> bindParam(3, $offset, PDO::PARAM_INT);
+            }
+            
     
             $pdo -> execute(); # Ejecuta
             $this->registros = $pdo -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos
