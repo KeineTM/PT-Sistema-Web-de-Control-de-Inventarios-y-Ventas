@@ -58,8 +58,6 @@ const registrarCategoria = (categoria, selectCategorias, aletaHTML) => {
         if (selectCategorias != undefined)
         recuperarCategoriasActivas(selectCategorias); // RECARGA LA LISTA DE OPCIONES CON OTRO AJAX del archivo inventario-listar-categorias-asincrono.js
 
-        metodosModal.desplegarModal(document.getElementById('modal'));
-        metodosModal.construirModalMensajeResultado(document.getElementById('modal'), data);
     }).catch(error => {
         console.error('Error:', error);
     });
@@ -97,7 +95,7 @@ const registrarProducto = (formulario) => {
     ).then(data => {
         const alertaHTML = document.getElementById('alerta-formulario');
         alertaHTML.style.visibility = 'visible';
-        alertaHTML.innerText = data;
+        alertaHTML.innerHTML = data;
         
         metodosModal.desplegarModal(document.getElementById('modal'));
         metodosModal.construirModalMensajeResultado(document.getElementById('modal'), data);

@@ -121,7 +121,7 @@ ControladorOperaciones::ctrlEliminar($tipo_operacion);
         </fieldset>
     </form>
 
-
+<!-- Formulario para borrado del apartado-->
 <form method="post" id="formulario-eliminar-operacion" class="formulario">
     <fieldset class="formulario__fieldset-2-columnas">
         <input name="folio-txt" type="hidden" value="<?=$folio?>" required readonly>

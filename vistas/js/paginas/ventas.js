@@ -1,7 +1,5 @@
 import { metodosModal } from "../modal.js";
 
-const contenedorHTML = document.querySelector('#subcontenedor');
-const formularioBusqueda = document.querySelector('#barra-busqueda');
 const campoBuscar = document.querySelector('#buscarOperacion-txt');
 const btnBuscar = document.querySelector('#btnBuscarOperacion');
 const formularioBusquedaProducto = document.querySelector('#barra-busqueda-producto');
@@ -140,6 +138,8 @@ if(formularioDeApartados !== null || formularioAbonoNuevo !== null) {
     const campoMontoAbonadoNuevo = document.querySelector('[data-form=abono_nuevo]');
     const btnAbonar = document.querySelector('#btnAbonar');
     const errorAbono = document.querySelector('#error-abono');
+    const saldo_pendiente = document.querySelector('#saldo_pendiente');
+
     
     // Evalúa que exista un campo de abonos: Apartados
     // Para calcular e imprimir en pantalla el total restante después del abono
@@ -208,47 +208,56 @@ if(formularioDeApartados !== null || formularioAbonoNuevo !== null) {
 
     
     /** Validación del campo de abono: */ 
-    const validarAbono = (campo) => {
-        let regex = new RegExp('^[0-9]+(\\.[0-9]{1,2})?$');
-        if(campo.value <= 0 ||
-            campo.value > 9999 ||
-            !regex.test(campo.value)) {
-    
-            if(campo.value <= 0) return 'Sólo se aceptan números mayores a 0.'
-            if(campo.value > 9999) return 'Sólo se aceptan números menores a 9999.'
-            if(!regex.test(campo.value)) return 'Sólo se aceptan números con un máximo de 2 decimales.'
-    
-        } else return false;
+    const validarAbono = (campo, saldo_pendiente) => {
+        if(campo.value.length > 0) {
+            let regex = new RegExp('^[0-9]+(\\.[0-9]{1,2})?$');
+            if(campo.value <= 0 ||
+                campo.value > 9999 ||
+                !regex.test(campo.value) ||
+                parseFloat(campo.value) > parseFloat(saldo_pendiente.value)) {
+
+                if(campo.value <= 0) return 'Sólo se aceptan números mayores a 0.'
+                if(campo.value > 9999) return 'Sólo se aceptan números menores a 9999.'
+                if(!regex.test(campo.value)) return 'Sólo se aceptan números con un máximo de 2 decimales.'
+                if(parseFloat(campo.value) > parseFloat(saldo_pendiente.value)) return 'El monto abonado es mayor que la deuda.'
+
+            } else return false;
+        } else return 'No ha ingresado una cantidad a abonar.'; 
     }
     
     // Evalúa la existencia del campo para el nuevo abono y realiza las operaciones de cálculo de nuevo total 
     // y las restricciones necesarias
     if(campoMontoAbonadoNuevo !== null) {
-        const saldo_pendiente = document.querySelector('#saldo_pendiente');
         const campoRestante = document.querySelector('#restante');
     
         campoRestante.value = saldo_pendiente.value;
     
         campoMontoAbonadoNuevo.addEventListener('keyup', () => {
-            
+            const validacion = validarAbono(campoMontoAbonadoNuevo, saldo_pendiente);
             // Si hay error en el monto abonado:
-            if(validarAbono(campoMontoAbonadoNuevo) !== false) {
-                errorAbono.innerText = validarAbono(campoMontoAbonadoNuevo);
+            if(validacion !== false) {
+                campoRestante.value = saldo_pendiente.value;
+                errorAbono.innerText = validacion;
             } else {
                 errorAbono.innerText = '';
-                (saldo_pendiente.value - campoMontoAbonadoNuevo.value < 0) 
-                    ? campoRestante.value = 'El abono excede a la deuda.'
-                    : campoRestante.value = saldo_pendiente.value - campoMontoAbonadoNuevo.value; 
+                if(saldo_pendiente.value - campoMontoAbonadoNuevo.value < 0) {
+                    campoRestante.value = '';
+                    errorAbono.innerText = 'El abono es mayor a la deuda.'
+                } else {
+                    campoRestante.value = saldo_pendiente.value - campoMontoAbonadoNuevo.value; 
+                }
             }
-    
         });
     }
     
     if(formularioAbonoNuevo !== null) {
-        btnAbonar.addEventListener('click', () => {
+        btnAbonar.addEventListener('click', (event) => {
             event.preventDefault();
-            if(validarAbono(campoMontoAbonadoNuevo) !== false) {
-                errorAbono.innerText = validarAbono(campoMontoAbonadoNuevo);
+            let listaErrores = validarAbono(campoMontoAbonadoNuevo, saldo_pendiente);
+
+            if(listaErrores !== false) {
+                metodosModal.desplegarModal(document.getElementById('modal'));
+                metodosModal.construirModalAlerta(document.getElementById('modal'), listaErrores);
             } else {
                 errorAbono.innerText = '';
                 formularioAbonoNuevo.submit();
@@ -257,7 +266,7 @@ if(formularioDeApartados !== null || formularioAbonoNuevo !== null) {
     }
 }
 
-
+//-----------------//-----------------//-----------------
 //----------------- Búsqueda de productos ------------------
 if(btnBuscarProducto !== null) {
     btnBuscarProducto.addEventListener('click', () => {

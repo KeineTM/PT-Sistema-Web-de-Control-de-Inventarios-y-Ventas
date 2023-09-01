@@ -203,4 +203,14 @@ class ControladorContactos {
         } else
             return "Servidor: Debe ingresar un dato para buscar";
     }
+
+    static public function ctrlConteoRegistros($id='', $tipo='') {
+        $modelo = new ModeloContactos();
+        return $modelo -> mdlConteoRegistros($id, $tipo);
+    }
+
+    static public function ctrlLeerParaPaginacion($limit, $offset, $tipo='') {
+        $modelo = new ModeloContactos();
+        return $modelo -> mdlLeerParaPaginacion($limit, $offset, $tipo);
+    }
 }

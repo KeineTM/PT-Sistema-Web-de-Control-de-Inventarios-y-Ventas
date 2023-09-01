@@ -150,13 +150,13 @@ if(selectFiltrar !== null) {
         event.preventDefault();
         switch(selectFiltrar.value) {
             case 'Activos':
-                window.location.href = "index.php?pagina=personal&opciones=personal&opciones=listar&ordenar=activos";
+                window.location.href = "index.php?pagina=personal&opciones=listar&ordenar=activos";
                 break;
             case 'Inactivos':
-                window.location.href = "index.php?pagina=personal&opciones=personal&opciones=listar&ordenar=inactivos";
+                window.location.href = "index.php?pagina=personal&opciones=listar&ordenar=inactivos";
                 break;
             default:
-                window.location.href = "index.php?pagina=personal&opciones=personal&opciones=listar";
+                window.location.href = "index.php?pagina=personal&opciones=listar";
                 break;
         }
     });

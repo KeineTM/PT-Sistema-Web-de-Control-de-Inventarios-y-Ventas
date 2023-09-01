@@ -482,7 +482,7 @@ class ControladorOperaciones
 
         // Evalúa que el folio exista
         if(count($consulta_abonos) < 1) {
-            echo 'No existen datos para este folio.';
+            echo 'Servidor: No existen datos para este folio.';
             die();
         }
 

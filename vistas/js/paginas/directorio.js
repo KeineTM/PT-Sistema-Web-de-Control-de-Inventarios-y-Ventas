@@ -107,3 +107,28 @@ if(formularioEliminarContacto !== null) {
     });
     
 }
+
+// ------------------------------------------------------------------------------------------
+// Métoso de ordenamiento para la lista de contactos
+// ------------------------------------------------------------------------------------------
+const selectFiltrar = document.querySelector('#lista-filtrar-txt');
+
+if(selectFiltrar !== null) {
+    selectFiltrar.addEventListener('change', (event) => {
+        event.preventDefault();
+        switch(selectFiltrar.value) {
+            case 'Clientes':
+                window.location.href = "index.php?pagina=directorio&opciones=listar&ordenar=clientes";
+                break;
+            case 'Proveedores':
+                window.location.href = "index.php?pagina=directorio&opciones=listar&ordenar=proveedores";
+                break;
+            case 'Servicios':
+                window.location.href = "index.php?pagina=directorio&opciones=listar&ordenar=servicios";
+                break;
+            default:
+                window.location.href = "index.php?pagina=directorio&opciones=listar";
+                break;
+        }
+    });
+}

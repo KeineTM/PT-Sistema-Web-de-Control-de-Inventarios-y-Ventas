@@ -94,9 +94,30 @@ class ModeloProductos extends ModeloConexion{
     }
     
     /** Método que cuenta los productos que coincidan con un id para validar su existencia.*/
-    public function mdlContarCoincidencias($producto_id) {
-        $this->sentenciaSQL ='SELECT count(*) AS conteo FROM inventario WHERE producto_id = ?';
-        return $this->consultaRead($producto_id);
+    public function mdlContarCoincidencias($producto_id_nuevo, $edicion_id_antiguo = '') {
+        $this->sentenciaSQL = ($edicion_id_antiguo === '')
+            ? 'SELECT count(*) AS conteo FROM inventario WHERE producto_id = ?'
+            : 'SELECT count(*) AS conteo FROM inventario WHERE producto_id = ? AND producto_id <> ?';
+        
+        try {
+            $this->abrirConexion(); # Conecta
+            $pdo = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
+                
+            $pdo -> bindParam(1, $producto_id_nuevo, PDO::PARAM_STR);
+            if($edicion_id_antiguo !== '')
+                $pdo -> bindParam(2, $edicion_id_antiguo, PDO::PARAM_STR);
+        
+            $pdo -> execute(); # Ejecuta
+            $this->registros = $pdo -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos
+        
+            return $this->registros;
+    
+        } catch(PDOException $e) {
+            return 'Error: ' . $e->getMessage(); # Si hubo un error lo Retorna
+        } finally {
+            $pdo = null; # Limpia
+            $this->cerrarConexion(); # Cierra
+        }
     }
 
     /**

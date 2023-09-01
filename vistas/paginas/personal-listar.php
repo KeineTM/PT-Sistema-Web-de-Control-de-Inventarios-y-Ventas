@@ -52,6 +52,7 @@ if (!is_array($consulta) || sizeof($consulta) === 0) {
         <option disabled selected>Seleccionar...</option>
         <option value="Activos">Activos</option>
         <option value="Inactivos">Inactivos</option>
+        <option value="Todos">Todos</option>
     </select>
     <br><br>
 

@@ -162,10 +162,9 @@ const validarCampoProductos = (campo) => {
         case 'unidadesMinimas': // Sólo se evalúa si existe un dato
             regex = /^([0-9])*$/;
             if(campo.value.length !== 0) {
-                
-                if(campo.value < 0) return mostrarMensajeDeError(dataform, 'limiteMin');
-                if(campo.value > 9999) return mostrarMensajeDeError(dataform, 'limiteMax');
-                if(!regex.test(campo.value)) return mostrarMensajeDeError(dataform, 'formato');
+                if(campo.value < 0) return 'Las unidades mínimas deben ser mayores a 0.';
+                if(campo.value > 9999) return 'Las unidades mínimas deben ser menores a 9999.';
+                if(!regex.test(campo.value)) 'Las unidades mínimas sólo pueden ser números enteros.';
                 return null;
             } else
                 return null;
@@ -216,20 +215,19 @@ const validarCampoProductos = (campo) => {
                 const FECHA_REGEX = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
                 if(campo.value.match(FECHA_REGEX)) {
                     // Establecimiento de fechas mínimas y máximas para el formulario:
-                    let fechaIngresada = new Date(campo.value);
+                    let fechaIngresada = new Date(campo.value + 'T00:00:00Z');
                     let fechaMin = new Date();
                     let fechaMax = new Date();
-                    fechaMax = fechaMax.setFullYear(fechaMin.getFullYear() + 5);
-                    fechaMin.setHours(0, 0, 0, 0);
-                    if(fechaIngresada.toLocaleString('en-US', { timeZone: 'America/Mexico_City' }) < fechaMin) return mostrarMensajeDeError(dataform, 'limiteMin');
-                    if(fechaIngresada.toLocaleString('en-US', { timeZone: 'America/Mexico_City' }) > fechaMax) return mostrarMensajeDeError(dataform, 'limiteMax');
+                    fechaMax.setFullYear(fechaMin.getFullYear() + 5);
+                    fechaMin.setUTCHours(0, 0, 0, 0);
+                    
+                    if(fechaIngresada.toISOString() < fechaMin.toISOString()) return 'La fecha de caducidad no puede ser anterior al día de hoy';
+                    if(fechaIngresada.toISOString() > fechaMax.toISOString()) return 'La fecha de caducidad no puede ser mayor a 5 años';
                     return null;
                 } else 
                     return mostrarMensajeDeError(dataform, 'formato');
-            } else {
+            } else
                 return null;
-            }
-        break;
         case 'imagenURL': // Sólo se evalúa si existe un dato
             if(campo.value.length !== 0) {
                 regex = /\.(jpg|jpeg|png|gif|webp|svg|JPG|JPEG|PNG|GIF|WEBP|SVG)$/i; // Formato para extensiones de imágenes
@@ -241,7 +239,6 @@ const validarCampoProductos = (campo) => {
                 }
             } else
                 return null;
-        break;
         default:
             return null;
     }

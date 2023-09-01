@@ -6,13 +6,14 @@ import { metodosValidacion } from "../validacion.js";
 import { metodosAJAX } from "./ajax-inventario.js";
 
 const formularioAlta = document.getElementById('formulario-alta-producto');
-const contenedor = document.getElementById('subcontenedor');
 const selectCategorias = document.getElementById("categoriaProducto-txt");
 const formularioAltaCategoria = document.getElementById('formulario-alta-categoria');
 const formularioEdicionCategoria = document.getElementById('formulario-edicion-categoria');
+const productoID = document.querySelector('#idProducto-txt');
+const productoIDOriginal = document.querySelector('#idProductoOriginal-txt');
+const aletaHTML_validacion = document.querySelector('#alerta-valida_ID');
 
 const campoCodigoDeBarras = document.querySelector('[data-form="productoID"]');
-
 /** Método para prevenir el 'Enter' del lector de código de barras */
 if(campoCodigoDeBarras !== null) {
     campoCodigoDeBarras.addEventListener('keydown', (event) => {
@@ -23,6 +24,40 @@ if(campoCodigoDeBarras !== null) {
             return false;
         }
     });
+}
+
+// Código para ejecutar una consulta asincrónica que valida que el código de barras no esté repetido
+if(productoID !== null) {
+    const validarExistenciaAJAX = () => {
+        aletaHTML_validacion.style.visibility = 'hidden';
+        aletaHTML_validacion.innerText = '';
+
+        const formData = new FormData();
+        formData.append('idProducto-txt', productoID.value);
+        
+        if(productoIDOriginal !== null) {
+            formData.append('idProductoOriginal-txt', productoIDOriginal.value);
+        }
+
+        // Uso de Fetch para el paso del parámetro a la página PHP por POST
+        fetch('controlador/ctrlInventario.php?funcion=validar-existencia', {
+            method: 'POST',
+            body: formData
+        }).then(response => response.text() // Recuperación de la respuesta del servidor en texto plano
+        ).then(data => {
+            if(data !== '') {
+                aletaHTML_validacion.style.visibility = 'visible';
+                aletaHTML_validacion.innerText = data; // Impresión en pantalla de la respuesta del registro
+                metodosModal.desplegarModal(document.getElementById('modal'));
+                metodosModal.construirModalMensajeResultado(document.getElementById('modal'), data);
+            } 
+            
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    productoID.addEventListener('blur', validarExistenciaAJAX);
 }
 
 /** Método que recorre todas las etiquetas input para validar su contenido */
@@ -55,7 +90,7 @@ const construirFormularioAltaCategoria = (contenedor) => {
             </span>
             <form action="post" class="formulario" id="formulario-alta-categoria">
                 <h3>Agregar categoría</h3>
-                <input class="campo" type="text" placeholder="Categoria" id="categoria-txt" name="categoria-txt" autocomplete="off" minlength="3" maxlength="50" required>
+                <input class="campo mayusculas" type="text" placeholder="Categoria" id="categoria-txt" name="categoria-txt" autocomplete="off" minlength="3" maxlength="50" required>
                 <button class="boton-form otro" id="btnCerrarMiniModal">Cancelar</button>
                 <button class="boton-form enviar" id="btnRegistrarCategoria">Agregar</button>
             </form>
@@ -179,7 +214,8 @@ if(formularioAlta !== null) {
     const campoPrecioVenta = document.querySelector('[data-form="precioVenta"]');
 
     // Control del mini formulario de categorías:
-    btnAbrirFormularioCategoria.addEventListener("click", () => {
+    btnAbrirFormularioCategoria.addEventListener("click", (event) => {
+        event.preventDefault();
         metodosModal.desplegarModal(contenedorMiniFormularioCategoria);
         construirFormularioAltaCategoria(contenedorMiniFormularioCategoria);
     });
@@ -220,7 +256,8 @@ if(formularioEdicion !== null) {
     const campoPrecioVenta = document.querySelector('[data-form="precioVenta"]');
 
     // Control del mini formulario de categorías:
-    btnAbrirFormularioCategoria.addEventListener("click", () => {
+    btnAbrirFormularioCategoria.addEventListener("click", (event) => {
+        event.preventDefault();
         metodosModal.desplegarModal(contenedorMiniFormularioCategoria);
         construirFormularioAltaCategoria(contenedorMiniFormularioCategoria);
     });
@@ -229,7 +266,7 @@ if(formularioEdicion !== null) {
     const alertaHTML = document.getElementById('alerta-formulario');
 
     // Registro de producto
-    btnEditarProducto.addEventListener("click", () => {
+    btnEditarProducto.addEventListener("click", (event) => {
         event.preventDefault();
         let listaErrores = []; // Lista que almacenará los errores detectados
         
@@ -241,7 +278,7 @@ if(formularioEdicion !== null) {
                     metodosAJAX.editarProducto(formularioEdicion);
             } else
                 metodosAJAX.editarProducto(formularioEdicion);
-        }else {
+        } else {
             metodosModal.desplegarModal(contenedorMiniFormularioCategoria);
             metodosModal.construirModalAlerta(contenedorMiniFormularioCategoria, listaErrores);
         }
@@ -260,7 +297,7 @@ const alertaBuscar = document.getElementById('alertaBuscar');
 // Recuperación y listado de productos de la BD en tarjetas por páginas
 // -------------------------------------------------------------------------------------------------------
 if(btnBuscarProductos !== null) {
-    btnBuscarProductos.addEventListener('click', () => {
+    btnBuscarProductos.addEventListener('click', (event) => {
         event.preventDefault();
         alertaBuscar.innerText = ""
         alertaBuscar.style.visibility = 'hidden';

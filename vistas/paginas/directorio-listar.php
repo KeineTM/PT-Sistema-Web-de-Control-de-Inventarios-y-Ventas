@@ -10,14 +10,22 @@
 <?php
 $registrosPorPagina = 20;
 $pagina = 1;
+$tipo = '';
+
+if(isset($_GET['ordenar'])) {
+    switch($_GET['ordenar']) {
+        case('proveedores'): $tipo = 1; break;
+        case('clientes'): $tipo = 2; break;
+        case('servicios'): $tipo = 3; break;
+    }
+}
 
 if (isset($_GET['pag'])) $pagina = intval($_GET['pag']);
 
 $limit = $registrosPorPagina; # No. registros en pantalla
 $offset = ($pagina - 1) * $registrosPorPagina; # Saltado de registros en páginas != 1
 
-$modelo = new ModeloContactos();
-$conteo = $modelo->mdlConteoRegistros(); # Recupera el no. de registros
+$conteo = ControladorContactos::ctrlConteoRegistros($id='', $tipo); # Recupera el no. de registros
 
 if ($conteo[0]['conteo'] === 0) {
     echo '<p class="alerta-roja">No hay contactos registrados.</p>';
@@ -28,7 +36,7 @@ if ($conteo[0]['conteo'] === 0) {
 $paginas = ceil($conteo[0]['conteo'] / $registrosPorPagina);
 
 // Retorna los registros por página
-$consulta = $modelo->mdlLeerParaPaginacion($limit, $offset);
+$consulta = ControladorContactos::ctrlLeerParaPaginacion($limit, $offset, $tipo);
 
 $titulo = 'Directorio de contactos';
 # Valida el resultado de la consulta
@@ -45,6 +53,17 @@ if (!is_array($consulta) || sizeof($consulta) === 0) {
 <section class="contenedor__tabla">
     <h3 class="tabla__titulo"><?= $titulo ?></h3>
     <p>Puede acceder la información completa del contacto y editarlos haciendo clic en los <span class="texto-rosa">Detalles</span> del número de teléfono.</p><br>
+    
+    <label for="lista-filtrar-txt">Filtrar por:</label>
+    <select name="lista-filtrar-txt" id="lista-filtrar-txt" class="campo ancho-automatico">
+        <option disabled selected>Seleccionar...</option>
+        <option value="Clientes">Clientes</option>
+        <option value="Servicios">Servicios</option>
+        <option value="Proveedores">Proveedores</option>
+        <option value="Todos">Todos</option>
+    </select>
+    <br><br>
+    
     <!-- -------------Tabla de ventas por tiempo ---------- -->
     <table class="tabla">
         <thead>

@@ -27,6 +27,7 @@ $modelo = new ModeloProductos();
 $conteo = $modelo->mdlConteoProductosBuscados($palabraClave); # Recupera el no. de productos
 
 if ($conteo[0]['conteo'] === 0) {
+    echo '<h3 class="destacado"> ' . $conteo[0]["conteo"] . ' resultados para "' . $palabraClave . '":</h3>';
     echo '<p class="alerta-roja">No hay coincidencias.</p>';
     die();
 }

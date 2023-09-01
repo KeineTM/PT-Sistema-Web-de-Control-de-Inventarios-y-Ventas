@@ -48,7 +48,7 @@ ControladorContactos::crearContacto();
     </fieldset>
 
     <fieldset class="formulario__fieldset">
-        <label for="notas-txt">notas:</label>
+        <label for="notas-txt">Notas:</label>
         <textarea name="notas-txt" id="notas-txt" class="campo requerido" autocomplete="off" cols="30" rows="3" data-form="notas" placeholder="Contador, Pizzería Frogs, Zaragoza..." maxlength="250" required></textarea>
 
         <fieldset class="fieldset__envoltura formulario__fieldset-2-columnas">

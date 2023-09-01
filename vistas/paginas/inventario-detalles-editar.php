@@ -1,11 +1,16 @@
 <?php
 if(!isset($_GET['id'])) {
-    echo '<p class="destacado">No se ha selecionado ningún folio...</p>';
+    echo '<p class="alerta-roja">No se ha selecionado ningún folio...</p>';
     return;
 }
 
 $folio = $_GET['id'];
 $consulta = ControladorProductos::ctrlLeerUno($folio);
+
+if(count($consulta) === 0) {
+    echo '<p class="alerta-roja">No se ha selecionado ningún folio...</p>';
+    die();
+}
 
 $fecha_min = date("Y-m-d 00:00:00");
 $fecha_max = date("Y-m-d", strtotime("+5 year", strtotime($fecha_min)));
@@ -15,6 +20,7 @@ $caducidad = ($consulta[0]['caducidad'] !== null)
     : null;
 
 $lista_categorias = ControladorProductos::ctrlCategoriasActivas();
+
 ?>
 <span class="formulario__encabezado">
     <img class="formulario__icono" src="vistas/img/file-invoice.svg" alt="Formulario">
@@ -27,8 +33,9 @@ $lista_categorias = ControladorProductos::ctrlCategoriasActivas();
     <fieldset class="formulario__fieldset">
         <label for="idProducto-txt">Código o Folio:</label>
         <input type="text" class="campo requerido mayusculas" placeholder="ID del producto" name="idProducto-txt" id="idProducto-txt" autocomplete="off" data-form="productoID" maxlength="20" pattern="^[a-zA-Z0-9]{1,20}$" required value="<?= $consulta[0]['producto_id'] ?>">
+        <span class="texto-rosa" id="alerta-valida_ID"></span>
         
-        <input type="hidden" name="idProductoOriginal-txt" value="<?= $consulta[0]['producto_id'] ?>" required>
+        <input type="hidden" name="idProductoOriginal-txt" id="idProductoOriginal-txt" value="<?= $consulta[0]['producto_id'] ?>" required>
 
         <label for="nombreProducto-txt">Nombre del producto:</label>
         <input type="text" class="campo requerido" placeholder="Nombre" name="nombreProducto-txt" id="nombreProducto-txt" autocomplete="off" data-form='nombreProducto' maxlength="80" minlength="4" required value="<?= $consulta[0]['nombre'] ?>">

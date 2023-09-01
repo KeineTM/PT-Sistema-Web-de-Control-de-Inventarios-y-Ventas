@@ -74,11 +74,11 @@ $productos = $modelo->mdlLeerParaPaginacionDeBusqueda($limit, $offset, $palabraC
             <span>
                 <h3><?= $producto['nombre'] ?></h3>
                 <ul>
-                    <li>Código: <?= $producto['producto_id'] ?></li>
+                    <li><?= $producto['producto_id'] ?></li>
                     <li class="mayusculas"><?= $producto['categoria'] ?></li>
-                    <li>Unidades: <?= ($producto['unidades'] !== 0) ? $producto['unidades'] : 'Agotado' ?></li>
-                    <li>Precio de venta: $<?= $producto['precio_venta'] ?></li>
-                    <li><a href="index.php?pagina=inventario&opciones=detalles&id=<?= $producto['producto_id'] ?>">Ver detalles y editar</a></li>
+                    <li>Unidades: <?= $producto['unidades'] ?></li>
+                    <li>Precio: $<?= $producto['precio_venta'] ?></li>
+                    <li><a href="index.php?pagina=ventas&opciones=alta&idProducto-txt=<?= $producto['producto_id'] ?>">Agregar a la venta</a></li>
                 </ul>
             </span>
         </article>

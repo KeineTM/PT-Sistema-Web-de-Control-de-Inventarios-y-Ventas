@@ -1,5 +1,5 @@
 <?php
-$fecha_min = date("Y-m-d 00:00:00");
+$fecha_min = date("Y-m-d");
 $fecha_max = date("Y-m-d", strtotime("+5 year", strtotime($fecha_min)));
 $lista_categorias = ControladorProductos::ctrlCategoriasActivas();
 ?>
@@ -14,6 +14,7 @@ $lista_categorias = ControladorProductos::ctrlCategoriasActivas();
     <fieldset class="formulario__fieldset">
         <label for="idProducto-txt">Código o Folio:</label>
         <input type="text" class="campo requerido mayusculas" placeholder="ABC12345678910" name="idProducto-txt" id="idProducto-txt" autocomplete="off" data-form="productoID" maxlength="20" pattern="^[a-zA-Z0-9]{1,20}$" autofocus required>
+        <span class="texto-rosa" id="alerta-valida_ID"></span>
 
         <label for="nombreProducto-txt">Nombre del producto:</label>
         <input type="text" class="campo requerido" placeholder="Nombre" name="nombreProducto-txt" id="nombreProducto-txt" autocomplete="off" data-form='nombreProducto' maxlength="80" minlength="4" required>
@@ -53,14 +54,14 @@ $lista_categorias = ControladorProductos::ctrlCategoriasActivas();
             <input type="number" step="any" class="campo  requerido" placeholder="0.00" name="precioVentaProducto-txt" id="precioVentaProducto-txt" autocomplete="off" data-form="precioVenta" min="0" max="9999" required>
 
             <label for="caducidadProducto-txt">Fecha de caducidad</label>
-            <input type="date" class="campo" placeholder="Fecha de caducidad" name="caducidadProducto-txt" id="caducidadProducto-txt" autocomplete="off" data-form="caducidad" min="<?=$fecha_min?>" max="<?=$fecha_max?>" maxlength="8">
+            <input type="date" class="campo" placeholder="Fecha de caducidad" name="caducidadProducto-txt" id="caducidadProducto-txt" autocomplete="off" data-form="caducidad" min="<?= $fecha_min ?>" max="<?= $fecha_max ?>" maxlength="8">
         </fieldset>
 
         <label for="imagenProducto-txt">URL de la foto:</label>
         <input type="text" class="campo" placeholder="direccion.jpg" name="imagenProducto-txt" id="imagenProducto-txt" autocomplete="off" data-form="imagenURL" maxlength="250" pattern="^[^\s]{0,250}\.(jpg|JPG|png|PNG|jpeg|JPEG|webp|WEBP)$">
 
         <div class="formulario__botones-contenedor">
-            <button class="boton-form enviar" id="btnRegistrarProducto">Registrar</button>
+            <button type="submit" class="boton-form enviar" id="btnRegistrarProducto">Registrar</button>
             <button class="boton-form otro" type="reset">Limpiar</button>
         </div>
     <fieldset>

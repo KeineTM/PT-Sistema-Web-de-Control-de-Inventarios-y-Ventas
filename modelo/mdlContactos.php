@@ -77,29 +77,26 @@ class ModeloContactos extends ModeloConexion {
     /**
      * Método que cuenta los registros en la tabla. 
      */
-    public function mdlConteoRegistros($id = '') {
-        $this->sentenciaSQL = ($id === '') 
-            ? 'SELECT count(*) AS conteo FROM contactos'
-            : 'SELECT count(*) AS conteo FROM contactos
-                WHERE contacto_id = ?';
-        return $this->consultaRead($id);
-    }
-
-    /** Método que recupera los registros para la paginación */
-    public function mdlLeerParaPaginacion($limit, $offset) {
-        $this->sentenciaSQL = 'SELECT contactos.contacto_id, contactos.nombre, contactos.apellido_paterno, contactos.apellido_materno,
-            contactos.email, contactos.notas, contactos.tipo_contacto AS tipo_id,
-            tipos_contacto.tipo_contacto
-            FROM contactos
-            INNER JOIN tipos_contacto ON contactos.tipo_contacto = tipos_contacto.tipo_id
-            LIMIT ? OFFSET ?';
+    public function mdlConteoRegistros($id = '', $tipo = '') {
+        switch(true) {
+            case($id === '' && $tipo === ''):  $this->sentenciaSQL = 'SELECT count(*) AS conteo FROM contactos'; break;
+            case($id === '' && $tipo !== ''):  $this->sentenciaSQL = 'SELECT count(*) AS conteo FROM contactos WHERE tipo_contacto = ?'; break;
+            case($id !== '' && $tipo === ''):  $this->sentenciaSQL = 'SELECT count(*) AS conteo FROM contactos WHERE contacto_id = ?'; break;
+            case($id !== '' && $tipo !== ''):  $this->sentenciaSQL = 'SELECT count(*) AS conteo FROM contactos WHERE contacto_id = ? AND tipo_contacto = ?'; break;
+        }
 
         try {
             $this->abrirConexion(); # Conecta
             $pdo = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
             
-            $pdo -> bindParam(1, $limit, PDO::PARAM_INT);
-            $pdo -> bindParam(2, $offset, PDO::PARAM_INT);
+            switch(true) {
+                case($id === '' && $tipo !== ''):  $pdo -> bindParam(1, $tipo, PDO::PARAM_INT); break;
+                case($id !== '' && $tipo === ''):  $pdo -> bindParam(1, $id, PDO::PARAM_INT); break;
+                case($id !== '' && $tipo !== ''):  
+                    $pdo -> bindParam(1, $id, PDO::PARAM_INT);
+                    $pdo -> bindParam(2, $tipo, PDO::PARAM_INT);
+                break;
+            }
     
             $pdo -> execute(); # Ejecuta
             $this->registros = $pdo -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos
@@ -112,6 +109,50 @@ class ModeloContactos extends ModeloConexion {
             $pdo = null; # Limpia
             $this->cerrarConexion(); # Cierra
         }
+    }
+
+    /** Método que recupera los registros para la paginación */
+    public function mdlLeerParaPaginacion($limit, $offset, $tipo='') {
+        $this->sentenciaSQL = ($tipo === '') 
+            ? 'SELECT contactos.contacto_id, contactos.nombre, contactos.apellido_paterno, contactos.apellido_materno,
+            contactos.email, contactos.notas, contactos.tipo_contacto AS tipo_id,
+            tipos_contacto.tipo_contacto
+            FROM contactos
+            INNER JOIN tipos_contacto ON contactos.tipo_contacto = tipos_contacto.tipo_id
+            LIMIT ? OFFSET ?'
+            : 'SELECT contactos.contacto_id, contactos.nombre, contactos.apellido_paterno, contactos.apellido_materno,
+            contactos.email, contactos.notas, contactos.tipo_contacto AS tipo_id,
+            tipos_contacto.tipo_contacto
+            FROM contactos
+            INNER JOIN tipos_contacto ON contactos.tipo_contacto = tipos_contacto.tipo_id
+            WHERE contactos.tipo_contacto= ?
+            LIMIT ? OFFSET ?';
+
+    try {
+        $this->abrirConexion(); # Conecta
+        $pdo = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
+        
+        if($tipo === '') {
+            $pdo -> bindParam(1, $limit, PDO::PARAM_INT);
+            $pdo -> bindParam(2, $offset, PDO::PARAM_INT);
+        } else {
+            $pdo -> bindParam(1, $tipo, PDO::PARAM_INT);
+            $pdo -> bindParam(2, $limit, PDO::PARAM_INT);
+            $pdo -> bindParam(3, $offset, PDO::PARAM_INT);
+        }
+        
+
+        $pdo -> execute(); # Ejecuta
+        $this->registros = $pdo -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos
+
+        return $this->registros;
+
+    } catch(PDOException $e) {
+        return 'Error: ' . $e->getMessage(); # Si hubo un error lo Retorna
+    } finally {
+        $pdo = null; # Limpia
+        $this->cerrarConexion(); # Cierra
+    }
     }
 
     public function mdlBuscarEnFullText($palabra_clave, $limit, $offset) {

@@ -130,15 +130,69 @@ class ControladorProductos {
         }
     }
 
-    /** Método que registra un nuevo producto en la base de datos */
-    public function ctrlRegistrar() {
+    private function registrar() {
         $listaDatos = [$this->producto_id, $this->nombre, $this->categoria_id, $this->descripcion, $this->unidades, $this->unidadesMinimas, 
         $this->precioCompra, $this->precioVenta, $this->estado, $this->foto_url, $this->caducidad];
         $productoNuevo = new ModeloProductos;
         $resultado = $productoNuevo -> registrar($listaDatos);
         return ($resultado === true)
                 ? 'Registro correcto'
-                : 'Ocurrio un error durante el registro, verifique sus datos.';
+                : $resultado;
+    }
+
+    /** Método que registra un nuevo producto en la base de datos */
+    public static function ctrlRegistrar() {
+        # Recuperación de valores
+        $producto_id = $_POST['idProducto-txt']; # Requerido
+        $nombre = $_POST['nombreProducto-txt']; # Requerido
+        $categoria_id = (strlen($_POST['categoriaProducto-txt']))
+            ? $_POST['categoriaProducto-txt']
+            : ''; # Requerido
+        $descripcion = (strlen($_POST['descripcionProducto-txt']))
+                        ? $_POST['descripcionProducto-txt']
+                        : null;
+        $unidades = $_POST['unidadesProducto-txt']; # Requerido
+        $unidadesMinimas = (strlen($_POST['unidadesMinimasProducto-txt']))
+                            ? $_POST['unidadesMinimasProducto-txt']
+                            : 0;
+        $precioCompra = (strlen($_POST['precioCompraProducto-txt']))
+                        ? $_POST['precioCompraProducto-txt']
+                        : 0;
+        $precioVenta = $_POST['precioVentaProducto-txt']; # Requerido
+        $estado = (isset($_POST['estadoProducto-txt'])) # Requerido
+                    ? $_POST['estadoProducto-txt']
+                    : 1;
+        $foto_url = (strlen($_POST['imagenProducto-txt']))
+                    ? $_POST['imagenProducto-txt']
+                    : "vistas/img/image.svg";
+        $caducidad = (strlen($_POST['caducidadProducto-txt']))
+            ? $_POST['caducidadProducto-txt']
+            : null;
+
+        // VALIDA Coincidencias de id
+        $coincidencia = self::ctrlContarCoincidencias($producto_id);
+        if($coincidencia) return 'Error: El código ya se encuentra registrado.';
+
+        $productoNuevo = new ControladorProductos(
+            $producto_id, $nombre, $categoria_id, $descripcion, $unidades, $unidadesMinimas, 
+            $precioCompra, $precioVenta, $estado, $foto_url, $caducidad);
+
+        $listaErrores = [];
+        $listaCampos = ['Codigo del producto', 'Nombre de producto', 'Categoria', 'Descripcion', 'Unidades', 'Unidades Minimas', 'Precio de Compra', 'Precio de Venta', 'Caducidad', 'Imagen URL', 'Estado'];
+        
+        # Validación de los campos
+        foreach($listaCampos as $campo) {
+            if($productoNuevo->validarDato($campo) !== null) # Si hay un error
+                array_push($listaErrores, '<br>' . $productoNuevo->validarDato($campo)); # Se agrega a la lista
+        }
+
+        if(count($listaErrores) > 0) { // Si existen errores devuelve la lista con ellos
+            return ($listaErrores);
+            die();
+        } else { # Sino, ejecuta el registro
+            return $productoNuevo->registrar();
+            die();
+        }
     }
     
     /** Método que actualiza un producto existente en la base de datos */
@@ -191,13 +245,11 @@ class ControladorProductos {
 
     /** 
      * Método que cuenta los productos que coincidan con un id para validar su existencia.
-     * Si encuentra coincidencia, retorna true, de lo contrario retorna false.
     */
-
-    static public function ctrlValidarExistencia($producto_id) {
+    static public function ctrlContarCoincidencias($producto_id_nuevo, $edicion_id_antiguo = '') {
         $listaProductos = new ModeloProductos();
-        $resultado = $listaProductos -> mdlContarCoincidencias($producto_id);
-        return ($resultado > 0) ? true : false;
+        $resultado = $listaProductos -> mdlContarCoincidencias($producto_id_nuevo, $edicion_id_antiguo);
+        return $resultado[0]['conteo'];
     }
 
     ## Otros métodos
@@ -248,11 +300,11 @@ if(isset($_GET['funcion'])) {
     require_once '../modelo/mdlInventario.php';
 
     if($_GET['funcion'] === 'listar-categorias-activas') {
-        echo json_encode(ControladorProductos::ctrlCategoriasActivas());
+        echo json_encode(ControladorProductos::ctrlCategoriasActivas(), JSON_UNESCAPED_UNICODE);
         die();
     }
     else if($_GET['funcion'] === 'listar-categorias') {
-        echo json_encode(ControladorProductos::ctrlCategorias());
+        echo json_encode(ControladorProductos::ctrlCategorias(), JSON_UNESCAPED_UNICODE);
         die();
     }
     else if($_GET['funcion'] === 'registrar-categoria') {
@@ -264,10 +316,41 @@ if(isset($_GET['funcion'])) {
         $resultado = ControladorProductos::ctrlRegistrarCategoria($categoria);
         echo $resultado;
         die();
-    } else if($_GET['funcion'] === 'validar-existencia') {
+    } 
+    else if($_GET['funcion'] === 'validar-existencia') {
+        if(!isset($_POST['idProducto-txt'])) {
+            echo 'No se ha ingresado un código.';
+            die();
+        }
 
+        $producto_id_nuevo = $_POST['idProducto-txt'];
+        $producto_id_antiguo = (isset($_POST['idProductoOriginal-txt'])) 
+            ? $_POST['idProductoOriginal-txt'] 
+            : '';
+
+        // Validación:
+        $regex = '/^[a-zA-Z0-9]{1,20}$/';
+        $hay_error = match(true) {
+            strlen($producto_id_nuevo) === 0 =>'Ha enviado un código vacío.',
+            strlen($producto_id_nuevo) > 20 => 'El código debe ser menor a 20 caracteres.',
+            preg_match($regex, $producto_id_nuevo) === 0 => 'El código sólo admite números y letras.',
+            default => false,
+        };
+
+        if($hay_error === false) {
+            $existe_el_ID = ControladorProductos::ctrlContarCoincidencias($producto_id_nuevo, $producto_id_antiguo);
+
+            $respuesta = ($existe_el_ID > 0) 
+                ? 'El código ya se encuentra registrado.' 
+                :  '';
+            echo ($respuesta);
+            die(); 
+        } else {
+            echo $hay_error;
+            die();
+        } 
     }
-    /*else if($_GET['funcion'] === 'editar-categoria') {
+    else if($_GET['funcion'] === 'editar-categoria') {
         if(!isset($_POST['categoriaProductoEditar-txt'])) {echo 'Debe ingresar un id de categoria'; die();}
         if(!isset($_POST['categoria_editar-txt'])) {echo 'Debe ingresar un nombre para la categoria'; die();}
         if(!isset($_POST['estadoCategoria-txt'])) {echo 'Debe ingresar un estado valido: Activo / Dar de baja'; die();}
@@ -290,52 +373,7 @@ if(isset($_GET['funcion'])) {
             return 'Debe ingresar un estado valido: 0 o 1';
     }
     else if($_GET['funcion'] === 'registrar-producto') {
-        # Recuperación de valores
-        $producto_id = $_POST['idProducto-txt']; # Requerido
-        $nombre = $_POST['nombreProducto-txt']; # Requerido
-        $categoria_id = ($_POST['categoriaProducto-txt']); # Requerido
-        $descripcion = (strlen($_POST['descripcionProducto-txt']))
-                        ? $_POST['descripcionProducto-txt']
-                        : null;
-        $unidades = $_POST['unidadesProducto-txt']; # Requerido
-        $unidadesMinimas = (strlen($_POST['unidadesMinimasProducto-txt']))
-                            ? $_POST['unidadesMinimasProducto-txt']
-                            : null;
-        $precioCompra = (strlen($_POST['precioCompraProducto-txt']))
-                        ? $_POST['precioCompraProducto-txt']
-                        : null;
-        $precioVenta = $_POST['precioVentaProducto-txt']; # Requerido
-        $estado = (isset($_POST['estadoProducto-txt'])) # Requerido
-                    ? $_POST['estadoProducto-txt']
-                    : 1;
-        $foto_url = (strlen($_POST['imagenProducto-txt']) > 0)
-                    ? $_POST['imagenProducto-txt']
-                    : "vistas/img/image.svg";
-        $caducidad = (strlen($_POST['caducidadProducto-txt']) > 0)
-                    ? $_POST['caducidadProducto-txt']
-                    : null;
-
-        $productoNuevo = new ControladorProductos(
-            $producto_id, $nombre, $categoria_id, $descripcion, $unidades, $unidadesMinimas, 
-            $precioCompra, $precioVenta, $estado, $foto_url, $caducidad);
-
-        $listaErrores = [];
-        $listaCampos = ['Codigo del producto', 'Nombre de producto', 'Categoria', 'Descripcion', 'Unidades', 'Unidades Minimas', 'Precio de Compra', 'Precio de Venta', 'Caducidad', 'Imagen URL', 'Estado'];
-        
-        # Validación de los campos
-        foreach($listaCampos as $campo) {
-            if($productoNuevo->validarDato($campo) !== null) { # Si hay un error
-                array_push($listaErrores, $productoNuevo->validarDato($campo)); # Se agrega a la lista
-            }
-        }
-
-        if(count($listaErrores) > 0) { // Si existen errores devuelve la lista con ellos
-            echo json_encode($listaErrores);
-            die();
-        } else { # Sino, ejecuta el registro
-            echo $productoNuevo->ctrlRegistrar();
-            die();
-        }
+        echo json_encode(ControladorProductos::ctrlRegistrar(), JSON_UNESCAPED_UNICODE);
     }
     else if($_GET['funcion'] === 'editar-producto') {
         # Recuperación de valores
@@ -386,7 +424,7 @@ if(isset($_GET['funcion'])) {
             die();
         }
     }
-    else if($_GET['funcion'] === 'listar-productos') {
+    /*else if($_GET['funcion'] === 'listar-productos') {
         if(isset($_POST['buscarProducto-txt'])) {
             $palabraClave = $_POST['buscarProducto-txt'];
             #$limit = $_POST['limit-txt'];
