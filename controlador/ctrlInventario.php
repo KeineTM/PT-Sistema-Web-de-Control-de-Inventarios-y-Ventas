@@ -333,7 +333,7 @@ if(isset($_GET['funcion'])) {
         $hay_error = match(true) {
             strlen($producto_id_nuevo) === 0 =>'Ha enviado un código vacío.',
             strlen($producto_id_nuevo) > 20 => 'El código debe ser menor a 20 caracteres.',
-            preg_match($regex, $producto_id_nuevo) === 0 => 'El código sólo admite números y letras.',
+            preg_match($regex, $producto_id_nuevo) => 'El código sólo admite números y letras.',
             default => false,
         };
 

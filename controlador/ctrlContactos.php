@@ -80,9 +80,14 @@ class ControladorContactos {
         return $modelo_consulta -> mdlBuscarEnFullText($palabra_clave, $limit, $offset);
     }
 
-    public static function ctrlExiste($id) {
+    /** Método para buscar un id dentro de la tabla y determinar si ya se encuentra registrado.
+     * Retorna true si el id ya se encuentra registrado y false si no existe.
+     */
+    private function existe() {
         $modelo_consulta = new ModeloContactos();
-        return $modelo_consulta -> mdlExiste($id);
+
+        if($modelo_consulta -> mdlExiste($this->contacto_id)) return true; // existe
+        else return false; // no existe
     }
 
     /** Método para registrar un contacto.
@@ -125,17 +130,23 @@ class ControladorContactos {
         $resultado_validacion = $nuevo_contacto -> validarDatos();
 
         if($resultado_validacion !== null) {
-            echo ($resultado_validacion);
-        } else {
-            $resultado_registro = $nuevo_contacto -> ctrlRegistrar();
-
-            if($resultado_registro === true) { # Registro exitoso
-                echo '<div id="alerta-formulario" class=alerta-verde>Registro de ' . $nombre . ' exitoso</div>';
-            } else {
-                echo '<div id="alerta-formulario" class=alerta-roja>' . $resultado_registro . '</div>';
-                exit;
+            echo '<div id="alerta-formulario" class=alerta-roja>';
+            foreach($resultado_validacion as $error) {
+                echo $error . '<br>';
             }
-        } 
+            echo '</div>';
+        } else {
+            if(!$nuevo_contacto -> existe()) {
+                $resultado_registro = $nuevo_contacto -> ctrlRegistrar();
+
+                if($resultado_registro === true) { # Registro exitoso
+                    echo '<div id="alerta-formulario" class=alerta-verde>Registro de ' . $nombre . ' exitoso</div>';
+                } else {
+                    echo '<div id="alerta-formulario" class=alerta-roja>' . $resultado_registro . '</div>';
+                }
+            } else echo '<div id="alerta-formulario" class=alerta-roja>El número de teléfono ya fue registrado previamente</div>';
+        }
+            
     }
 
     public static function editarContacto() {
@@ -204,6 +215,15 @@ class ControladorContactos {
             return "Servidor: Debe ingresar un dato para buscar";
     }
 
+    /** 
+     * Método que cuenta los contactos que coincidan con un id para validar su existencia.
+    */
+    static public function ctrlContarCoincidencias($id_nuevo, $id_antiguo = '') {
+        $modelo_consulta = new ModeloContactos();
+        $resultado = $modelo_consulta -> mdlContarCoincidencias($id_nuevo, $id_antiguo);
+        return $resultado[0]['conteo'];
+    }
+
     static public function ctrlConteoRegistros($id='', $tipo='') {
         $modelo = new ModeloContactos();
         return $modelo -> mdlConteoRegistros($id, $tipo);
@@ -212,5 +232,43 @@ class ControladorContactos {
     static public function ctrlLeerParaPaginacion($limit, $offset, $tipo='') {
         $modelo = new ModeloContactos();
         return $modelo -> mdlLeerParaPaginacion($limit, $offset, $tipo);
+    }
+}
+
+if(isset($_GET['funcion'])) {
+    require_once '../modelo/mdlContactos.php';
+
+    if($_GET['funcion'] === 'validar-existencia') {
+        if(!isset($_POST['contacto_id-txt'])) {
+            echo 'No se ha ingresado un teléfono.';
+            die();
+        }
+
+        $id_nuevo = $_POST['contacto_id-txt'];
+        $id_antiguo = (isset($_POST['contacto_id_original-txt'])) 
+            ? $_POST['contacto_id_original-txt']
+            : '';
+
+        // Validación:
+        $regex = '/^([0-9]+){10}$/';
+        $hay_error = match(true) {
+            strlen($id_nuevo) === 0 =>'Ha enviado un número de teléfono vacío.',
+            strlen($id_nuevo) !== 10 => 'El teléfono debe tener 10 dígitos.',
+            preg_match($regex, $id_nuevo) => 'Sólo se aceptan números.',
+            default => false,
+        };
+
+        if($hay_error === false) {
+            $existe_el_ID = ControladorContactos::ctrlContarCoincidencias($id_nuevo, $id_antiguo);
+
+            $respuesta = ($existe_el_ID > 0) 
+                ? 'El teléfono ya fue registrado previamente.' 
+                :  '';
+            echo ($respuesta);
+            die(); 
+        } else {
+            echo $hay_error;
+            die();
+        } 
     }
 }

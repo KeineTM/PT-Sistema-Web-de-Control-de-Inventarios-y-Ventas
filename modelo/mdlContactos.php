@@ -73,6 +73,33 @@ class ModeloContactos extends ModeloConexion {
         return $this->consultasCUD();
     }
 
+    /** Método que cuenta los teléfonos que coincidan con un id para validar su existencia.*/
+    public function mdlContarCoincidencias($id_nuevo, $id_antiguo = '') {
+        $this->sentenciaSQL = ($id_antiguo === '')
+            ? 'SELECT count(*) AS conteo FROM contactos WHERE contacto_id = ?'
+            : 'SELECT count(*) AS conteo FROM contactos WHERE contacto_id = ? AND contacto_id <> ?';
+        
+        try {
+            $this->abrirConexion(); # Conecta
+            $pdo = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
+                
+            $pdo -> bindParam(1, $id_nuevo, PDO::PARAM_STR);
+            if($id_antiguo !== '')
+                $pdo -> bindParam(2, $id_antiguo, PDO::PARAM_STR);
+        
+            $pdo -> execute(); # Ejecuta
+            $this->registros = $pdo -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos
+        
+            return $this->registros;
+    
+        } catch(PDOException $e) {
+            return 'Error: ' . $e->getMessage(); # Si hubo un error lo Retorna
+        } finally {
+            $pdo = null; # Limpia
+            $this->cerrarConexion(); # Cierra
+        }
+    }
+
 
     /**
      * Método que cuenta los registros en la tabla. 
@@ -128,31 +155,31 @@ class ModeloContactos extends ModeloConexion {
             WHERE contactos.tipo_contacto= ?
             LIMIT ? OFFSET ?';
 
-    try {
-        $this->abrirConexion(); # Conecta
-        $pdo = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
-        
-        if($tipo === '') {
-            $pdo -> bindParam(1, $limit, PDO::PARAM_INT);
-            $pdo -> bindParam(2, $offset, PDO::PARAM_INT);
-        } else {
-            $pdo -> bindParam(1, $tipo, PDO::PARAM_INT);
-            $pdo -> bindParam(2, $limit, PDO::PARAM_INT);
-            $pdo -> bindParam(3, $offset, PDO::PARAM_INT);
+        try {
+            $this->abrirConexion(); # Conecta
+            $pdo = $this->conexion -> prepare($this->sentenciaSQL); # Crea PDOStatement
+            
+            if($tipo === '') {
+                $pdo -> bindParam(1, $limit, PDO::PARAM_INT);
+                $pdo -> bindParam(2, $offset, PDO::PARAM_INT);
+            } else {
+                $pdo -> bindParam(1, $tipo, PDO::PARAM_INT);
+                $pdo -> bindParam(2, $limit, PDO::PARAM_INT);
+                $pdo -> bindParam(3, $offset, PDO::PARAM_INT);
+            }
+            
+
+            $pdo -> execute(); # Ejecuta
+            $this->registros = $pdo -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos
+
+            return $this->registros;
+
+        } catch(PDOException $e) {
+            return 'Error: ' . $e->getMessage(); # Si hubo un error lo Retorna
+        } finally {
+            $pdo = null; # Limpia
+            $this->cerrarConexion(); # Cierra
         }
-        
-
-        $pdo -> execute(); # Ejecuta
-        $this->registros = $pdo -> fetchAll(PDO::FETCH_ASSOC); # Recupera datos
-
-        return $this->registros;
-
-    } catch(PDOException $e) {
-        return 'Error: ' . $e->getMessage(); # Si hubo un error lo Retorna
-    } finally {
-        $pdo = null; # Limpia
-        $this->cerrarConexion(); # Cierra
-    }
     }
 
     public function mdlBuscarEnFullText($palabra_clave, $limit, $offset) {

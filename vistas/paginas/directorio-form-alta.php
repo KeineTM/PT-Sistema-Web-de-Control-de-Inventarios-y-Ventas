@@ -42,6 +42,7 @@ ControladorContactos::crearContacto();
 
         <label for="contacto_id-txt">Teléfono:</label>
         <input type="number" step="any" class="campo requerido" placeholder="1234567890" name="contacto_id-txt" id="contacto_id-txt" autocomplete="off" data-form="contacto_id" minlength="10" maxlength="10" required>
+        <span class="texto-rosa" id="alerta-valida_ID"></span>
 
         <label for="email-txt">Email:</label>
         <input type="email" name="email-txt" id="email-txt" autocomplete="off" class="campo" data-form="email" placeholder="direccion@email.com" maxlength="150">

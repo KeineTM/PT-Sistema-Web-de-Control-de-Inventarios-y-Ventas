@@ -56,7 +56,8 @@ ControladorContactos::eliminarContacto();
         <input type="text" class="campo" placeholder="Apellido" name="apellido_materno-txt" id="apellido_materno-txt" autocomplete="off" data-form="apellido_materno" maxlength="80" value=<?= $consulta[0]['apellido_materno'] ?>>
 
         <label for="contacto_id_nuevo-txt">Teléfono:</label>
-        <input type="number" step="any" class="campo requerido" placeholder="1234567890" name="contacto_id_nuevo-txt" id="contacto_id_nuevo-txt" autocomplete="off" data-form="contacto_id" minlength="10" maxlength="10" required value=<?= $consulta[0]['contacto_id'] ?>>
+        <input type="number" step="any" class="campo requerido" placeholder="1234567890" name="contacto_id_nuevo-txt" id="contacto_id-txt" autocomplete="off" data-form="contacto_id" minlength="10" maxlength="10" required value=<?= $consulta[0]['contacto_id'] ?>>
+        <span class="texto-rosa" id="alerta-valida_ID"></span>
 
         <label for="email-txt">Email:</label>
         <input type="email" name="email-txt" id="email-txt" autocomplete="off" class="campo" data-form="email" placeholder="direccion@email.com" maxlength="150" value=<?= $consulta[0]['email'] ?>>

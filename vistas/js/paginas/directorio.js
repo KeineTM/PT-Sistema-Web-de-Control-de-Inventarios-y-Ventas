@@ -1,6 +1,8 @@
 import { metodosValidacion } from "../validacion.js";
 import { metodosModal } from "../modal.js";
 
+const contactoID = document.querySelector('#contacto_id-txt');
+
 // Validaciones en formularios de alta y edición
 /** Método que recorre todas las etiquetas input para validar su contenido */
 const validar = (campos, alertaHTML, listaErrores) => {
@@ -18,11 +20,49 @@ const validar = (campos, alertaHTML, listaErrores) => {
     alertaHTML.innerHTML = listaErrores.join('<br>');
 }
 
+// Código para ejecutar una consulta asincrónica que valida que el código de barras no esté repetido
+if(contactoID !== null) {
+    const aletaHTML_validacion = document.querySelector('#alerta-valida_ID');
+    const url = window.location.search;
+    const urlParametros = new URLSearchParams(url);
+    const contactoIDOriginal = urlParametros.get('id');
+
+    const validarExistenciaAJAX = () => {
+        aletaHTML_validacion.style.visibility = 'hidden';
+        aletaHTML_validacion.innerText = '';
+
+        const formData = new FormData();
+        formData.append('contacto_id-txt', contactoID.value);
+        
+        if(contactoIDOriginal !== null) {
+            formData.append('contacto_id_original-txt', contactoIDOriginal);
+        }
+
+        // Uso de Fetch para el paso del parámetro a la página PHP por POST
+        fetch('controlador/ctrlContactos.php?funcion=validar-existencia', {
+            method: 'POST',
+            body: formData
+        }).then(response => response.text() // Recuperación de la respuesta del servidor en texto plano
+        ).then(data => {
+            if(data !== '') {
+                aletaHTML_validacion.style.visibility = 'visible';
+                aletaHTML_validacion.innerText = data; // Impresión en pantalla de la respuesta del registro
+                metodosModal.desplegarModal(document.getElementById('modal'));
+                metodosModal.construirModalMensajeResultado(document.getElementById('modal'), data);
+            } 
+            
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    contactoID.addEventListener('blur', validarExistenciaAJAX);
+}
+
 // Aplica tanto para formulario de alta como de edición
 const formulario = document.querySelector('#formulario-directorio')
 
 if(formulario !== null) {
-    const alertaHTML = document.querySelector('#alerta-formulario');
     const listaCampos = document.querySelectorAll('[data-form]');
     const campoTelefono = document.querySelector('[data-form=contacto_id]');
     const btnEnviar = document.querySelector('#btnRegistrar');
@@ -50,7 +90,6 @@ if(formulario !== null) {
 
 
 //----------------- AJAX búsqueda y despliegue de un contacto ------------------
-const contenedorHTML = document.querySelector('#subcontenedor');
 const formularioBusqueda = document.querySelector('#barra-busqueda');
 const campoBuscar = document.querySelector('[name=buscarContacto-txt]');
 const btnBuscar = document.querySelector('#btnBuscar');
