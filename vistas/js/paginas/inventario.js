@@ -12,6 +12,7 @@ const formularioEdicionCategoria = document.getElementById('formulario-edicion-c
 const productoID = document.querySelector('#idProducto-txt');
 const productoIDOriginal = document.querySelector('#idProductoOriginal-txt');
 const aletaHTML_validacion = document.querySelector('#alerta-valida_ID');
+let listaErrores = []; // Lista que almacenará los errores detectados
 
 const campoCodigoDeBarras = document.querySelector('[data-form="productoID"]');
 /** Método para prevenir el 'Enter' del lector de código de barras */
@@ -48,8 +49,8 @@ if(productoID !== null) {
             if(data !== '') {
                 aletaHTML_validacion.style.visibility = 'visible';
                 aletaHTML_validacion.innerText = data; // Impresión en pantalla de la respuesta del registro
-                metodosModal.desplegarModal(document.getElementById('modal'));
-                metodosModal.construirModalMensajeResultado(document.getElementById('modal'), data);
+                /*metodosModal.desplegarModal(document.getElementById('modal'));
+                metodosModal.construirModalMensajeResultado(document.getElementById('modal'), data);*/
             } 
             
         }).catch(error => {
@@ -171,7 +172,7 @@ if(formularioEdicionCategoria !== null) {
     const alertaCategoria = document.getElementById('alerta-edicion-categoria');
     const formulario = document.getElementById('formulario-edicion-categoria');
     
-    btnEditarCategoria.addEventListener('click', () => {
+    btnEditarCategoria.addEventListener('click', (event) => {
         event.preventDefault();
         alertaCategoria.style.visibility = 'hidden';
         alertaCategoria.innerHTML = '';
@@ -225,9 +226,10 @@ if(formularioAlta !== null) {
     // Registro de producto
     btnRegistrarProducto.addEventListener("click", (event) => {
         event.preventDefault();
-        let listaErrores = []; // Lista que almacenará los errores detectados
+        listaErrores = []; // Lista que almacenará los errores detectados
 
         validar(campos, alertaHTML, listaErrores);
+
 
         if(listaErrores.length === 0) {// Si no hay errores 
             if(parseInt(campoPrecioVenta.value) < parseInt(campoPrecioCompra.value)) {
@@ -268,7 +270,7 @@ if(formularioEdicion !== null) {
     // Registro de producto
     btnEditarProducto.addEventListener("click", (event) => {
         event.preventDefault();
-        let listaErrores = []; // Lista que almacenará los errores detectados
+        listaErrores = []; // Lista que almacenará los errores detectados
         
         validar(campos, alertaHTML, listaErrores); // Método que retorna los errores encontrados
 

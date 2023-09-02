@@ -35,7 +35,7 @@ class ModeloContactos extends ModeloConexion {
     }
 
     public function mdlExiste($id) {
-        $this->sentenciaSQL = 'SELECT COUNT(*) FROM contactos WHERE contacto_id = ?';
+        $this->sentenciaSQL = 'SELECT COUNT(*) AS conteo FROM contactos WHERE contacto_id = ?';
         return $this->consultaRead($id);
     }
 

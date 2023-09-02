@@ -2,6 +2,7 @@ import { metodosValidacion } from "../validacion.js";
 import { metodosModal } from "../modal.js";
 
 const contactoID = document.querySelector('#contacto_id-txt');
+const aletaHTML_validacion = document.querySelector('#alerta-valida_ID');
 
 // Validaciones en formularios de alta y edición
 /** Método que recorre todas las etiquetas input para validar su contenido */
@@ -22,7 +23,6 @@ const validar = (campos, alertaHTML, listaErrores) => {
 
 // Código para ejecutar una consulta asincrónica que valida que el código de barras no esté repetido
 if(contactoID !== null) {
-    const aletaHTML_validacion = document.querySelector('#alerta-valida_ID');
     const url = window.location.search;
     const urlParametros = new URLSearchParams(url);
     const contactoIDOriginal = urlParametros.get('id');
@@ -47,8 +47,8 @@ if(contactoID !== null) {
             if(data !== '') {
                 aletaHTML_validacion.style.visibility = 'visible';
                 aletaHTML_validacion.innerText = data; // Impresión en pantalla de la respuesta del registro
-                metodosModal.desplegarModal(document.getElementById('modal'));
-                metodosModal.construirModalMensajeResultado(document.getElementById('modal'), data);
+                /*metodosModal.desplegarModal(document.getElementById('modal'));
+                metodosModal.construirModalMensajeResultado(document.getElementById('modal'), data);*/
             } 
             
         }).catch(error => {
@@ -65,6 +65,7 @@ const formulario = document.querySelector('#formulario-directorio')
 if(formulario !== null) {
     const listaCampos = document.querySelectorAll('[data-form]');
     const campoTelefono = document.querySelector('[data-form=contacto_id]');
+    const alertaHTML = document.getElementById('alerta-formulario');
     const btnEnviar = document.querySelector('#btnRegistrar');
 
     campoTelefono.addEventListener('input', () => {
@@ -79,8 +80,11 @@ if(formulario !== null) {
         
         validar(listaCampos, alertaHTML, listaErrores);
 
-        if(listaErrores.length === 0) {
-            formulario.submit()
+        if(aletaHTML_validacion.textContent !== '') 
+            listaErrores.unshift(aletaHTML_validacion.textContent);
+
+        if(listaErrores.length === 0 ) {
+            formulario.submit();
         } else {
             metodosModal.desplegarModal(document.getElementById('modal'));
             metodosModal.construirModalAlerta(document.getElementById('modal'), listaErrores);

@@ -85,8 +85,8 @@ class ControladorContactos {
      */
     private function existe() {
         $modelo_consulta = new ModeloContactos();
-
-        if($modelo_consulta -> mdlExiste($this->contacto_id)) return true; // existe
+        $resultado = $modelo_consulta -> mdlExiste($this->contacto_id);
+        if($resultado[0]['conteo'] > 0) return true; // existe
         else return false; // no existe
     }
 
@@ -136,7 +136,7 @@ class ControladorContactos {
             }
             echo '</div>';
         } else {
-            if(!$nuevo_contacto -> existe()) {
+            if($nuevo_contacto -> existe() === false) {
                 $resultado_registro = $nuevo_contacto -> ctrlRegistrar();
 
                 if($resultado_registro === true) { # Registro exitoso

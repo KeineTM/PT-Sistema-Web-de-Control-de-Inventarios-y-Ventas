@@ -50,6 +50,7 @@ const construirModalAlerta = (contenedor, mensaje) => {
     const contenedorModalAlerta = document.getElementById('contenedorModalAlerta');
     const btnCerrarModal = document.getElementById('btnCerrarMiniModal');
     
+    btnCerrarModal.focus();
     btnCerrarModal.addEventListener("click", () => {
         metodosModal.cerrarModal(contenedorModalAlerta);
     });

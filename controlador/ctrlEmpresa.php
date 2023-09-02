@@ -123,9 +123,8 @@ class ControladorEmpresa {
             $resultado_registro = $empresa -> ctrlEditar($rfc_original);
 
             if($resultado_registro === true) { # Registro exitoso
-                echo '<div id="alerta-formulario" class=alerta-verde>Registro exitoso</div>';
                 echo '<script type="text/javascript">
-                window.location.href = "index.php?pagina=empresa&opciones=editar";
+                window.location.href = "index.php?pagina=empresa&opciones=editar&estado=exito";
                 </script>';
                 exit;
             } else {
@@ -163,7 +162,7 @@ class ControladorEmpresa {
             if($resultado_registro === true) { # Registro exitoso
                 echo '<div id="alerta-formulario" class=alerta-verde>Registro exitoso</div>';
                 echo '<script type="text/javascript">
-                window.location.href = "index.php?pagina=empresa&opciones=editar";
+                window.location.href = "index.php?pagina=empresa&opciones=editar&estado=exito";
                 </script>';
                 exit();
             } else {
@@ -208,7 +207,7 @@ class ControladorEmpresa {
             if($resultado_registro === true) { # Registro exitoso
                 echo '<div id="alerta-formulario" class=alerta-verde>Registro exitoso</div>';
                 echo '<script type="text/javascript">
-                window.location.href = "index.php?pagina=empresa&opciones=editar";
+                window.location.href = "index.php?pagina=empresa&opciones=editar&estado=exito";
                 </script>';
                 exit;
             } else {
@@ -242,7 +241,7 @@ class ControladorEmpresa {
             if($resultado_registro === true) { # Registro exitoso
                 echo '<div id="alerta-formulario" class=alerta-verde>Eliminación completa</div>';
                 echo '<script type="text/javascript">
-                window.location.href = "index.php?pagina=empresa&opciones=editar";
+                window.location.href = "index.php?pagina=empresa&opciones=editar&estado=exito";
                 </script>';
                 exit;
             } else {

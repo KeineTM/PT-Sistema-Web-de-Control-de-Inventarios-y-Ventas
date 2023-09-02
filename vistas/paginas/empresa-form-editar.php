@@ -7,6 +7,8 @@ ControladorEmpresa::editarEmpresa();
 ControladorEmpresa::registrarRedSocial();
 ControladorEmpresa::editarRedSocial();
 ControladorEmpresa::borrarRedSocial();
+
+
 ?>
 
 <span class="formulario__encabezado">
@@ -14,6 +16,20 @@ ControladorEmpresa::borrarRedSocial();
     <h2>Editar datos de la Tienda</h2>
     <span class="alerta" id="alerta-formulario"></span>
 </span>
+
+<!-- Mensaje de estado de la operación -->
+<div id="alerta-formulario" class=<?php
+    if (isset($_GET['estado'])) {
+        if ($_GET['estado'] === 'exito') {
+        ?> "alerta-verde">Datos editados correctamente
+<?php } else
+        if ($_GET['estado'] === 'error') { ?>
+    "alerta-roja">Ocurrió un error, intente nuevamente
+<?php }
+    } else {
+    echo 'hidden >';
+} ?>
+</div>
 
 <form class="formulario" method="post" id="formulario-empresa">
     <fieldset class="formulario__fieldset">
@@ -50,7 +66,7 @@ ControladorEmpresa::borrarRedSocial();
         <input type="number" class="campo  requerido" placeholder="101" name="numero-txt" id="numero-txt" autocomplete="off" data-form="numero" min="1" maxlength="6" value="<?= $consulta[0]['numero'] ?>" required>
 
         <label for="codigo_postal-txt">Código Postal:</label>
-        <input type="number" class="campo  requerido" placeholder="000001" name="codigo_postal-txt" id="codigo_postal-txt" autocomplete="off" data-form="cp" min="5" maxlength="5" value="<?= $consulta[0]['codigo_postal'] ?>" disabled required>
+        <input type="number" class="campo  requerido" placeholder="00001" name="codigo_postal-txt" id="codigo_postal-txt" autocomplete="off" data-form="cp" min="5" maxlength="5" value="<?= $consulta[0]['codigo_postal'] ?>" required>
 
         <label for="ciudad-txt">Ciudad:</label>
         <input type="text" class="campo" id="ciudad-txt" value="<?= $consulta[0]['ciudad'] ?>" disabled>

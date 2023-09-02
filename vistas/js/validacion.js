@@ -115,7 +115,7 @@ const validarCampoProductos = (campo) => {
                 if(campo.value.length === 0) return mostrarMensajeDeError(dataform, 'vacio');
                 if(campo.value.length > 20) return mostrarMensajeDeError(dataform, 'muyLargo');
                 if(!regex.test(campo.value)) return mostrarMensajeDeError(dataform, 'formato');
-            } else
+            } else 
                 return null;
         break;
         case 'nombreProducto': // Requerido
@@ -144,7 +144,6 @@ const validarCampoProductos = (campo) => {
                 return mostrarMensajeDeError(dataform, 'muyLargo');
             } else
                 return null;
-        break;
         case 'unidades': // Requerido
             regex = /^([0-9])*$/; // Valida sólo números
             if(campo.value.length === 0 ||
