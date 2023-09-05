@@ -404,7 +404,7 @@ class ControladorOperaciones
         }
         # Valida que el cliente está registrado:
         $resultadoCliente = ControladorContactos::ctrlExiste($_POST['cliente_id-txt']);
-        if(!$resultadoCliente[0]['COUNT(*)']) {
+        if($resultadoCliente === false) {
             echo # Indica que el número de teléfono del cliente no encontrado
             '<script type="text/javascript">
                     window.location.href = "index.php?pagina='  . $tipo_operacion_url . '&opciones=alta&estado=error-telefono";

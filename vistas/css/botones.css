@@ -79,7 +79,7 @@
 .otro {
     color: var(--color-blanco);
     background: var(--color-rojo);
-    height: 3rem;
+    min-height: 3rem;
     width: 100%;
     font-size: x-large;
 }

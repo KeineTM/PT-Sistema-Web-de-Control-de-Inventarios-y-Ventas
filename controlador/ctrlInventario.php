@@ -117,7 +117,7 @@ class ControladorProductos {
                 return $mensaje;
                 break;
             case 'Imagen URL':
-                $regex = '/\.(jpg|jpeg|png|gif|webp|svg)$/i';
+                $regex = '/\.(jpg|jpeg|png|gif|webp|svg|JPG|JPEG|PNG|GIF|WEBP|SVG)$/i';
                 $referencia = 'extensiones .jpg, .jpeg, .png, .gif, .webp o .svg';
 
                 if (strlen($this->foto_url) !== 0) {

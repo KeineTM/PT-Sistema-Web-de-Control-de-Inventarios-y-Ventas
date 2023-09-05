@@ -90,6 +90,13 @@ class ControladorContactos {
         else return false; // no existe
     }
 
+    public static function ctrlExiste($id) {
+        $modelo_consulta = new ModeloContactos();
+        $resultado = $modelo_consulta -> mdlExiste($id);
+        if($resultado[0]['conteo'] > 0) return true; // existe
+        else return false; // no existe
+    }
+
     /** Método para registrar un contacto.
      * En caso de ejecutarse con éxito retorna true, de lo contrario retorna un string con el error.
      */
